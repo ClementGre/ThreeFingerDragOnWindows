@@ -1,0 +1,12 @@
+﻿<Window x:Class="RawInput.Touchpad.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		x:Name="WindowRoot"
+		Title="RawInput Touchpad"
+		Height="200" Width="400" ResizeMode="NoResize">
+	<Grid>
+		<TextBlock Margin="10"
+				   TextWrapping="Wrap"
+				   Text="{Binding ElementName=WindowRoot, Path=Status}"/>
+	</Grid>
+</Window>
