@@ -44,8 +44,6 @@ namespace RawInput.Touchpad
 		{
 			public RAWINPUTHEADER Header;
 			public RAWHID Hid;
-
-			public IntPtr bRawData; // This is not for use.
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -66,8 +64,7 @@ namespace RawInput.Touchpad
 		{
 			public uint dwSizeHid;
 			public uint dwCount;
-
-			// bRawData is moved to RAWINPUT.
+			public IntPtr bRawData; // This is not for use.
 		}
 
 		[DllImport("User32.dll", SetLastError = true)]
@@ -219,17 +216,15 @@ namespace RawInput.Touchpad
 		public static TouchpadContact[] ParseInput(IntPtr lParam)
 		{
 			// Get RAWINPUT.
-			int rawInputHeaderSize = Marshal.SizeOf<RAWINPUTHEADER>();
-			int rawHidSize = Marshal.SizeOf<RAWHID>(); // RAWHID's size excluding bRawData
-
 			uint rawInputSize = 0;
+			uint rawInputHeaderSize = (uint)Marshal.SizeOf<RAWINPUTHEADER>();
 
 			if (GetRawInputData(
 				lParam,
 				RID_INPUT,
 				IntPtr.Zero,
 				ref rawInputSize,
-				(uint)rawInputHeaderSize) != 0)
+				rawInputHeaderSize) != 0)
 			{
 				return null;
 			}
@@ -247,7 +242,7 @@ namespace RawInput.Touchpad
 					RID_INPUT,
 					rawInputPointer,
 					ref rawInputSize,
-					(uint)rawInputHeaderSize) != rawInputSize)
+					rawInputHeaderSize) != rawInputSize)
 				{
 					return null;
 				}
@@ -257,8 +252,8 @@ namespace RawInput.Touchpad
 				var rawInputData = new byte[rawInputSize];
 				Marshal.Copy(rawInputPointer, rawInputData, 0, rawInputData.Length);
 
-				int rawInputOffset = rawInputHeaderSize + rawHidSize;
-				rawHidRawData = new byte[rawInputSize - rawInputOffset];
+				rawHidRawData = new byte[rawInput.Hid.dwSizeHid * rawInput.Hid.dwCount];
+				int rawInputOffset = (int)rawInputSize - rawHidRawData.Length;
 				Buffer.BlockCopy(rawInputData, rawInputOffset, rawHidRawData, 0, rawHidRawData.Length);
 			}
 			finally
