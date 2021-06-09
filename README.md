@@ -9,6 +9,12 @@ Sample to capture inputs from Precision Touchpad by [Raw Input](https://docs.mic
 
 - .NET 5.0
 
+## Example
+
+When five fingers are touching the touchpad of Surface Pro 4 Type Cover, five contacts appear with each coordinates.
+
+![Screenshot](Images/Screenshot.png)
+
 ## License
 
 - MIT License
