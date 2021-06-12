@@ -11,6 +11,23 @@ namespace RawInput.Touchpad
 	{
 		#region Win32
 
+		[DllImport("User32", SetLastError = true)]
+		private static extern uint GetRawInputDeviceList(
+			[Out] RAWINPUTDEVICELIST[] pRawInputDeviceList,
+			ref uint puiNumDevices,
+			uint cbSize);
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct RAWINPUTDEVICELIST
+		{
+			public IntPtr hDevice;
+			public uint dwType; // RIM_TYPEMOUSE or RIM_TYPEKEYBOARD or RIM_TYPEHID
+		}
+
+		private const uint RIM_TYPEMOUSE = 0;
+		private const uint RIM_TYPEKEYBOARD = 1;
+		private const uint RIM_TYPEHID = 2;
+
 		[DllImport("User32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool RegisterRawInputDevices(
@@ -55,10 +72,6 @@ namespace RawInput.Touchpad
 			public IntPtr wParam; // wParam in WM_INPUT
 		}
 
-		private const uint RIM_TYPEMOUSE = 0;
-		private const uint RIM_TYPEKEYBOARD = 1;
-		private const uint RIM_TYPEHID = 2;
-
 		[StructLayout(LayoutKind.Sequential)]
 		private struct RAWHID
 		{
@@ -74,7 +87,33 @@ namespace RawInput.Touchpad
 			IntPtr pData,
 			ref uint pcbSize);
 
+		[DllImport("User32.dll", SetLastError = true)]
+		private static extern uint GetRawInputDeviceInfo(
+			IntPtr hDevice, // hDevice by RAWINPUTDEVICELIST
+			uint uiCommand, // RIDI_DEVICEINFO
+			ref RID_DEVICE_INFO pData,
+			ref uint pcbSize);
+
 		private const uint RIDI_PREPARSEDDATA = 0x20000005;
+		private const uint RIDI_DEVICEINFO = 0x2000000b;
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct RID_DEVICE_INFO
+		{
+			public uint cbSize; // This is determined to accommodate RID_DEVICE_INFO_KEYBOARD.
+			public uint dwType;
+			public RID_DEVICE_INFO_HID hid;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct RID_DEVICE_INFO_HID
+		{
+			public uint dwVendorId;
+			public uint dwProductId;
+			public uint dwVersionNumber;
+			public ushort usUsagePage;
+			public ushort usUsage;
+		}
 
 		[DllImport("Hid.dll", SetLastError = true)]
 		private static extern uint HidP_GetCaps(
@@ -193,6 +232,62 @@ namespace RawInput.Touchpad
 			uint ReportLength);
 
 		#endregion
+
+		public static bool Exists()
+		{
+			uint deviceListCount = 0;
+			uint rawInputDeviceListSize = (uint)Marshal.SizeOf<RAWINPUTDEVICELIST>();
+
+			if (GetRawInputDeviceList(
+				null,
+				ref deviceListCount,
+				rawInputDeviceListSize) != 0)
+			{
+				return false;
+			}
+
+			var devices = new RAWINPUTDEVICELIST[deviceListCount];
+
+			if (GetRawInputDeviceList(
+				devices,
+				ref deviceListCount,
+				rawInputDeviceListSize) != deviceListCount)
+			{
+				return false;
+			}
+
+			foreach (var device in devices.Where(x => x.dwType == RIM_TYPEHID))
+			{
+				uint deviceInfoSize = 0;
+
+				if (GetRawInputDeviceInfo(
+					device.hDevice,
+					RIDI_DEVICEINFO,
+					IntPtr.Zero,
+					ref deviceInfoSize) != 0)
+				{
+					continue;
+				}
+
+				var deviceInfo = new RID_DEVICE_INFO { cbSize = deviceInfoSize };
+
+				if (GetRawInputDeviceInfo(
+					device.hDevice,
+					RIDI_DEVICEINFO,
+					ref deviceInfo,
+					ref deviceInfoSize) == unchecked((uint)-1))
+				{
+					continue;
+				}
+
+				if ((deviceInfo.hid.usUsagePage == 0x000D) &&
+					(deviceInfo.hid.usUsage == 0x0005))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 
 		public static bool RegisterInput(IntPtr windowHandle)
 		{

@@ -38,7 +38,8 @@ namespace RawInput.Touchpad
 			_targetSource = PresentationSource.FromVisual(this) as HwndSource;
 			_targetSource?.AddHook(WndProc);
 
-			TouchpadHelper.RegisterInput(_targetSource.Handle);
+			if (TouchpadHelper.Exists())
+				TouchpadHelper.RegisterInput(_targetSource.Handle);
 		}
 
 		private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
