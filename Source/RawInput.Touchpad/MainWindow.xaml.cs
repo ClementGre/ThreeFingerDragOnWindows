@@ -16,13 +16,21 @@ namespace RawInput.Touchpad
 {
 	public partial class MainWindow : Window
 	{
-		public string Status
+		public bool TouchpadExists
 		{
-			get { return (string)GetValue(StatusProperty); }
-			set { SetValue(StatusProperty, value); }
+			get { return (bool)GetValue(TouchpadExistsProperty); }
+			set { SetValue(TouchpadExistsProperty, value); }
 		}
-		public static readonly DependencyProperty StatusProperty =
-			DependencyProperty.Register("Status", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
+		public static readonly DependencyProperty TouchpadExistsProperty =
+			DependencyProperty.Register("TouchpadExists", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+		public string TouchpadContacts
+		{
+			get { return (string)GetValue(TouchpadContactsProperty); }
+			set { SetValue(TouchpadContactsProperty, value); }
+		}
+		public static readonly DependencyProperty TouchpadContactsProperty =
+			DependencyProperty.Register("TouchpadContacts", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
 		public MainWindow()
 		{
@@ -30,6 +38,7 @@ namespace RawInput.Touchpad
 		}
 
 		private HwndSource _targetSource;
+		private readonly List<string> _log = new();
 
 		protected override void OnSourceInitialized(EventArgs e)
 		{
@@ -38,8 +47,16 @@ namespace RawInput.Touchpad
 			_targetSource = PresentationSource.FromVisual(this) as HwndSource;
 			_targetSource?.AddHook(WndProc);
 
-			if (TouchpadHelper.Exists())
-				TouchpadHelper.RegisterInput(_targetSource.Handle);
+			TouchpadExists = TouchpadHelper.Exists();
+
+			_log.Add($"Precision touchpad exists: {TouchpadExists}");
+
+			if (TouchpadExists)
+			{
+				var success = TouchpadHelper.RegisterInput(_targetSource.Handle);
+
+				_log.Add($"Precision touchpad registered: {success}");
+			}
 		}
 
 		private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -48,11 +65,18 @@ namespace RawInput.Touchpad
 			{
 				case TouchpadHelper.WM_INPUT:
 					var contacts = TouchpadHelper.ParseInput(lParam);
+					TouchpadContacts = string.Join(Environment.NewLine, contacts.Select(x => x.ToString()));
 
-					Status = string.Join(Environment.NewLine, contacts.Select(x => x.ToString()));
+					_log.Add("---");
+					_log.Add(TouchpadContacts);
 					break;
 			}
 			return IntPtr.Zero;
+		}
+
+		private void Copy_Click(object sender, RoutedEventArgs e)
+		{
+			Clipboard.SetText(string.Join(Environment.NewLine, _log));
 		}
 	}
 }

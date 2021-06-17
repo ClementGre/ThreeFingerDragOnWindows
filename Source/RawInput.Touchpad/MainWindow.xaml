@@ -3,10 +3,29 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		x:Name="WindowRoot"
 		Title="RawInput Touchpad"
-		Height="200" Width="400" ResizeMode="NoResize">
+		Height="260" Width="400" ResizeMode="NoResize">
 	<Grid>
-		<TextBlock Margin="10"
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Grid.Row="0" VerticalAlignment="Center"
+				   Margin="10,0">
+			<Run Text="Precision touchpad exists:"/>
+			<Run FontWeight="Bold"
+				 Text="{Binding ElementName=WindowRoot, Path=TouchpadExists}"/>
+		</TextBlock>
+
+		<Button Grid.Row="0"
+				HorizontalAlignment="Right"
+				BorderThickness="0" Padding="8,4"
+				Content="Copy to clipboard"
+				Click="Copy_Click"/>
+		
+		<TextBlock Grid.Row="1"
+				   Margin="10"
 				   TextWrapping="Wrap"
-				   Text="{Binding ElementName=WindowRoot, Path=Status}"/>
+				   Text="{Binding ElementName=WindowRoot, Path=TouchpadContacts}"/>
 	</Grid>
 </Window>
