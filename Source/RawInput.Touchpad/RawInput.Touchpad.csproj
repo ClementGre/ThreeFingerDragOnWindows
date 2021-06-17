@@ -7,6 +7,7 @@
     <Authors>emoacht</Authors>
     <Copyright>Copyright © 2021 emoacht</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
 </Project>
