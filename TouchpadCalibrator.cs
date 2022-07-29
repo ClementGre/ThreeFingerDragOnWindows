@@ -1,7 +1,7 @@
 using System;
 using System.Timers;
 
-namespace RawInput.Touchpad{
+namespace ThreeFingersDragOnWindows{
     public class TouchpadCalibrator {
 
 

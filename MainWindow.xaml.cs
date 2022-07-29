@@ -13,10 +13,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace RawInput.Touchpad
-{
-	public partial class MainWindow : Window
-	{
+namespace ThreeFingersDragOnWindows {
+	public partial class MainWindow : Window {
 
 		private ThreeFingersDrag threeFingersDrag;
 
@@ -38,6 +36,7 @@ namespace RawInput.Touchpad
 
 		public MainWindow()
 		{
+
 			InitializeComponent();
 			threeFingersDrag = new ThreeFingersDrag();
 			threeFingersDrag.calibrate();
@@ -83,9 +82,9 @@ namespace RawInput.Touchpad
 			return IntPtr.Zero;
 		}
 
-		private void Copy_Click(object sender, RoutedEventArgs e)
-		{
-			Clipboard.SetText(string.Join(Environment.NewLine, _log));
+		private void calibrate(object sender, RoutedEventArgs e){
+
+			threeFingersDrag.calibrate();
 		}
 
 

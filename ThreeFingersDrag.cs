@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System;
 
 
-namespace RawInput.Touchpad{
+namespace ThreeFingersDragOnWindows{
     public class ThreeFingersDrag {
 
-        private const int releaseDelay = 300; // miliseconds
+        private const int releaseDelay = 20; // miliseconds
         private Timer dragEndTimer = new Timer(releaseDelay);
 
         private bool isDragging = false;

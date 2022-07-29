@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RawInput.Touchpad
+namespace ThreeFingersDragOnWindows
 {
 	internal static class TouchpadHelper
 	{

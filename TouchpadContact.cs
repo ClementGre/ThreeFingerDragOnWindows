@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RawInput.Touchpad
+namespace ThreeFingersDragOnWindows
 {
 	public struct TouchpadContact : IEquatable<TouchpadContact>
 	{

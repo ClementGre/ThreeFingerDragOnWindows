@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 // From https://stackoverflow.com/questions/2416748/how-do-you-simulate-mouse-click-in-c
 
-namespace RawInput.Touchpad {
+namespace ThreeFingersDragOnWindows {
     public class MouseOperations {
         [Flags]
         public enum MouseEventFlags

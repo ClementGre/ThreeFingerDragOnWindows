@@ -1,4 +1,4 @@
-﻿<Window x:Class="RawInput.Touchpad.MainWindow"
+﻿<Window x:Class="ThreeFingersDragOnWindows.MainWindow"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		x:Name="WindowRoot"
@@ -20,8 +20,8 @@
 		<Button Grid.Row="0"
 				HorizontalAlignment="Right"
 				BorderThickness="0" Padding="8,4"
-				Content="Copy to clipboard"
-				Click="Copy_Click"/>
+				Content="Calibrate"
+				Click="calibrate"/>
 		
 		<TextBlock Grid.Row="1"
 				   Margin="10"
