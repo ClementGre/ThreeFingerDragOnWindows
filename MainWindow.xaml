@@ -28,4 +28,5 @@
                    TextWrapping="Wrap"
                    Text="{Binding ElementName=WindowRoot, Path=TouchpadContacts}" />
     </Grid>
+    
 </Window>

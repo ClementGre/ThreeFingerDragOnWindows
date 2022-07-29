@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 
+
 namespace ThreeFingersDragOnWindows;
 
-public partial class MainWindow {
+public sealed partial class MainWindow {
     public static readonly DependencyProperty TouchpadExistsProperty =
         DependencyProperty.Register("TouchpadExists", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
@@ -16,11 +16,17 @@ public partial class MainWindow {
     private HwndSource _targetSource;
     private readonly ThreeFingersDrag _threeFingersDrag;
 
+    public static UserPreferences prefs;
+
     public MainWindow(){
+        Console.WriteLine("Starting ThreeFingersDragOnWindows...");
         InitializeComponent();
-        
+
+        prefs = UserPreferences.load();
+
         _threeFingersDrag = new ThreeFingersDrag();
-        _threeFingersDrag.Calibrate();
+        
+        
     }
 
     public bool TouchpadExists{
@@ -62,4 +68,11 @@ public partial class MainWindow {
     private void Calibrate(object sender, RoutedEventArgs e){
         _threeFingersDrag.Calibrate();
     }
+    
+    protected override void OnClosed(EventArgs e){
+        Console.WriteLine("Closing application, saving data...");
+        UserPreferences.save(prefs);
+        base.OnClosed(e);
+    }
+    
 }

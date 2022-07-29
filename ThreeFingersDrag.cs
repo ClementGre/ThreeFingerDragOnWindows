@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Timers;
 
 namespace ThreeFingersDragOnWindows;
@@ -16,9 +15,10 @@ public class ThreeFingersDrag {
     private readonly List<TouchpadContact> _lastContacts = new();
     private MousePoint _lastLocation = new(0, 0);
     private long _lastThreeFingersContact;
-    private float _ratio = 1; // touchpad dist / screen dist
 
     public ThreeFingersDrag(){
+        Console.WriteLine("MouseSpeed = " + MainWindow.prefs.MouseSpeed);
+        
         // Setup timer
         _dragEndTimer.Elapsed += (_, _) => CheckDragEnd();
         _dragEndTimer.AutoReset = false;
@@ -59,8 +59,8 @@ public class ThreeFingersDrag {
             }
             else{
                 // Mouse do not move automatically on three fingers drag
-                MouseOperations.ShiftCursorPosition((int) ((point.x - _lastLocation.x) / _ratio),
-                    (int) ((point.y - _lastLocation.y) / _ratio));
+                MouseOperations.ShiftCursorPosition((int) ((point.x - _lastLocation.x) / MainWindow.prefs.MouseSpeed),
+                    (int) ((point.y - _lastLocation.y) / MainWindow.prefs.MouseSpeed));
 
                 _dragEndTimer.Stop();
                 _dragEndTimer.Start();
@@ -88,7 +88,7 @@ public class ThreeFingersDrag {
         _calibrator = new TouchpadCalibrator();
         _calibrator.Calibrate(5, (ratio) => {
             Console.WriteLine("Calibrated with ratio: " + ratio);
-            _ratio = ratio;
+            MainWindow.prefs.MouseSpeed = ratio;
             _calibrator = null;
         });
     }
