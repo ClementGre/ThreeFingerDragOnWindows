@@ -1,59 +1,63 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ThreeFingersDragOnWindows
-{
-	public struct TouchpadContact : IEquatable<TouchpadContact>
-	{
-		public int ContactId { get; }
-		public int X { get; }
-		public int Y { get; }
+namespace ThreeFingersDragOnWindows;
 
-		public TouchpadContact(int contactId, int x, int y) =>
-			(this.ContactId, this.X, this.Y) = (contactId, x, y);
+public struct TouchpadContact : IEquatable<TouchpadContact> {
+    public int ContactId{ get; }
+    public int X{ get; }
+    public int Y{ get; }
 
-		public override bool Equals(object obj) => (obj is TouchpadContact other) && Equals(other);
+    public TouchpadContact(int contactId, int x, int y){
+        (ContactId, X, Y) = (contactId, x, y);
+    }
 
-		public bool Equals(TouchpadContact other) =>
-			(this.ContactId == other.ContactId) && (this.X == other.X) && (this.Y == other.Y);
+    public override bool Equals(object obj){
+        return obj is TouchpadContact other && Equals(other);
+    }
 
-		public static bool operator ==(TouchpadContact a, TouchpadContact b) => a.Equals(b);
-		public static bool operator !=(TouchpadContact a, TouchpadContact b) => !(a == b);
+    public bool Equals(TouchpadContact other){
+        return ContactId == other.ContactId && X == other.X && Y == other.Y;
+    }
 
-		public override int GetHashCode() => (this.ContactId, this.X, this.Y).GetHashCode();
+    public static bool operator ==(TouchpadContact a, TouchpadContact b){
+        return a.Equals(b);
+    }
 
-		public override string ToString() => $"Contact ID:{ContactId} Point:{X},{Y}";
+    public static bool operator !=(TouchpadContact a, TouchpadContact b){
+        return !(a == b);
+    }
 
-		public MousePoint getMousePoint(){
-			return new MousePoint(X, Y);
-		}
-	}
+    public override int GetHashCode(){
+        return (ContactId, X, Y).GetHashCode();
+    }
 
-	internal class TouchpadContactCreator
-	{
-		public int? ContactId { get; set; }
-		public int? X { get; set; }
-		public int? Y { get; set; }
+    public override string ToString(){
+        return $"Contact ID:{ContactId} Point:{X},{Y}";
+    }
 
-		public bool TryCreate(out TouchpadContact contact)
-		{
-			if (ContactId.HasValue && X.HasValue && Y.HasValue)
-			{
-				contact = new TouchpadContact(ContactId.Value, X.Value, Y.Value);
-				return true;
-			}
-			contact = default;
-			return false;
-		}
+    public MousePoint getMousePoint(){
+        return new MousePoint(X, Y);
+    }
+}
 
-		public void Clear()
-		{
-			ContactId = null;
-			X = null;
-			Y = null;
-		}
-	}
+internal class TouchpadContactCreator {
+    public int? ContactId{ get; set; }
+    public int? X{ get; set; }
+    public int? Y{ get; set; }
+
+    public bool TryCreate(out TouchpadContact contact){
+        if(ContactId.HasValue && X.HasValue && Y.HasValue){
+            contact = new TouchpadContact(ContactId.Value, X.Value, Y.Value);
+            return true;
+        }
+
+        contact = default;
+        return false;
+    }
+
+    public void Clear(){
+        ContactId = null;
+        X = null;
+        Y = null;
+    }
 }

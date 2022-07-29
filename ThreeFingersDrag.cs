@@ -1,119 +1,120 @@
-using System.Timers;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Timers;
+
+namespace ThreeFingersDragOnWindows;
+
+public class ThreeFingersDrag {
+    private const int ReleaseDelay = 20; // milliseconds
+
+    // When not null, the calibration is working
+    private TouchpadCalibrator _calibrator;
+    private readonly Timer _dragEndTimer = new(ReleaseDelay);
+
+    private bool _isDragging;
+    private readonly List<TouchpadContact> _lastContacts = new();
+    private MousePoint _lastLocation = new(0, 0);
+    private long _lastThreeFingersContact;
+    private float _ratio = 1; // touchpad dist / screen dist
+
+    public ThreeFingersDrag(){
+        // Setup timer
+        _dragEndTimer.Elapsed += (_, _) => CheckDragEnd();
+        _dragEndTimer.AutoReset = false;
+    }
 
 
-namespace ThreeFingersDragOnWindows{
-    public class ThreeFingersDrag {
+    public void RegisterTouchpadContacts(TouchpadContact[] contacts){
+        foreach(var contact in contacts) RegisterTouchpadContact(contact);
+    }
 
-        private const int releaseDelay = 20; // miliseconds
-        private Timer dragEndTimer = new Timer(releaseDelay);
-
-        private bool isDragging = false;
-        private long lastThreeFingersContact = 0;
-        private MousePoint lastLocation = new MousePoint(0, 0);
-        private List<TouchpadContact> lastContacts = new List<TouchpadContact>();
-
-        // When not null, the calibration is working
-        private TouchpadCalibrator calibrator;
-        private float ratio = 1; // touchpad dist / screen dist
-
-        public ThreeFingersDrag(){
-            // Setup timer
-            dragEndTimer.Elapsed += (Object source, ElapsedEventArgs e) => checkDragEnd();
-            dragEndTimer.AutoReset = false;
+    private void RegisterTouchpadContact(TouchpadContact contact){
+        if(_calibrator != null){
+            _calibrator.OnCalibratingContact(contact);
+            return;
         }
 
-
-        public void registerTouchpadContacts(TouchpadContact[] contacts){
-            foreach(TouchpadContact contact in contacts) registerTouchpadContact(contact);
-        }
-        private void registerTouchpadContact(TouchpadContact contact){
-            if(this.calibrator != null){
-                calibrator.onCalibratingContact(contact);
-                return;
+        foreach(var lastContact in _lastContacts)
+            if(lastContact.ContactId == contact.ContactId){
+                // A contact is registered twice: send the event with the list of all contacts
+                OnTouchpadContact(_lastContacts.ToArray());
+                _lastContacts.Clear();
+                break;
             }
 
-            foreach(TouchpadContact lastContact in lastContacts){
-                if(lastContact.ContactId == contact.ContactId){
-                    // A contact is registered twice: send the event with the list of all contacts
-                    onTouchpadContact(lastContacts.ToArray());
-                    lastContacts.Clear();
-                    break;
-                }
+        // Add the contact to the list
+        _lastContacts.Add(contact);
+    }
+
+    private void OnTouchpadContact(TouchpadContact[] contacts){
+        var point = AverageCoordinate(contacts);
+
+        if(contacts.Length == 3){
+            _lastThreeFingersContact = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+            if(!_isDragging){
+                _isDragging = true;
+                MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftDown);
             }
-            // Add the contact to the list
-            lastContacts.Add(contact);
-        }
+            else{
+                // Mouse do not move automatically on three fingers drag
+                MouseOperations.ShiftCursorPosition((int) ((point.x - _lastLocation.x) / _ratio),
+                    (int) ((point.y - _lastLocation.y) / _ratio));
 
-        private void onTouchpadContact(TouchpadContact[] contacts){
-            MousePoint point = averageCoordinate(contacts);
-
-            if(contacts.Length == 3){
-                lastThreeFingersContact = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-
-                if(!isDragging){
-                    isDragging = true;
-                    MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftDown);
-
-                }else{ // Mouse do not move automatically on three fingers drag
-                    MouseOperations.ShiftCursorPosition((int) ((point.x - lastLocation.x) / ratio), (int) ((point.y - lastLocation.y) / ratio));
-
-                    dragEndTimer.Stop();
-                    dragEndTimer.Start();
-                }
-            }else{
-                if(isDragging){
-                    isDragging = false;
-                    MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftUp);
-                }
+                _dragEndTimer.Stop();
+                _dragEndTimer.Start();
             }
-            lastLocation = point;
         }
-        private void checkDragEnd(){
-            if(isDragging && new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() - lastThreeFingersContact > releaseDelay){
-                isDragging = false;
+        else{
+            if(_isDragging){
+                _isDragging = false;
                 MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftUp);
             }
         }
 
-        public void calibrate(){
-            calibrator = new TouchpadCalibrator();
-            calibrator.calibrate(5, (ratio) => {
-                Console.WriteLine("Calibrated with ratio: " + ratio);
-                this.ratio = ratio;
-                this.calibrator = null;
-            });
-        }
+        _lastLocation = point;
+    }
 
-
-        private MousePoint averageCoordinate(TouchpadContact[] contacts){
-            int totalX = 0;
-            int totalY = 0;
-            int count = 0;
-            foreach(TouchpadContact contact in contacts){
-                totalX += contact.X;
-                totalY += contact.Y;
-                count++;
-            }
-            return new MousePoint(totalX/count, totalY/count);
+    private void CheckDragEnd(){
+        if(_isDragging && new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() - _lastThreeFingersContact >
+           ReleaseDelay){
+            _isDragging = false;
+            MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftUp);
         }
     }
 
-    public struct MousePoint{
-        public int x;
-        public int y;
-        public MousePoint(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
+    public void Calibrate(){
+        _calibrator = new TouchpadCalibrator();
+        _calibrator.Calibrate(5, (ratio) => {
+            Console.WriteLine("Calibrated with ratio: " + ratio);
+            _ratio = ratio;
+            _calibrator = null;
+        });
     }
-    public struct Dimensions{
-        public int w;
-        public int h;
-        public Dimensions(int w, int h){
-            this.w = w;
-            this.h = h;
+
+
+    private MousePoint AverageCoordinate(TouchpadContact[] contacts){
+        var totalX = 0;
+        var totalY = 0;
+        var count = 0;
+        foreach(var contact in contacts){
+            totalX += contact.X;
+            totalY += contact.Y;
+            count++;
         }
+
+        if(count == 0) return new MousePoint(0, 0);
+        return new MousePoint(totalX / count, totalY / count);
+    }
+}
+
+public struct MousePoint {
+    public int x;
+    public int y;
+
+    public MousePoint(int x, int y){
+        this.x = x;
+        this.y = y;
     }
 }

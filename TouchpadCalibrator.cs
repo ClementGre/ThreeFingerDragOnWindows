@@ -1,71 +1,61 @@
 using System;
+using System.Diagnostics;
 using System.Timers;
 
-namespace ThreeFingersDragOnWindows{
-    public class TouchpadCalibrator {
+namespace ThreeFingersDragOnWindows;
 
+public class TouchpadCalibrator {
+    public delegate void TaskCompletedCallBack(float ratio);
 
-        public delegate void TaskCompletedCallBack(float ratio);
+    private float _globalLongestDist; // Longest distance of all moves
+    private float _longestDist; // Longest distance of last move
+    private float _ratio = 1; // Represents the numbers of touchpad coordinates that corresponds to one pixel.
+    
+    private MousePoint _startPoint = new(0, 0);
+    private MousePoint _lastPoint = new(0, 0);
+    private MousePoint _touchpadStartPoint = new(0, 0);
+    private MousePoint _touchpadLastPoint = new(0, 0);
 
-        public TouchpadCalibrator(){
+    public void Calibrate(int seconds, TaskCompletedCallBack callback){
+        var timer = new Timer(seconds * 1000);
+        timer.AutoReset = false;
+        timer.Enabled = true;
+        timer.Elapsed += (_, _) => {
+            CalculateRatio();
+            Console.WriteLine("Returning ratio: " + _ratio);
+            callback(_ratio);
+        };
+    }
 
+    public void OnCalibratingContact(TouchpadContact contact){
+        if(contact.ContactId != 0) return;
+
+        var currentPoint = MouseOperations.GetCursorPosition();
+        var dist = PointDist(currentPoint, _startPoint);
+
+        if((_startPoint.x == 0 && _startPoint.y == 0) || dist < _longestDist){
+            CalculateRatio();
+            _touchpadStartPoint = contact.getMousePoint();
+            _startPoint = currentPoint;
+        }
+        else{
+            _longestDist = dist;
         }
 
+        _lastPoint = currentPoint;
+        _touchpadLastPoint = contact.getMousePoint();
+    }
 
-        public void calibrate(int seconds, TaskCompletedCallBack callback){
+    private static float PointDist(MousePoint a, MousePoint b){
+        return (float) Math.Sqrt(Math.Pow(a.x - b.x, 2) + Math.Pow(a.y - b.y, 2));
+    }
 
-            Timer timer = new Timer(seconds * 1000);
-            timer.AutoReset = false;
-            timer.Enabled = true;
-            timer.Elapsed += (Object source, ElapsedEventArgs e) => {
-                
-                calculateRatio();
-                Console.WriteLine("Returning ratio: " + ratio);
-                callback(ratio);
-            };
-        }
+    private void CalculateRatio(){
+        if(_longestDist <= _globalLongestDist) return;
 
-        private MousePoint touchpadStartPoint = new MousePoint(0, 0);
-        private MousePoint touchpadLastPoint = new MousePoint(0, 0);
-        private MousePoint startPoint = new MousePoint(0, 0);
-        private MousePoint lastPoint = new MousePoint(0, 0);
-        private float longestDist = 0; // Longest distance of last move
-
-        private float globalLongestDist = 0; // Longest distance of all moves
-        private float ratio = 1; // Represents the numbers of touchpad coordinates that corresponds to one pixel.
-
-        public void onCalibratingContact(TouchpadContact contact){
-            if(contact.ContactId != 0) return;
-
-            MousePoint currentPoint = MouseOperations.GetCursorPosition();
-
-        
-            float dist = pointDist(currentPoint, startPoint);
-
-            if((startPoint.x == 0 && startPoint.y == 0) || dist < longestDist){
-                calculateRatio();
-                touchpadStartPoint = contact.getMousePoint();
-                startPoint = currentPoint;
-
-            }else{
-                longestDist = dist;
-            }
-
-            lastPoint = currentPoint;
-            touchpadLastPoint = contact.getMousePoint();
-        }
-
-        private float pointDist(MousePoint a, MousePoint b){
-            return (float) Math.Sqrt(Math.Pow(a.x - b.x, 2) + Math.Pow(a.y - b.y, 2));
-        }
-        private void calculateRatio(){
-            if(longestDist <= globalLongestDist) return;
-
-            globalLongestDist = pointDist(startPoint, lastPoint);
-            float touchPadDist = pointDist(touchpadStartPoint, touchpadLastPoint);
-            ratio = touchPadDist / globalLongestDist;
-            Console.WriteLine("Calculated ratio: " + globalLongestDist + "/" + touchPadDist + " = " + ratio);
-        }
-
+        _globalLongestDist = PointDist(_startPoint, _lastPoint);
+        var touchPadDist = PointDist(_touchpadStartPoint, _touchpadLastPoint);
+        _ratio = touchPadDist / _globalLongestDist;
+        Console.WriteLine("Calculated ratio: " + _globalLongestDist + "/" + touchPadDist + " = " + _ratio);
     }
 }

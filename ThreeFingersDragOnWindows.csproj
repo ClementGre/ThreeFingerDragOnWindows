@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <Authors>emoacht</Authors>
-    <Copyright>Copyright © 2021 emoacht</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <Authors>emoacht</Authors>
+        <Copyright>Copyright © 2021 emoacht</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    </PropertyGroup>
 
 </Project>
