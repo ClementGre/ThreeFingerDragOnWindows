@@ -40,6 +40,9 @@ namespace RawInput.Touchpad
 		{
 			InitializeComponent();
 			threeFingersDrag = new ThreeFingersDrag();
+			threeFingersDrag.calibrate();
+
+			Console.WriteLine("run...");
 		}
 
 		private HwndSource _targetSource;

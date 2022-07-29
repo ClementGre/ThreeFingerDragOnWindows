@@ -26,6 +26,10 @@ namespace RawInput.Touchpad
 		public override int GetHashCode() => (this.ContactId, this.X, this.Y).GetHashCode();
 
 		public override string ToString() => $"Contact ID:{ContactId} Point:{X},{Y}";
+
+		public MousePoint getMousePoint(){
+			return new MousePoint(X, Y);
+		}
 	}
 
 	internal class TouchpadContactCreator

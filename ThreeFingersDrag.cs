@@ -2,6 +2,7 @@ using System.Timers;
 using System.Collections.Generic;
 using System;
 
+
 namespace RawInput.Touchpad{
     public class ThreeFingersDrag {
 
@@ -12,6 +13,10 @@ namespace RawInput.Touchpad{
         private long lastThreeFingersContact = 0;
         private MousePoint lastLocation = new MousePoint(0, 0);
         private List<TouchpadContact> lastContacts = new List<TouchpadContact>();
+
+        // When not null, the calibration is working
+        private TouchpadCalibrator calibrator;
+        private float ratio = 1; // touchpad dist / screen dist
 
         public ThreeFingersDrag(){
             // Setup timer
@@ -24,6 +29,11 @@ namespace RawInput.Touchpad{
             foreach(TouchpadContact contact in contacts) registerTouchpadContact(contact);
         }
         private void registerTouchpadContact(TouchpadContact contact){
+            if(this.calibrator != null){
+                calibrator.onCalibratingContact(contact);
+                return;
+            }
+
             foreach(TouchpadContact lastContact in lastContacts){
                 if(lastContact.ContactId == contact.ContactId){
                     // A contact is registered twice: send the event with the list of all contacts
@@ -47,7 +57,7 @@ namespace RawInput.Touchpad{
                     MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftDown);
 
                 }else{ // Mouse do not move automatically on three fingers drag
-                    MouseOperations.ShiftCursorPosition(point.x - lastLocation.x, point.y - lastLocation.y);
+                    MouseOperations.ShiftCursorPosition((int) ((point.x - lastLocation.x) / ratio), (int) ((point.y - lastLocation.y) / ratio));
 
                     dragEndTimer.Stop();
                     dragEndTimer.Start();
@@ -67,6 +77,16 @@ namespace RawInput.Touchpad{
             }
         }
 
+        public void calibrate(){
+            calibrator = new TouchpadCalibrator();
+            calibrator.calibrate(5, (ratio) => {
+                Console.WriteLine("Calibrated with ratio: " + ratio);
+                this.ratio = ratio;
+                this.calibrator = null;
+            });
+        }
+
+
         private MousePoint averageCoordinate(TouchpadContact[] contacts){
             int totalX = 0;
             int totalY = 0;
@@ -78,25 +98,22 @@ namespace RawInput.Touchpad{
             }
             return new MousePoint(totalX/count, totalY/count);
         }
+    }
 
-
-
-        public struct MousePoint{
-            public int x;
-            public int y;
-            public MousePoint(int x, int y){
-                this.x = x;
-                this.y = y;
-            }
+    public struct MousePoint{
+        public int x;
+        public int y;
+        public MousePoint(int x, int y){
+            this.x = x;
+            this.y = y;
         }
-        public struct Dimensions{
-            public int w;
-            public int h;
-            public Dimensions(int w, int h){
-                this.w = w;
-                this.h = h;
-            }
+    }
+    public struct Dimensions{
+        public int w;
+        public int h;
+        public Dimensions(int w, int h){
+            this.w = w;
+            this.h = h;
         }
-
     }
 }
