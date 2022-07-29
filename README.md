@@ -1,19 +1,14 @@
-# RawInput Touchpad
+# ThreeFingersDragOnWindows
 
-Sample to capture inputs from Precision Touchpad by [Raw Input](https://docs.microsoft.com/en-us/windows/win32/inputdev/raw-input) API. This is C# implementation which basically follows C++ function of [TouchpadGestures Advanced][1] by @kamektx to parse inputs from Touchpad including each contact point. Also, [RawInput.Sharp][2] by @mfakane is well sophisticated C# implementation and great help to understand this API. Many thanks!
+A windows app that allows the macos three fingers drag, using the Raw Inputs of precision touchpad.
 
 - [kamektx/TouchpadGestures_Advanced][1]
 - [mfakane/rawinput-sharp][2]
+- [emoacht/RawInput.Touchpad][3]
 
 ## Requirements
 
 - .NET 5.0
-
-## Example
-
-When five fingers are touching the touchpad of Surface Pro 4 Type Cover, five contacts appear with each coordinates.
-
-![Screenshot](Images/Screenshot.png)
 
 ## License
 
@@ -21,3 +16,4 @@ When five fingers are touching the touchpad of Surface Pro 4 Type Cover, five co
 
 [1]: https://github.com/kamektx/TouchpadGestures_Advanced
 [2]: https://github.com/mfakane/rawinput-sharp
+[3]: https://github.com/emoacht/RawInput.Touchpad
