@@ -19,6 +19,11 @@ public class MouseOperations {
         RightUp = 0x00000010
     }
 
+    // moving the cursor does not work with floating point values
+    // decimal parts are kept and then added to be taken in account
+    private static float _decimalX;
+    private static float _decimalY;
+
     [DllImport("user32.dll", EntryPoint = "SetCursorPos")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetCursorPos(int x, int y);
@@ -38,9 +43,13 @@ public class MouseOperations {
         SetCursorPos(point.x, point.y);
     }
 
-    public static void ShiftCursorPosition(int x, int y){
+    public static void ShiftCursorPosition(float x, float y){
         var point = GetCursorPosition();
-        SetCursorPos(point.x + x, point.y + y);
+        var intX = (int) (x + _decimalX);
+        var intY = (int) (y + _decimalY);
+        _decimalX = x - intX;
+        _decimalY = y - intY;
+        SetCursorPos(point.x + intX, point.y + intY);
     }
 
     public static MousePoint GetCursorPosition(){

@@ -32,7 +32,7 @@ public struct TouchpadContact : IEquatable<TouchpadContact> {
     }
 
     public override string ToString(){
-        return $"Contact ID:{ContactId} Point:{X},{Y}";
+        return $"ID: {ContactId} x,y: {X},{Y}";
     }
 
     public MousePoint getMousePoint(){
