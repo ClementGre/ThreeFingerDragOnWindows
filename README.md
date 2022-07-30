@@ -9,7 +9,7 @@ A windows app that allows the macos three fingers drag, using the Raw Inputs of 
 - [emoacht/RawInput.Touchpad][3]
 
 ## Preview
-![](https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/master/Resources/preview.png)
+![screenshot](https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/Resources/preview.png)
 
 ## Requirements
 
