@@ -95,13 +95,13 @@
                         <TextBlock Grid.Row="0" Grid.Column="0">
                             Mouse speed:
                         </TextBlock>
-                        <Slider Grid.Row="0" Grid.Column="1" Name="MouseSpeed" Minimum="0.05" Maximum="10"
+                        <Slider Grid.Row="0" Grid.Column="1" Name="MouseSpeed" Minimum="0.5" Maximum="200"
                                 AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" Width="250" Margin="8, 0, 0, 0" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0">
-                            Mouse acceleration:
+                            Mouse acceleration (default to 1, 0 to disable):
                         </TextBlock>
-                        <Slider Grid.Row="1" Grid.Column="1" Name="MouseAcceleration" Minimum="0.05" Maximum="10"
+                        <Slider Grid.Row="1" Grid.Column="1" Name="MouseAcceleration" Minimum="0" Maximum="5"
                                 AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" Width="250" Margin="8, 0, 0, 0" />
                     </Grid>
 

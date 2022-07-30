@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 
@@ -19,18 +20,13 @@ public class MouseOperations {
         RightUp = 0x00000010
     }
 
-    // moving the cursor does not work with floating point values
-    // decimal parts are kept and then added to be taken in account
-    private static float _decimalX;
-    private static float _decimalY;
-
     [DllImport("user32.dll", EntryPoint = "SetCursorPos")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetCursorPos(int x, int y);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetCursorPos(out MousePoint lpMousePoint);
+    private static extern bool GetCursorPos(out IntMousePoint lpFIntMousePoint);
 
     [DllImport("user32.dll")]
     private static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
@@ -40,23 +36,29 @@ public class MouseOperations {
     }
 
     public static void SetCursorPosition(MousePoint point){
-        SetCursorPos(point.x, point.y);
+        SetCursorPos((int) point.x, (int) point.y);
     }
 
+    // moving the cursor does not work with floating point values
+    // decimal parts are kept and then added to be taken in account
+    private static float _decimalX;
+    private static float _decimalY;
+    
     public static void ShiftCursorPosition(float x, float y){
-        var point = GetCursorPosition();
         var intX = (int) (x + _decimalX);
         var intY = (int) (y + _decimalY);
-        _decimalX = x - intX;
-        _decimalY = y - intY;
+        _decimalX = (x + _decimalX) - intX;
+        _decimalY = (y + _decimalY) - intY;
+        var point = GetCursorPosition();
+
         SetCursorPos(point.x + intX, point.y + intY);
     }
 
-    public static MousePoint GetCursorPosition(){
-        MousePoint currentMousePoint;
-        var gotPoint = GetCursorPos(out currentMousePoint);
-        if(!gotPoint) currentMousePoint = new MousePoint(0, 0);
-        return currentMousePoint;
+    public static IntMousePoint GetCursorPosition(){
+        IntMousePoint currentIntMousePoint;
+        var gotPoint = GetCursorPos(out currentIntMousePoint);
+        if(!gotPoint) currentIntMousePoint = new IntMousePoint(0, 0);
+        return currentIntMousePoint;
     }
 
     public static void MouseEvent(MouseEventFlags value){

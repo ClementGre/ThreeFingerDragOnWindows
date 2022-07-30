@@ -1,4 +1,6 @@
-﻿namespace ThreeFingersDragOnWindows.src.utils;
+﻿using System;
+
+namespace ThreeFingersDragOnWindows.src.utils;
 
 public static class Utils {
     public static MousePoint AverageCoordinate(TouchpadContact[] contacts){
@@ -14,14 +16,119 @@ public static class Utils {
         if(count == 0) return new MousePoint(0, 0);
         return new MousePoint(totalX / count, totalY / count);
     }
+    
+    public static float Dist(float x1, float y1, float x2, float y2){
+        return (float) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+    }
 }
 
 public struct MousePoint {
+    public float x;
+    public float y;
+
+    public MousePoint(float x, float y){
+        this.x = x;
+        this.y = y;
+    }
+
+    public void Multiply(float multiplicator){
+        x = x * multiplicator;
+        y = y * multiplicator;
+    }
+
+    public float Length(){
+        return (float) Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
+    }
+}
+
+public struct IntMousePoint {
     public int x;
     public int y;
 
-    public MousePoint(int x, int y){
+    public IntMousePoint(int x, int y){
         this.x = x;
         this.y = y;
+    }
+}
+
+public struct ThreeFingersPoints {
+    public float x1;
+    public float y1;
+    public float x2;
+    public float y2;
+    public float x3;
+    public float y3;
+    public ThreeFingersPoints(){
+        this.x1 = 0;
+        this.y1 = 0;
+        this.x2 = 0;
+        this.y2 = 0;
+        this.x3 = 0;
+        this.y3 = 0;
+    }
+    public ThreeFingersPoints(float x1, float y1, float x2, float y2, float x3, float y3){
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.x3 = x3;
+        this.y3 = y3;
+    }
+    public ThreeFingersPoints(TouchpadContact[] contacts){
+        if(contacts.Length >= 1){
+            this.x1 = contacts[0].X;
+            this.y1 = contacts[0].Y;
+        }else{
+            this.x1 = 0;
+            this.y1 = 0;
+        }
+        if(contacts.Length >= 2){
+            this.x2 = contacts[1].X;
+            this.y2 = contacts[1].Y;
+        }else{
+            this.x2 = 0;
+            this.y2 = 0;
+        }
+        if(contacts.Length >= 3){
+            this.x3 = contacts[2].X;
+            this.y3 = contacts[2].Y;
+        }else{
+            this.x3 = 0;
+            this.y3 = 0;
+        }
+    }
+
+    public MousePoint GetLongestDistPoint(ThreeFingersPoints points){
+        var d1 = Utils.Dist(x1, y1, points.x1, points.y1);
+        var d2 = Utils.Dist(x2, y2, points.x2, points.y2);
+        var d3 = Utils.Dist(x3, y3, points.x3, points.y3);
+        if(d1 > d2 && d1 > d3) return new MousePoint(x1, y1);
+        if(d2 > d1 && d2 > d3) return new MousePoint(x2, y2);
+        return new MousePoint(x3, y3);
+    }
+    public MousePoint GetLongestDist2D(ThreeFingersPoints points){
+        return GetLongestDistNumber(points) switch{
+            1 => new MousePoint(x1 - points.x1, y1 - points.y1),
+            2 => new MousePoint(x2 - points.x2, y2 - points.y2),
+            3 => new MousePoint(x3 - points.x3, y3 - points.y3),
+            _ => new MousePoint(0, 0)
+        };
+    }
+    public int GetLongestDistNumber(ThreeFingersPoints points){
+        var d1 = Utils.Dist(x1, y1, points.x1, points.y1);
+        var d2 = Utils.Dist(x2, y2, points.x2, points.y2);
+        var d3 = Utils.Dist(x3, y3, points.x3, points.y3);
+        if(d1 > d2 && d1 > d3) return 1;
+        if(d2 > d1 && d2 > d3) return 2;
+        return 3;
+    }
+
+    public float GetLongestDist(ThreeFingersPoints points){
+        var d1 = Utils.Dist(x1, y1, points.x1, points.y1);
+        var d2 = Utils.Dist(x2, y2, points.x2, points.y2);
+        var d3 = Utils.Dist(x3, y3, points.x3, points.y3);
+        if(d1 > d2 && d1 > d3) return d1;
+        if(d2 > d1 && d2 > d3) return d2;
+        return d3;
     }
 }
