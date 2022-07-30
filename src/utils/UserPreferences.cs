@@ -2,17 +2,16 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace ThreeFingersDragOnWindows;
+namespace ThreeFingersDragOnWindows.src.utils;
 
 public class UserPreferences {
-    
     public bool AllowReleaseAndRestart{ get; set; } = true;
     public int ReleaseDelay{ get; set; } = 500;
-    
+
     public bool ThreeFingersMove{ get; set; } = true;
     public float MouseSpeed{ get; set; } = 3;
     public float MouseAcceleration{ get; set; } = 2;
-    
+
     public static UserPreferences load(){
         var mySerializer = new XmlSerializer(typeof(UserPreferences));
         var myFileStream = new FileStream(getPath(true), FileMode.Open);

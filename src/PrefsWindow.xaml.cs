@@ -4,22 +4,34 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
+using ThreeFingersDragOnWindows.src.utils;
 
-namespace ThreeFingersDragOnWindows;
+namespace ThreeFingersDragOnWindows.src;
 
 public sealed partial class PrefsWindow {
-    
-    
+    ////////// Touchpad registration and data //////////
+
+    public static readonly DependencyProperty TouchpadContactsProperty =
+        DependencyProperty.Register("TouchpadContacts", typeof(string), typeof(PrefsWindow),
+            new PropertyMetadata(null));
+
+
     private readonly App _app;
+
     public PrefsWindow(App app){
         _app = app;
         Console.WriteLine("Starting PrefsWindow...");
         InitializeComponent();
     }
 
+    public string TouchpadContacts{
+        get => (string) GetValue(TouchpadContactsProperty);
+        private set => SetValue(TouchpadContactsProperty, value);
+    }
+
     protected override void OnSourceInitialized(EventArgs e){
         base.OnSourceInitialized(e);
-        
+
         TouchpadExists.Text = _app.DoTouchpadExist() ? "Yes" : "No";
         TouchpadRegistered.Text = _app.DoTouchpadRegistered() ? "Yes" : "No";
 
@@ -32,9 +44,10 @@ public sealed partial class PrefsWindow {
                 ReleaseDelay.Text = App.Prefs.ReleaseDelay.ToString();
                 return;
             }
+
             App.Prefs.ReleaseDelay = delay;
         };
-        
+
         ThreeFingersMove.IsChecked = App.Prefs.ThreeFingersMove;
         ThreeFingersMove.Checked += (_, _) => App.Prefs.ThreeFingersMove = true;
         ThreeFingersMove.Unchecked += (_, _) => App.Prefs.ThreeFingersMove = false;
@@ -49,6 +62,7 @@ public sealed partial class PrefsWindow {
     private void CloseButton_Click(object sender, RoutedEventArgs e){
         Close();
     }
+
     private void QuitButton_Click(object sender, RoutedEventArgs e){
         _app.Quit();
     }
@@ -59,21 +73,15 @@ public sealed partial class PrefsWindow {
         _app.OnClosePrefsWindow();
         base.OnClosing(e);
     }
-    
+
     ////////// UI Tools //////////
-    
+
     private void NumberValidationTextBox(object sender, TextCompositionEventArgs e){
-        Regex regex = new Regex("[^0-9]+");
+        var regex = new Regex("[^0-9]+");
         e.Handled = regex.IsMatch(e.Text);
     }
 
-    ////////// Touchpad registration and data //////////
-    
-    public static readonly DependencyProperty TouchpadContactsProperty =
-        DependencyProperty.Register("TouchpadContacts", typeof(string), typeof(PrefsWindow), new PropertyMetadata(null));
-    public string TouchpadContacts{ get => (string) GetValue(TouchpadContactsProperty); private set => SetValue(TouchpadContactsProperty, value); }
-
     public void OnTouchpadContact(TouchpadContact[] contacts){
-        TouchpadContacts = String.Join(" | ", contacts.Select(c => c.ToString()));
+        TouchpadContacts = string.Join(" | ", contacts.Select(c => c.ToString()));
     }
 }

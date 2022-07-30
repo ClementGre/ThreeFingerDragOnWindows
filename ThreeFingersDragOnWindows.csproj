@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Drawing.Common" Version="7.0.0-preview.6.22324.4" />
+        <PackageReference Include="System.Drawing.Common" Version="7.0.0-preview.6.22324.4"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -31,6 +31,13 @@
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ApplicationDefinition Include="src\App.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <XamlRuntime>Wpf</XamlRuntime>
+        </ApplicationDefinition>
     </ItemGroup>
 
 </Project>

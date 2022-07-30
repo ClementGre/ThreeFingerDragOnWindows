@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace ThreeFingersDragOnWindows;
+namespace ThreeFingersDragOnWindows.src.utils;
 
 internal static class TouchpadHelper {
     public const int WM_INPUT = 0x00FF;

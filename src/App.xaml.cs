@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
+using ThreeFingersDragOnWindows.src.utils;
 
-namespace ThreeFingersDragOnWindows;
+namespace ThreeFingersDragOnWindows.src;
 
 public partial class App {
     public static UserPreferences Prefs;
@@ -41,6 +42,7 @@ public partial class App {
         _prefsWindow ??= new PrefsWindow(this);
         _prefsWindow.Show();
     }
+
     public void OnClosePrefsWindow(){
         _prefsWindow = null;
     }
@@ -49,7 +51,7 @@ public partial class App {
         _notifyIcon.Dispose();
         Shutdown();
     }
-    
+
     public void OnTouchpadContact(TouchpadContact[] contacts){
         _prefsWindow?.OnTouchpadContact(contacts);
     }
@@ -57,6 +59,7 @@ public partial class App {
     public bool DoTouchpadExist(){
         return GetHandlerWindow().TouchpadExists;
     }
+
     public bool DoTouchpadRegistered(){
         return GetHandlerWindow().TouchpadRegistered;
     }

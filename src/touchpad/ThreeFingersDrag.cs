@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Timers;
+using ThreeFingersDragOnWindows.src.utils;
 
-namespace ThreeFingersDragOnWindows;
+namespace ThreeFingersDragOnWindows.src.touchpad;
 
 public class ThreeFingersDrag {
     private const int ReleaseDelay = 20; // milliseconds
@@ -13,7 +13,6 @@ public class ThreeFingersDrag {
     private long _lastThreeFingersContact;
 
     public ThreeFingersDrag(){
-
         // Setup timer
         _dragEndTimer.Elapsed += (_, _) => CheckDragEnd();
         _dragEndTimer.AutoReset = false;
@@ -28,7 +27,8 @@ public class ThreeFingersDrag {
             if(!_isDragging){
                 _isDragging = true;
                 MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftDown);
-            }else{
+            }
+            else{
                 // Mouse do not move automatically on three fingers drag
                 MouseOperations.ShiftCursorPosition((point.x - _lastLocation.x) / App.Prefs.MouseSpeed,
                     (point.y - _lastLocation.y) / App.Prefs.MouseSpeed);
@@ -55,4 +55,3 @@ public class ThreeFingersDrag {
         }
     }
 }
-

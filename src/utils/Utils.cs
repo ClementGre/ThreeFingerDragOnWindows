@@ -1,8 +1,6 @@
-﻿namespace ThreeFingersDragOnWindows;
-
+﻿namespace ThreeFingersDragOnWindows.src.utils;
 
 public static class Utils {
-    
     public static MousePoint AverageCoordinate(TouchpadContact[] contacts){
         var totalX = 0;
         var totalY = 0;
@@ -16,7 +14,6 @@ public static class Utils {
         if(count == 0) return new MousePoint(0, 0);
         return new MousePoint(totalX / count, totalY / count);
     }
-    
 }
 
 public struct MousePoint {

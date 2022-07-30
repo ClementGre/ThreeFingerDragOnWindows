@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 // From https://stackoverflow.com/questions/2416748/how-do-you-simulate-mouse-click-in-c
 
-namespace ThreeFingersDragOnWindows;
+namespace ThreeFingersDragOnWindows.src.utils;
 
 public class MouseOperations {
     [Flags]

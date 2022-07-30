@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ThreeFingersDragOnWindows;
+namespace ThreeFingersDragOnWindows.src.utils;
 
 public struct TouchpadContact : IEquatable<TouchpadContact> {
     public int ContactId{ get; }

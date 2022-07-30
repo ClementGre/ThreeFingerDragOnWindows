@@ -1,4 +1,4 @@
-﻿<Window x:Class="ThreeFingersDragOnWindows.PrefsWindow"
+﻿<Window x:Class="ThreeFingersDragOnWindows.src.PrefsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Name="WindowRoot"
@@ -7,7 +7,7 @@
 
     <ScrollViewer>
         <StackPanel Background="White" MinWidth="300">
-            
+
             <GroupBox Margin="10,10,10,10" FontSize="12" FontWeight="Regular"
                       Background="#EAEAEA" Padding="8">
                 <GroupBox.Header>
@@ -16,7 +16,7 @@
                     </TextBlock>
                 </GroupBox.Header>
                 <StackPanel>
-                    
+
                     <TextBlock>
                         <Run Text="Precision touchpad exists:" />
                         <Run FontWeight="Bold" Name="TouchpadExists" />
@@ -26,16 +26,15 @@
                         <Run FontWeight="Bold" Name="TouchpadRegistered" />
                     </TextBlock>
 
-                    <TextBlock Margin="0, 8, 0, 0" TextWrapping="Wrap" >
+                    <TextBlock Margin="0, 8, 0, 0" TextWrapping="Wrap">
                         <Run FontStyle="Italic" Text="Contacts:" />
                         <Run Text="{Binding ElementName=WindowRoot, Path=TouchpadContacts}" />
                     </TextBlock>
 
 
-
                 </StackPanel>
             </GroupBox>
-            
+
             <GroupBox Margin="10,10,10,10" FontSize="12" FontWeight="Regular"
                       Background="#EAEAEA" Padding="8">
                 <GroupBox.Header>
@@ -47,18 +46,19 @@
                     <TextBlock TextWrapping="WrapWithOverflow">
                         After releasing the three fingers, using only one or two fingers will release instantly the click, but if you hang on, the click will be released only after a short delay. This feature allows you to stop dragging for repositioning yours fingers on the touchpad, and then, restart the drag without releasing the click. This is useful for drag and drop operations on small touchpads. You can disable this feature here, or change the delay time.
                     </TextBlock>
-                    
-                    
+
+
                     <CheckBox Name="AllowReleaseAndRestart" Margin="0, 5">
-                        <TextBlock Text="Allow release fingers and restart drag without releasing click" TextWrapping="Wrap"/>
+                        <TextBlock Text="Allow release fingers and restart drag without releasing click"
+                                   TextWrapping="Wrap" />
                     </CheckBox>
-                    
+
                     <StackPanel Orientation="Horizontal">
                         <TextBlock TextWrapping="Wrap">
                             Delay before click release (ms):
                         </TextBlock>
                         <TextBox Name="ReleaseDelay" PreviewTextInput="NumberValidationTextBox"
-                                 Width="50" Margin="5, 0, 0, 0"/>
+                                 Width="50" Margin="5, 0, 0, 0" />
                     </StackPanel>
 
                 </StackPanel>
@@ -76,12 +76,14 @@
                     <TextBlock TextWrapping="WrapWithOverflow">
                         By default, moving three fingers on the touchpad does not move the mouse pointer. ThreeFingersDragOnWindows is simulating the cursor move manually. Therefore, moving the cursor with three fingers may behave a bit different than with only one finger. However, you can here change this behaviour.
                     </TextBlock>
-                    
-                    
+
+
                     <CheckBox Name="ThreeFingersMove" Margin="0, 8">
-                        <TextBlock Text="Enable three fingers mouse move (must be enabled unless you found a way to make windows move the pointer on three fingers drag)" TextWrapping="Wrap"/>
+                        <TextBlock
+                            Text="Enable three fingers mouse move (must be enabled unless you found a way to make windows move the pointer on three fingers drag)"
+                            TextWrapping="Wrap" />
                     </CheckBox>
-                    
+
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
@@ -89,16 +91,18 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <TextBlock Grid.Row="0" Grid.Column="0">
                             Mouse speed:
                         </TextBlock>
-                        <Slider Grid.Row="0" Grid.Column="1" Name="MouseSpeed" Minimum="0.05" Maximum="10" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" Width="250" Margin="8, 0, 0, 0"/>
-                        
+                        <Slider Grid.Row="0" Grid.Column="1" Name="MouseSpeed" Minimum="0.05" Maximum="10"
+                                AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" Width="250" Margin="8, 0, 0, 0" />
+
                         <TextBlock Grid.Row="1" Grid.Column="0">
                             Mouse acceleration:
                         </TextBlock>
-                        <Slider Grid.Row="1" Grid.Column="1" Name="MouseAcceleration" Minimum="0.05" Maximum="10" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" Width="250" Margin="8, 0, 0, 0"/>
+                        <Slider Grid.Row="1" Grid.Column="1" Name="MouseAcceleration" Minimum="0.05" Maximum="10"
+                                AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" Width="250" Margin="8, 0, 0, 0" />
                     </Grid>
 
                 </StackPanel>
