@@ -34,7 +34,8 @@ public partial class App {
         _notifyIcon.Visible = true;
 
         MainWindow = new HandlerWindow(this);
-
+        if(UserPreferences.IsFirstRun) ShowPrefsWindow();
+        
         base.OnStartup(e);
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Documents;
 
 namespace ThreeFingersDragOnWindows.src.utils;
 
@@ -38,6 +39,19 @@ public struct MousePoint {
 
     public float Length(){
         return (float) Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
+    }
+
+    public float DistTo(MousePoint point){
+        return (float) Math.Sqrt(Math.Pow(x - point.x, 2) + Math.Pow(y - point.y, 2));
+    }
+
+    public static MousePoint Empty = new(0, 0);
+    
+    public static bool operator ==(MousePoint a, MousePoint b){
+        return a.x == b.x && a.y == b.y;
+    }
+    public static bool operator !=(MousePoint a, MousePoint b){
+        return a.x != b.x || a.y != b.y;
     }
 }
 
@@ -86,16 +100,24 @@ public struct ThreeFingersPoints {
             this.x2 = contacts[1].X;
             this.y2 = contacts[1].Y;
         }else{
-            this.x2 = 0;
-            this.y2 = 0;
+            this.x2 = contacts[0].X;
+            this.y2 = contacts[0].Y;
         }
         if(contacts.Length >= 3){
             this.x3 = contacts[2].X;
             this.y3 = contacts[2].Y;
         }else{
-            this.x3 = 0;
-            this.y3 = 0;
+            this.x3 = contacts[0].X;
+            this.y3 = contacts[0].Y;
         }
+    }
+    public static ThreeFingersPoints Empty = new (0, 0, 0, 0, 0, 0);
+    
+    public static bool operator ==(ThreeFingersPoints a, ThreeFingersPoints b){
+        return a.x1 == b.x1 && a.y1 == b.y1 && a.x2 == b.x2 && a.y2 == b.y2 && a.x3 == b.x3 && a.y3 == b.y3;
+    }
+    public static bool operator !=(ThreeFingersPoints a, ThreeFingersPoints b){
+        return a.x1 != b.x1 || a.y1 != b.y1 || a.x2 != b.x2 || a.y2 != b.y2 || a.x3 != b.x3 || a.y3 != b.y3;
     }
 
     public MousePoint GetLongestDistPoint(ThreeFingersPoints points){

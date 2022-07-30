@@ -9,8 +9,10 @@ public class UserPreferences {
     public int ReleaseDelay{ get; set; } = 500;
 
     public bool ThreeFingersMove{ get; set; } = true;
-    public float MouseSpeed{ get; set; } = 3;
-    public float MouseAcceleration{ get; set; } = 2;
+    public float MouseSpeed{ get; set; } = 30;
+    public float MouseAcceleration{ get; set; } = 1;
+    
+    public static bool IsFirstRun{ get; set; }
 
     public static UserPreferences load(){
         var mySerializer = new XmlSerializer(typeof(UserPreferences));
@@ -34,6 +36,7 @@ public class UserPreferences {
 
         if(!Directory.Exists(dirPath) || !File.Exists(filePath)){
             Directory.CreateDirectory(dirPath);
+            IsFirstRun = true;
             if(testCreate) save(new UserPreferences());
         }
 
