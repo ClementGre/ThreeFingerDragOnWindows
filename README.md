@@ -24,6 +24,9 @@ dotnet build ./ThreeFingersDragOnWindows.csproj
 dotnet exec ./bin/Debug/net6.0-windows/ThreeFingersDragOnWindows.dll
 ```
 
+## How to open configuration pane
+Click the ThreeFingersDragOnWindows icon on the Windows task bar.
+
 ## License
 
 - MIT License
