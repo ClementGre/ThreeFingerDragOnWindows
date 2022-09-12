@@ -15,7 +15,14 @@ A windows app that allows the macos three fingers drag, using the Raw Inputs of 
 
 ## Requirements
 
-- .NET 5.0
+- .NET 6.0
+
+## Build and Execute
+```
+cd /path/to/ThreeFingersDragOnWindows/directory/
+dotnet build ./ThreeFingersDragOnWindows.csproj
+dotnet exec ./bin/Debug/net6.0-windows/ThreeFingersDragOnWindows.dll
+```
 
 ## License
 

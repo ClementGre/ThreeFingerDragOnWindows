@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
+        <OutputType>WinExe</OutputType>
         <TargetFramework>net6.0-windows</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
         <UseWPF>true</UseWPF>
         <Authors>Clément Grennerat</Authors>
         <Copyright>Copyright © 2021 Clément Grennerat</Copyright>
@@ -12,12 +13,6 @@
         <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
         <PackageIcon>Resources\icon.png</PackageIcon>
     </PropertyGroup>
-
-    <ItemGroup>
-        <Reference Include="System.Windows.Forms">
-            <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.Forms.dll</HintPath>
-        </Reference>
-    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="System.Drawing.Common" Version="7.0.0-preview.6.22324.4" />
