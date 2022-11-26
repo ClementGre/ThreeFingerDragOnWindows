@@ -9,8 +9,11 @@ public class ThreeFingersDrag {
     private readonly Timer _oneFingerTimer = new(20);
 
     private bool _isDragging;
+    private int _numberOfThreeFingersInputs = 0;
+    
     private ThreeFingersPoints _lastPoints = ThreeFingersPoints.Empty;
     private MousePoint _lastOneFingerPoint = MousePoint.Empty;
+    private long _firstThreeFingersContact;
     private long _lastThreeFingersContact;
 
     public ThreeFingersDrag(){
@@ -28,13 +31,16 @@ public class ThreeFingersDrag {
     public void OnTouchpadContact(TouchpadContact[] contacts){
         ThreeFingersPoints points = new(contacts);
 
-        if(contacts.Length == 3){
-
+        if(contacts.Length == 3) {
+            if(_numberOfThreeFingersInputs == 0)  _firstThreeFingersContact = Ctms();
+            _numberOfThreeFingersInputs++;
+            
             if(!_isDragging){
-                _isDragging = true;
-                MouseOperations.Click(true);
-                _lastThreeFingersContact = Ctms();
-                _lastPoints = points;
+                if (Ctms() - _firstThreeFingersContact > 100) {
+                    _isDragging = true;
+                    MouseOperations.Click(true);   
+                }
+
             }else{
                 if(App.Prefs.ThreeFingersMove && _lastPoints != ThreeFingersPoints.Empty){
 
@@ -57,15 +63,17 @@ public class ThreeFingersDrag {
                     MouseOperations.ShiftCursorPosition(dist2d.x, dist2d.y);
                 }
                 
-                _lastPoints = points;
-                _lastThreeFingersContact = Ctms();
                 _dragEndTimer.Stop();
                 _dragEndTimer.Interval = GetReleaseDelay();
                 _dragEndTimer.Start();
             }
+            _lastThreeFingersContact = Ctms();
+            _lastPoints = points;
             _lastOneFingerPoint = MousePoint.Empty;
-        }
-        else{
+            
+        }else{
+            _numberOfThreeFingersInputs = 0;
+            
             if(!_isDragging) return;
             MousePoint point = new MousePoint(contacts[0].X, contacts[0].Y);
             

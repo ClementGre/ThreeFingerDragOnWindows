@@ -36,6 +36,7 @@ public sealed partial class HandlerWindow : IContactsManager {
         else Console.WriteLine("Touchpad is detected and registered.");
     }
 
+    
     public void OnTouchpadContact(TouchpadContact[] contacts){
         _threeFingersDrag.OnTouchpadContact(contacts);
         _app.OnTouchpadContact(contacts);
