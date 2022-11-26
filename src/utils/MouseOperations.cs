@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.Xml;
+using Microsoft.VisualBasic.Devices;
 
 
 // From https://stackoverflow.com/questions/2416748/how-do-you-simulate-mouse-click-in-c
@@ -15,7 +17,7 @@ public class MouseOperations {
         MiddleDown = 0x00000020,
         MiddleUp = 0x00000040,
         Move = 0x00000001,
-        Absolute = 0x00008000,
+        Absolute = 0x8000,
         RightDown = 0x00000008,
         RightUp = 0x00000010
     }
@@ -31,14 +33,13 @@ public class MouseOperations {
     [DllImport("user32.dll")]
     private static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
 
-    public static void SetCursorPosition(int x, int y){
-        SetCursorPos(x, y);
+    public static IntMousePoint GetCursorPosition(){
+        IntMousePoint currentIntMousePoint;
+        var gotPoint = GetCursorPos(out currentIntMousePoint);
+        if(!gotPoint) currentIntMousePoint = new IntMousePoint(0, 0);
+        return currentIntMousePoint;
     }
-
-    public static void SetCursorPosition(MousePoint point){
-        SetCursorPos((int) point.x, (int) point.y);
-    }
-
+    
     // moving the cursor does not work with floating point values
     // decimal parts are kept and then added to be taken in account
     private static float _decimalX;
@@ -50,24 +51,26 @@ public class MouseOperations {
         _decimalX = (x + _decimalX) - intX;
         _decimalY = (y + _decimalY) - intY;
         var point = GetCursorPosition();
-
-        SetCursorPos(point.x + intX, point.y + intY);
+        
+        Move(intX, intY);
     }
 
-    public static IntMousePoint GetCursorPosition(){
-        IntMousePoint currentIntMousePoint;
-        var gotPoint = GetCursorPos(out currentIntMousePoint);
-        if(!gotPoint) currentIntMousePoint = new IntMousePoint(0, 0);
-        return currentIntMousePoint;
+    public static void Move(int dx, int dy) {
+        MouseEvent(MouseOperations.MouseEventFlags.Move, dx, dy);
     }
 
-    public static void MouseEvent(MouseEventFlags value){
+    public static void Click(bool down) {
         var position = GetCursorPosition();
-
+        MouseEvent(down ? MouseOperations.MouseEventFlags.LeftDown : MouseOperations.MouseEventFlags.LeftUp, position.x, position.y);
+    }
+    
+    
+    
+    public static void MouseEvent(MouseEventFlags value, int dx, int dy){
         mouse_event
             ((int) value,
-                position.x,
-                position.y,
+                dx,
+                dy,
                 0,
                 0)
             ;

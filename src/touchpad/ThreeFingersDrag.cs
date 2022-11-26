@@ -32,7 +32,7 @@ public class ThreeFingersDrag {
 
             if(!_isDragging){
                 _isDragging = true;
-                MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftDown);
+                MouseOperations.Click(true);
                 _lastThreeFingersContact = Ctms();
                 _lastPoints = points;
             }else{
@@ -92,7 +92,7 @@ public class ThreeFingersDrag {
 
     private void stopDrag(){
         _isDragging = false;
-        MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.LeftUp);
+        MouseOperations.Click(false);
     }
     
     private int GetReleaseDelay(){
