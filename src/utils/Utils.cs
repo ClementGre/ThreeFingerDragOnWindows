@@ -31,6 +31,10 @@ public struct MousePoint {
         this.x = x;
         this.y = y;
     }
+    public MousePoint(IntMousePoint point){
+        this.x = point.x;
+        this.y = point.y;
+    }
 
     public void Multiply(float multiplicator){
         x = x * multiplicator;
@@ -42,6 +46,9 @@ public struct MousePoint {
     }
 
     public float DistTo(MousePoint point){
+        return (float) Math.Sqrt(Math.Pow(x - point.x, 2) + Math.Pow(y - point.y, 2));
+    }
+    public float DistTo(IntMousePoint point){
         return (float) Math.Sqrt(Math.Pow(x - point.x, 2) + Math.Pow(y - point.y, 2));
     }
 
@@ -66,6 +73,7 @@ public struct IntMousePoint {
 }
 
 public struct ThreeFingersPoints {
+    public int Length;
     public float x1;
     public float y1;
     public float x2;
@@ -73,6 +81,7 @@ public struct ThreeFingersPoints {
     public float x3;
     public float y3;
     public ThreeFingersPoints(){
+        this.Length = 0;
         this.x1 = 0;
         this.y1 = 0;
         this.x2 = 0;
@@ -87,6 +96,13 @@ public struct ThreeFingersPoints {
         this.y2 = y2;
         this.x3 = x3;
         this.y3 = y3;
+        if (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0 && x3 == 0 && y3 == 0){
+            this.Length = 0;
+        }else if (x2 == 0 && y2 == 0 && x3 == 0 && y3 == 0){
+            this.Length = 1;
+        }else if (x3 == 0 && y3 == 0){
+            this.Length = 2;
+        }else this.Length = 3;
     }
     public ThreeFingersPoints(TouchpadContact[] contacts){
         if(contacts.Length >= 1){
@@ -110,9 +126,10 @@ public struct ThreeFingersPoints {
             this.x3 = contacts[0].X;
             this.y3 = contacts[0].Y;
         }
+        this.Length = contacts.Length;
     }
-    public static ThreeFingersPoints Empty = new (0, 0, 0, 0, 0, 0);
-    
+    public static ThreeFingersPoints Empty = new();
+
     public static bool operator ==(ThreeFingersPoints a, ThreeFingersPoints b){
         return a.x1 == b.x1 && a.y1 == b.y1 && a.x2 == b.x2 && a.y2 == b.y2 && a.x3 == b.x3 && a.y3 == b.y3;
     }

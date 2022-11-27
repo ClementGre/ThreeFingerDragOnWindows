@@ -50,9 +50,17 @@ public class MouseOperations {
         var intY = (int) (y + _decimalY);
         _decimalX = (x + _decimalX) - intX;
         _decimalY = (y + _decimalY) - intY;
-        var point = GetCursorPosition();
         
         Move(intX, intY);
+    }
+    public static void SetCursorPosition(float x, float y){
+        var intX = (int) (x + _decimalX);
+        var intY = (int) (y + _decimalY);
+        _decimalX = (x + _decimalX) - intX;
+        _decimalY = (y + _decimalY) - intY;
+        var point = GetCursorPosition();
+        
+        Move(intX - point.x, intY - point.y);
     }
 
     public static void Move(int dx, int dy) {
