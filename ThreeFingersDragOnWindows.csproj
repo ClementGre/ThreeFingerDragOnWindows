@@ -13,6 +13,8 @@
         <Company>Clément Grennerat</Company>
         <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
         <PackageIcon>Resources\icon.png</PackageIcon>
+
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     </PropertyGroup>
 
 
@@ -34,3 +36,5 @@
     </ItemGroup>
 
 </Project>
+
+<!-- dotnet publish -self-contained false -->
