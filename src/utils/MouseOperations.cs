@@ -67,9 +67,13 @@ public class MouseOperations {
         MouseEvent(MouseOperations.MouseEventFlags.Move, dx, dy);
     }
 
-    public static void Click(bool down) {
+    public static void LeftClick(bool down) {
         var position = GetCursorPosition();
         MouseEvent(down ? MouseOperations.MouseEventFlags.LeftDown : MouseOperations.MouseEventFlags.LeftUp, position.x, position.y);
+    }
+    public static void RightClick(bool down) {
+        var position = GetCursorPosition();
+        MouseEvent(down ? MouseOperations.MouseEventFlags.RightDown : MouseOperations.MouseEventFlags.RightUp, position.x, position.y);
     }
     
     

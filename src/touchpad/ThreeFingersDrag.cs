@@ -48,7 +48,8 @@ public class ThreeFingersDrag {
             if(!_isDragging){
                 if (Ctms() - _firstThreeFingersContact > 100){ // When placing four fingers, a three fingers input can be detected for less than 100ms
                     _isDragging = true;
-                    MouseOperations.Click(true);
+                    MouseOperations.RightClick(false);
+                    MouseOperations.LeftClick(true);
                 }
             }else{
                 var dist2d = points.GetLongestDist2D(_lastThreeFingersPoints);
@@ -122,7 +123,7 @@ public class ThreeFingersDrag {
 
     private void stopDrag(){
         _isDragging = false;
-        MouseOperations.Click(false);
+        MouseOperations.LeftClick(false);
     }
 
     private int GetReleaseDelay(){
