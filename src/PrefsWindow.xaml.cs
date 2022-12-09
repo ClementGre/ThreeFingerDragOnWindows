@@ -81,7 +81,21 @@ public sealed partial class PrefsWindow {
         e.Handled = regex.IsMatch(e.Text);
     }
 
+    private long _lastContact = 0;
+    private int _inputCount = 0;
+    private long _lastEventSpeed = 0;
     public void OnTouchpadContact(TouchpadContact[] contacts){
-        TouchpadContacts = string.Join(" | ", contacts.Select(c => c.ToString()));
+        _inputCount++;
+
+        if(_inputCount >= 20){
+            _inputCount = 0;
+            _lastEventSpeed = (Ctms() - _lastContact) / 20;
+            _lastContact = Ctms();
+        }
+        TouchpadContacts = string.Join(" | ", contacts.Select(c => c.ToString())) + " | Event speed: " + _lastEventSpeed + "ms";
+    }
+    
+    private long Ctms(){
+        return new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
     }
 }
