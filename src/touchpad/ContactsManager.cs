@@ -46,7 +46,7 @@ public class ContactsManager<T> where T : Window, IContactsManager {
         foreach(var lastContact in _lastContacts)
             if(lastContact.ContactId == contact.ContactId){
                 // A contact is registered twice: send the event with the list of all contacts
-                if (Ctms() - _lastInput < 20){
+                if (Ctms() - _lastInput < 50){ // If contacts have all been released for a long time, cancel the last contact list
                     _source.OnTouchpadContact(_lastContacts.ToArray());
                 }
                 _lastContacts.Clear();

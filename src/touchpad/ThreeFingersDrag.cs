@@ -48,7 +48,6 @@ public class ThreeFingersDrag {
             if(!_isDragging){
                 if (Ctms() - _firstThreeFingersContact > 100){ // When placing four fingers, a three fingers input can be detected for less than 100ms
                     _isDragging = true;
-                    MouseOperations.RightClick(false);
                     MouseOperations.LeftClick(true);
                 }
             }else{
