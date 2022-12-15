@@ -52,7 +52,8 @@ public class ThreeFingersDrag {
                 }
             }else{
                 var dist2d = points.GetLongestDist2D(_lastThreeFingersPoints);
-
+                //var dist2d = new MousePoint(_lastThreeFingersPoints.x1 - points.x1, _lastThreeFingersPoints.y1 - points.y1);
+                    
                 if (App.Prefs.ThreeFingersMove // Three Fingers drag enabled in preferences
                     && _lastThreeFingersPoints != ThreeFingersPoints.Empty // Last contact is a three fingers drag contact
                     && Math.Sqrt(Math.Pow(dist2d.x, 2) + Math.Pow(dist2d.y, 2)) <= 30){ // Fingers can be released and replaced without catching any one/two finger contact. This makes sure the fingers haven't been replaced on the touchpad

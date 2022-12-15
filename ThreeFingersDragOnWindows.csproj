@@ -37,4 +37,4 @@
 
 </Project>
 
-<!-- dotnet publish -self-contained false -->
+<!-- dotnet publish !-self-contained false -->
