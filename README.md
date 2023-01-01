@@ -13,19 +13,28 @@ A windows app that allows the macos three fingers drag, using the Raw Inputs of 
 ## Preview
 ![screenshot](https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/Resources/preview.png)
 
+## How to use
+Make sure to disable the default 3-finger swipe behaviour via ``Touchpad settings`` in windows preferences for the drag to work without interferences.
+
+To open the configuration pane, click the ThreeFingersDragOnWindows icon on the Windows task bar.
+
 ## Requirements
 
 - .NET 6.0
 
 ## Build and Execute
 ```
-cd /path/to/ThreeFingersDragOnWindows/directory/
-dotnet build ./ThreeFingersDragOnWindows.csproj
-dotnet exec ./bin/Debug/net6.0-windows/ThreeFingersDragOnWindows.dll
+cd \path\to\ThreeFingersDragOnWindows\directory\
+dotnet build .\ThreeFingersDragOnWindows.csproj
+dotnet exec .\bin\Debug\net6.0-windows\win-x64\ThreeFingersDragOnWindows.dll
 ```
 
-## How to open configuration pane
-Click the ThreeFingersDragOnWindows icon on the Windows task bar.
+## Release
+```
+cd \path\to\ThreeFingersDragOnWindows\directory\
+dotnet publish --self-contained false
+```
+App files will be available at ``.\bin\Debug\net6.0-windows\win-x64\publish\``
 
 ## License
 
