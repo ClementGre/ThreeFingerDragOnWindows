@@ -34,7 +34,9 @@ dotnet exec .\bin\Debug\net6.0-windows\win-x64\ThreeFingersDragOnWindows.dll
 cd \path\to\ThreeFingersDragOnWindows\directory\
 dotnet publish --self-contained false
 ```
-App files will be available at ``.\bin\Debug\net6.0-windows\win-x64\publish\``
+App files will be available at ``.\bin\Debug\net6.0-windows\win-x64\publish\``.
+
+You can then use Inno Setup with the ``inno_setup.iss`` file to build an installer executable.
 
 ## License
 
