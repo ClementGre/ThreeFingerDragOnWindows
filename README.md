@@ -14,7 +14,7 @@ A windows app that allows the macos three fingers drag, using the Raw Inputs of 
 ![screenshot](https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/Resources/preview.png)
 
 ## How to use
-Make sure to disable the default 3-finger swipe behaviour via ``Touchpad settings`` in windows preferences for the drag to work without interferences.
+Make sure to disable the "Tap twice and drag to multi-select" behaviour and all of the defaults 3-finger swipe behaviour via ``Touchpad settings`` in windows preferences for the drag to work without interferences.
 
 To open the configuration pane, click the ThreeFingersDragOnWindows icon on the Windows task bar.
 
