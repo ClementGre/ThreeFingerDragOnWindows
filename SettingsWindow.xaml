@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Window
+    x:Class="ThreeFingersDragOnWindows.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ThreeFingersDragOnWindows"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+
+    <RelativePanel>
+
+        <StackPanel
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            x:Name="TitleBar"
+            Height="44"
+            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
+
+            <Border Height="44" Margin="15,0,0,0">
+                <TextBlock
+                    Text="ThreeFingersDragOnWindows"
+                    FontSize="14"
+                    FontWeight="Medium"
+                    TextWrapping="NoWrap"
+                    VerticalAlignment="Center" />
+            </Border>
+            
+
+            
+        </StackPanel>
+
+        
+
+
+        <NavigationView x:Name="nvSample"
+            IsSettingsVisible="True"
+            IsBackButtonVisible="Collapsed"
+            IsBackEnabled="False"
+            SelectionChanged="NavigationView_SelectionChanged"
+            Header="Header"
+            AlwaysShowHeader="True"
+            PaneDisplayMode="Left"
+            ExpandedModeThresholdWidth="400"
+            SelectionFollowsFocus="Disabled"
+            IsTabStop="False"
+            IsPaneToggleButtonVisible="False"
+            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+            RelativePanel.Below="TitleBar"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True">
+
+            <NavigationView.PaneCustomContent>
+                <StackPanel Height="22" />
+            </NavigationView.PaneCustomContent>
+
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Three Fingers Drag" Tag="ThreeFingersDrag" Name="ThreeFingersDrag">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE759;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <NavigationView.PaneFooter>
+                <StackPanel x:Name="FooterStackPanel" Orientation="Vertical" Visibility="Visible">
+                    <NavigationViewItem Content="Close" Tag="Close" Name="Close">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE711;" />
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                    <NavigationViewItem Content="Quit app" Tag="Quit" Name="Quit">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE7E8;" />
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                </StackPanel>
+            </NavigationView.PaneFooter>
+
+
+
+            <Frame x:Name="contentFrame" />
+        </NavigationView>
+    </RelativePanel>
+</Window>

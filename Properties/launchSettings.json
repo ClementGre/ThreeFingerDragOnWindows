@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ThreeFingersDragOnWindows (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ThreeFingersDragOnWindows (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
