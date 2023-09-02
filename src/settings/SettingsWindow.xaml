@@ -27,15 +27,9 @@
                     TextWrapping="NoWrap"
                     VerticalAlignment="Center" />
             </Border>
-            
-
-            
         </StackPanel>
 
-        
-
-
-        <NavigationView x:Name="nvSample"
+        <NavigationView x:Name="NavigationView"
             IsSettingsVisible="True"
             IsBackButtonVisible="Collapsed"
             IsBackEnabled="False"
@@ -59,7 +53,7 @@
 
 
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Three Fingers Drag" Tag="ThreeFingersDrag" Name="ThreeFingersDrag">
+                <NavigationViewItem Content="Three Fingers Drag" Tag="ThreeFingersDrag" x:Name="ThreeFingersDrag">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE759;" />
                     </NavigationViewItem.Icon>
@@ -68,12 +62,12 @@
 
             <NavigationView.PaneFooter>
                 <StackPanel x:Name="FooterStackPanel" Orientation="Vertical" Visibility="Visible">
-                    <NavigationViewItem Content="Close" Tag="Close" Name="Close">
+                    <NavigationViewItem Content="Close Settings" Tag="CloseSettings" x:Name="CloseApp">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE711;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="Quit app" Tag="Quit" Name="Quit">
+                    <NavigationViewItem Content="Quit App" Tag="QuitApp" x:Name="QuitApp">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE7E8;" />
                         </NavigationViewItem.Icon>
