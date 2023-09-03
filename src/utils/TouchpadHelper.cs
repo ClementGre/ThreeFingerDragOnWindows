@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using ThreeFingersDragOnWindows.src.Utils;
 
 namespace ThreeFingersDragOnWindows.src.utils;
 
-internal static class TouchpadHelper {
+// From  emoacht/RawInput.Touchpad
+internal static class TouchpadHelper
+{
     public const int WM_INPUT = 0x00FF;
     public const int RIM_INPUT = 0;
     public const int RIM_INPUTSINK = 1;
 
-    public static bool Exists(){
+    public static bool Exists()
+    {
         uint deviceListCount = 0;
-        var rawInputDeviceListSize = (uint) Marshal.SizeOf<RAWINPUTDEVICELIST>();
+        var rawInputDeviceListSize = (uint)Marshal.SizeOf<RAWINPUTDEVICELIST>();
 
-        if(GetRawInputDeviceList(
+        if (GetRawInputDeviceList(
                null,
                ref deviceListCount,
                rawInputDeviceListSize) != 0)
@@ -22,32 +26,33 @@ internal static class TouchpadHelper {
 
         var devices = new RAWINPUTDEVICELIST[deviceListCount];
 
-        if(GetRawInputDeviceList(
+        if (GetRawInputDeviceList(
                devices,
                ref deviceListCount,
                rawInputDeviceListSize) != deviceListCount)
             return false;
 
-        foreach(var device in devices.Where(x => x.dwType == RIM_TYPEHID)){
+        foreach (var device in devices.Where(x => x.dwType == RIM_TYPEHID))
+        {
             uint deviceInfoSize = 0;
 
-            if(GetRawInputDeviceInfo(
+            if (GetRawInputDeviceInfo(
                    device.hDevice,
                    RIDI_DEVICEINFO,
                    IntPtr.Zero,
                    ref deviceInfoSize) != 0)
                 continue;
 
-            var deviceInfo = new RID_DEVICE_INFO{ cbSize = deviceInfoSize };
+            var deviceInfo = new RID_DEVICE_INFO { cbSize = deviceInfoSize };
 
-            if(GetRawInputDeviceInfo(
+            if (GetRawInputDeviceInfo(
                    device.hDevice,
                    RIDI_DEVICEINFO,
                    ref deviceInfo,
-                   ref deviceInfoSize) == unchecked((uint) -1))
+                   ref deviceInfoSize) == unchecked((uint)-1))
                 continue;
 
-            if(deviceInfo.hid.usUsagePage == 0x000D &&
+            if (deviceInfo.hid.usUsagePage == 0x000D &&
                deviceInfo.hid.usUsage == 0x0005)
                 return true;
         }
@@ -55,25 +60,28 @@ internal static class TouchpadHelper {
         return false;
     }
 
-    public static bool RegisterInput(IntPtr windowHandle){
+    public static bool RegisterInput(IntPtr windowHandle)
+    {
         // Precision Touchpad (PTP) in HID Clients Supported in Windows
         // https://docs.microsoft.com/en-us/windows-hardware/drivers/hid/hid-architecture#hid-clients-supported-in-windows
-        var device = new RAWINPUTDEVICE{
+        var device = new RAWINPUTDEVICE
+        {
             usUsagePage = 0x000D,
             usUsage = 0x0005,
             dwFlags = 0x00000100, // Messages come even if the window is in the foreground.
             hwndTarget = windowHandle
         };
 
-        return RegisterRawInputDevices(new[]{ device }, 1, (uint) Marshal.SizeOf<RAWINPUTDEVICE>());
+        return RegisterRawInputDevices(new[] { device }, 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>());
     }
 
-    public static TouchpadContact[] ParseInput(IntPtr lParam){
+    public static TouchpadContact[] ParseInput(IntPtr lParam)
+    {
         // Get RAWINPUT.
         uint rawInputSize = 0;
-        var rawInputHeaderSize = (uint) Marshal.SizeOf<RAWINPUTHEADER>();
+        var rawInputHeaderSize = (uint)Marshal.SizeOf<RAWINPUTHEADER>();
 
-        if(GetRawInputData(
+        if (GetRawInputData(
                lParam,
                RID_INPUT,
                IntPtr.Zero,
@@ -85,10 +93,11 @@ internal static class TouchpadHelper {
         byte[] rawHidRawData;
 
         var rawInputPointer = IntPtr.Zero;
-        try{
-            rawInputPointer = Marshal.AllocHGlobal((int) rawInputSize);
+        try
+        {
+            rawInputPointer = Marshal.AllocHGlobal((int)rawInputSize);
 
-            if(GetRawInputData(
+            if (GetRawInputData(
                    lParam,
                    RID_INPUT,
                    rawInputPointer,
@@ -102,10 +111,11 @@ internal static class TouchpadHelper {
             Marshal.Copy(rawInputPointer, rawInputData, 0, rawInputData.Length);
 
             rawHidRawData = new byte[rawInput.Hid.dwSizeHid * rawInput.Hid.dwCount];
-            var rawInputOffset = (int) rawInputSize - rawHidRawData.Length;
+            var rawInputOffset = (int)rawInputSize - rawHidRawData.Length;
             Buffer.BlockCopy(rawInputData, rawInputOffset, rawHidRawData, 0, rawHidRawData.Length);
         }
-        finally{
+        finally
+        {
             Marshal.FreeHGlobal(rawInputPointer);
         }
 
@@ -114,26 +124,27 @@ internal static class TouchpadHelper {
         Marshal.Copy(rawHidRawData, 0, rawHidRawDataPointer, rawHidRawData.Length);
 
         var preparsedDataPointer = IntPtr.Zero;
-        try{
+        try
+        {
             uint preparsedDataSize = 0;
 
-            if(GetRawInputDeviceInfo(
+            if (GetRawInputDeviceInfo(
                    rawInput.Header.hDevice,
                    RIDI_PREPARSEDDATA,
                    IntPtr.Zero,
                    ref preparsedDataSize) != 0)
                 return null;
 
-            preparsedDataPointer = Marshal.AllocHGlobal((int) preparsedDataSize);
+            preparsedDataPointer = Marshal.AllocHGlobal((int)preparsedDataSize);
 
-            if(GetRawInputDeviceInfo(
+            if (GetRawInputDeviceInfo(
                    rawInput.Header.hDevice,
                    RIDI_PREPARSEDDATA,
                    preparsedDataPointer,
                    ref preparsedDataSize) != preparsedDataSize)
                 return null;
 
-            if(HidP_GetCaps(
+            if (HidP_GetCaps(
                    preparsedDataPointer,
                    out var caps) != HIDP_STATUS_SUCCESS)
                 return null;
@@ -141,7 +152,7 @@ internal static class TouchpadHelper {
             var valueCapsLength = caps.NumberInputValueCaps;
             var valueCaps = new HIDP_VALUE_CAPS[valueCapsLength];
 
-            if(HidP_GetValueCaps(
+            if (HidP_GetValueCaps(
                    HIDP_REPORT_TYPE.HidP_Input,
                    valueCaps,
                    ref valueCapsLength,
@@ -153,8 +164,9 @@ internal static class TouchpadHelper {
             TouchpadContactCreator creator = new();
             List<TouchpadContact> contacts = new();
 
-            foreach(var valueCap in valueCaps.OrderBy(x => x.LinkCollection)){
-                if(HidP_GetUsageValue(
+            foreach (var valueCap in valueCaps.OrderBy(x => x.LinkCollection))
+            {
+                if (HidP_GetUsageValue(
                        HIDP_REPORT_TYPE.HidP_Input,
                        valueCap.UsagePage,
                        valueCap.LinkCollection,
@@ -162,14 +174,16 @@ internal static class TouchpadHelper {
                        out var value,
                        preparsedDataPointer,
                        rawHidRawDataPointer,
-                       (uint) rawHidRawData.Length) != HIDP_STATUS_SUCCESS)
+                       (uint)rawHidRawData.Length) != HIDP_STATUS_SUCCESS)
                     continue;
 
                 // Usage Page and ID in Windows Precision Touchpad input reports
                 // https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/windows-precision-touchpad-required-hid-top-level-collections#windows-precision-touchpad-input-reports
-                switch(valueCap.LinkCollection){
+                switch (valueCap.LinkCollection)
+                {
                     case 0:
-                        switch (valueCap.UsagePage, valueCap.Usage){
+                        switch (valueCap.UsagePage, valueCap.Usage)
+                        {
                             case (0x0D, 0x56): // Scan Time
                                 scanTime = value;
                                 break;
@@ -182,26 +196,28 @@ internal static class TouchpadHelper {
                         break;
 
                     default:
-                        switch (valueCap.UsagePage, valueCap.Usage){
+                        switch (valueCap.UsagePage, valueCap.Usage)
+                        {
                             case (0x0D, 0x51): // Contact ID
-                                creator.ContactId = (int) value;
+                                creator.ContactId = (int)value;
                                 break;
 
                             case (0x01, 0x30): // X
-                                creator.X = (int) value;
+                                creator.X = (int)value;
                                 break;
 
                             case (0x01, 0x31): // Y
-                                creator.Y = (int) value;
+                                creator.Y = (int)value;
                                 break;
                         }
 
                         break;
                 }
 
-                if(creator.TryCreate(out var contact)){
+                if (creator.TryCreate(out var contact))
+                {
                     contacts.Add(contact);
-                    if(contacts.Count >= contactCount)
+                    if (contacts.Count >= contactCount)
                         break;
 
                     creator.Clear();
@@ -210,7 +226,8 @@ internal static class TouchpadHelper {
 
             return contacts.ToArray();
         }
-        finally{
+        finally
+        {
             Marshal.FreeHGlobal(rawHidRawDataPointer);
             Marshal.FreeHGlobal(preparsedDataPointer);
         }
@@ -225,7 +242,8 @@ internal static class TouchpadHelper {
         uint cbSize);
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct RAWINPUTDEVICELIST {
+    private struct RAWINPUTDEVICELIST
+    {
         public readonly IntPtr hDevice;
         public readonly uint dwType; // RIM_TYPEMOUSE or RIM_TYPEKEYBOARD or RIM_TYPEHID
     }
@@ -242,7 +260,8 @@ internal static class TouchpadHelper {
         uint cbSize);
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct RAWINPUTDEVICE {
+    private struct RAWINPUTDEVICE
+    {
         public ushort usUsagePage;
         public ushort usUsage;
         public uint dwFlags; // RIDEV_INPUTSINK
@@ -262,13 +281,15 @@ internal static class TouchpadHelper {
     private const uint RID_INPUT = 0x10000003;
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct RAWINPUT {
+    private struct RAWINPUT
+    {
         public readonly RAWINPUTHEADER Header;
         public readonly RAWHID Hid;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct RAWINPUTHEADER {
+    private struct RAWINPUTHEADER
+    {
         public readonly uint dwType; // RIM_TYPEMOUSE or RIM_TYPEKEYBOARD or RIM_TYPEHID
         public readonly uint dwSize;
         public readonly IntPtr hDevice;
@@ -276,7 +297,8 @@ internal static class TouchpadHelper {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct RAWHID {
+    private struct RAWHID
+    {
         public readonly uint dwSizeHid;
         public readonly uint dwCount;
         public readonly IntPtr bRawData; // This is not for use.
@@ -300,14 +322,16 @@ internal static class TouchpadHelper {
     private const uint RIDI_DEVICEINFO = 0x2000000b;
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct RID_DEVICE_INFO {
+    private struct RID_DEVICE_INFO
+    {
         public uint cbSize; // This is determined to accommodate RID_DEVICE_INFO_KEYBOARD.
         public readonly uint dwType;
         public readonly RID_DEVICE_INFO_HID hid;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct RID_DEVICE_INFO_HID {
+    private struct RID_DEVICE_INFO_HID
+    {
         public readonly uint dwVendorId;
         public readonly uint dwProductId;
         public readonly uint dwVersionNumber;
@@ -323,7 +347,8 @@ internal static class TouchpadHelper {
     private const uint HIDP_STATUS_SUCCESS = 0x00110000;
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct HIDP_CAPS {
+    private struct HIDP_CAPS
+    {
         public readonly ushort Usage;
         public readonly ushort UsagePage;
         public readonly ushort InputReportByteLength;
@@ -352,14 +377,16 @@ internal static class TouchpadHelper {
         ref ushort ValueCapsLength,
         IntPtr PreparsedData);
 
-    private enum HIDP_REPORT_TYPE {
+    private enum HIDP_REPORT_TYPE
+    {
         HidP_Input,
         HidP_Output,
         HidP_Feature
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct HIDP_VALUE_CAPS {
+    private struct HIDP_VALUE_CAPS
+    {
         public readonly ushort UsagePage;
         public readonly byte ReportID;
 

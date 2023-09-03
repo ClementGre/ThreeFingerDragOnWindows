@@ -1,50 +1,79 @@
-﻿using Microsoft.UI.Xaml;
+﻿using H.NotifyIcon;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Diagnostics;
+using ThreeFingersDragOnWindows.src.settings;
+using ThreeFingersDragOnWindows.src.touchpad;
+using ThreeFingersDragOnWindows.src.Utils;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace ThreeFingersDragOnWindows;
 
-namespace ThreeFingersDragOnWindows
+public partial class App : Application
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
-    public partial class App : Application
+
+    public static SettingsData SettingsData;
+    private SettingsWindow _settingsWindow;
+
+
+    public HandlerWindow HandlerWindow;
+    
+
+    public App()
     {
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
-        public App()
-        {
-            this.InitializeComponent();
-        }
+        Debug.WriteLine("Starting ThreeFingersDragOnWindows...");
+        this.InitializeComponent();
 
-        /// <summary>
-        /// Invoked when the application is launched.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
-        {
-            m_window = new SettingsWindow();
-            m_window.Activate();
-        }
+        SettingsData = SettingsData.load();
 
-        private Window m_window;
+
+        HandlerWindow = new HandlerWindow(this);
+        //if (SettingsData.IsFirstRun) ShowSettingsWindow();
+
+
+        //_notifyIcon.Icon = new Icon("Resources/icon.ico");
+        //_notifyIcon.Text = "ThreeFingersDragOnWindows";
+        //_notifyIcon.Click += (_, _) => ShowSettingsWindow();
+
+        //var button = new ToolStripButton("Quit");
+        //button.Click += (_, _) => Quit();
+        //_notifyIcon.ContextMenuStrip = new ContextMenuStrip();
+        //_notifyIcon.ContextMenuStrip.Items.Add(button);
+        //_notifyIcon.Visible = true;
     }
+
+
+    public void OpenSettingsWindow()
+    {
+        _settingsWindow = new SettingsWindow(this);
+        _settingsWindow.Activate();
+    }
+
+    public void OnClosePrefsWindow()
+    {
+        SettingsData = null;
+    }
+
+    public void Quit()
+    {
+        HandlerWindow?.Close();
+        _settingsWindow?.Close();
+    }
+
+    public void OnTouchpadContact(TouchpadContact[] contacts)
+    {
+        _settingsWindow?.OnTouchpadContact(contacts);
+    }
+
+    public bool DoTouchpadExist()
+    {
+        return HandlerWindow.TouchpadExists;
+    }
+
+    public bool DoTouchpadRegistered()
+    {
+        return HandlerWindow.TouchpadRegistered;
+    }
+
+
 }
+
