@@ -1,18 +1,16 @@
-using H.NotifyIcon;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
-using System;
 using System.Diagnostics;
-using System.Windows.Input;
-using ThreeFingersDragOnWindows.src.Utils;
+using ThreeFingersDragOnWindows.src.settings;
+using ThreeFingersDragOnWindows.src.utils;
 
 namespace ThreeFingersDragOnWindows.src.touchpad;
 
-public sealed partial class HandlerWindow : Window//, IContactsManager
+public sealed partial class HandlerWindow : Window
 {
     private readonly App _app;
-    //private readonly ContactsManager<HandlerWindow> _contactsManager;
-    //private readonly ThreeFingersDrag _threeFingersDrag;
+    private readonly ContactsManager _contactsManager;
+    private readonly ThreeFingersDrag _threeFingersDrag;
 
     public bool TouchpadExists;
     public bool TouchpadRegistered;
@@ -23,18 +21,13 @@ public sealed partial class HandlerWindow : Window//, IContactsManager
         this.InitializeComponent();
 
         _app = app;
-        //_contactsManager = new ContactsManager<HandlerWindow>(this);
+        _contactsManager = new ContactsManager(this);
+        _threeFingersDrag = new ThreeFingersDrag();
 
-        //_threeFingersDrag = new ThreeFingersDrag();
-
-
-
-        //WindowExtensions.Hide(this, false);
-        //Show();
-        //Hide();
-        //WindowState = WindowState.Minimized;
-        //ShowInTaskbar = false;
+        _contactsManager.InitializeSource();
     }
+
+    // TaskbarIcon Actions
     private void OpenSettingsWindow(object sender, ExecuteRequestedEventArgs e)
     {
         Debug.WriteLine("Opening SettingsWindow from HandlerWindow TaskbarIcon");
@@ -47,8 +40,9 @@ public sealed partial class HandlerWindow : Window//, IContactsManager
     }
 
 
-
-    /* public void OnTouchpadInitialized(bool touchpadExists, bool touchpadRegistered)
+    // Touchpad
+    // Called when the touchpad is detected and the events handlers are registered (or not)
+    public void OnTouchpadInitialized(bool touchpadExists, bool touchpadRegistered)
      {
          TouchpadExists = touchpadExists;
          TouchpadRegistered = touchpadRegistered;
@@ -57,15 +51,11 @@ public sealed partial class HandlerWindow : Window//, IContactsManager
          else Debug.WriteLine("Touchpad is detected and registered.");
      }
 
-
-     public void OnTouchpadContact(TouchpadContact[] contacts)
+    // Called when a new set of contacts has been registered
+    public void OnTouchpadContact(TouchpadContact[] contacts)
      {
          _threeFingersDrag.OnTouchpadContact(contacts);
-         _app.OnTouchpadContact(contacts);
+         _app.OnTouchpadContact(contacts); // Transfer to App for displaying contacts in SettingsWindow
      }
-
-     protected void OnSourceInitialized(EventArgs e)
-     {
-         _contactsManager.InitializeSource();
-     }*/
+    
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using ThreeFingersDragOnWindows.src.Utils;
+using ThreeFingersDragOnWindows.src.utils;
 
 
 // From https://stackoverflow.com/questions/2416748/how-do-you-simulate-mouse-click-in-c

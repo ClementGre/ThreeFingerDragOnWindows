@@ -39,6 +39,7 @@
             ExpandedModeThresholdWidth="400"
             SelectionFollowsFocus="Disabled"
             IsTabStop="False"
+            OpenPaneLength="250"
             IsPaneToggleButtonVisible="False"
             Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
             RelativePanel.Below="TitleBar"

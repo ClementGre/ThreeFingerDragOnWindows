@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Timers;
 using ThreeFingersDragOnWindows.src.utils;
-using ThreeFingersDragOnWindows.src.Utils;
 
 namespace ThreeFingersDragOnWindows.src.touchpad;
 

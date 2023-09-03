@@ -11,6 +11,9 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="src\utils\Intero^p.cs" />
+  </ItemGroup>
 
   <ItemGroup>
 	<Content Include="Assets\icon.ico" />

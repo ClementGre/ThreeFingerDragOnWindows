@@ -1,48 +1,58 @@
-﻿using Microsoft.UI.Xaml;
-using System;
+﻿using System;
 using System.Collections.Generic;
-//using System.Windows.Interop;
+using System.Diagnostics;
 using ThreeFingersDragOnWindows.src.utils;
-using ThreeFingersDragOnWindows.src.Utils;
 
 namespace ThreeFingersDragOnWindows.src.touchpad;
 
-public class ContactsManager<T> where T : Window, IContactsManager
+public class ContactsManager
 {
     private readonly List<TouchpadContact> _lastContacts = new();
-    private readonly T _source;
-    //private HwndSource _targetSource;
+    private readonly HandlerWindow _source;
+
+    
+    private IntPtr _oldWndProc;
 
     private long _lastInput;
 
-    public ContactsManager(T source)
+    public ContactsManager(HandlerWindow source)
     {
         _source = source;
     }
 
     public void InitializeSource()
     {
-        //_targetSource = PresentationSource.FromVisual(_source) as HwndSource;
-        //_targetSource?.AddHook(WndProc);
-
+       
         var touchpadExists = TouchpadHelper.Exists();
-        //var success = touchpadExists && _targetSource != null && TouchpadHelper.RegisterInput(_targetSource.Handle);
+        Debug.WriteLine("Touchpad exists: " + touchpadExists);
 
-        _source.OnTouchpadInitialized(touchpadExists, /*success*/false);
+
+        IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(_source);
+        _oldWndProc = Interop.SetWndProc(hwnd, WindowProcess);
+
+        var success = touchpadExists && TouchpadHelper.RegisterInput(hwnd);
+
+        _source.OnTouchpadInitialized(touchpadExists, success);
     }
 
-    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    // WindowProc Registration
+    private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
     {
-        switch (msg)
+        Debug.WriteLine("WindowProcess: " + message);
+        switch (message)
         {
             case TouchpadHelper.WM_INPUT:
+                Debug.WriteLine("WM_INPUT message: " + lParam);
                 var contacts = TouchpadHelper.ParseInput(lParam);
                 RegisterTouchpadContacts(contacts);
                 break;
         }
 
-        return IntPtr.Zero;
+        return Interop.CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam); ;
     }
+
+
+    // Contacts managements
 
     private void RegisterTouchpadContacts(TouchpadContact[] contacts)
     {
@@ -72,13 +82,4 @@ public class ContactsManager<T> where T : Window, IContactsManager
     {
         return new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
     }
-}
-
-public interface IContactsManager
-{
-    // Called when the touchpad is detected and the events handlers are registered (or not)
-    public void OnTouchpadInitialized(bool touchpadExists, bool touchpadRegistered);
-
-    // Called when a new set of contacts has been registered
-    public void OnTouchpadContact(TouchpadContact[] contacts);
 }

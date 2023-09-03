@@ -1,10 +1,11 @@
 ﻿using H.NotifyIcon;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
+using System.Timers;
 using ThreeFingersDragOnWindows.src.settings;
 using ThreeFingersDragOnWindows.src.touchpad;
-using ThreeFingersDragOnWindows.src.Utils;
+using ThreeFingersDragOnWindows.src.utils;
 
 namespace ThreeFingersDragOnWindows;
 
@@ -25,32 +26,27 @@ public partial class App : Application
 
         SettingsData = SettingsData.load();
 
+        if (SettingsData.IsFirstRun) {
+            OpenSettingsWindow();
+            Utils.runOnMainThreadAfter(3000, () => HandlerWindow = new HandlerWindow(this));
+        }
+        else {
+            HandlerWindow = new HandlerWindow(this);
+        }
 
-        HandlerWindow = new HandlerWindow(this);
-        //if (SettingsData.IsFirstRun) ShowSettingsWindow();
-
-
-        //_notifyIcon.Icon = new Icon("Resources/icon.ico");
-        //_notifyIcon.Text = "ThreeFingersDragOnWindows";
-        //_notifyIcon.Click += (_, _) => ShowSettingsWindow();
-
-        //var button = new ToolStripButton("Quit");
-        //button.Click += (_, _) => Quit();
-        //_notifyIcon.ContextMenuStrip = new ContextMenuStrip();
-        //_notifyIcon.ContextMenuStrip.Items.Add(button);
-        //_notifyIcon.Visible = true;
     }
+
 
 
     public void OpenSettingsWindow()
     {
-        _settingsWindow = new SettingsWindow(this);
+         _settingsWindow ??= new SettingsWindow(this);
         _settingsWindow.Activate();
     }
 
     public void OnClosePrefsWindow()
     {
-        SettingsData = null;
+        _settingsWindow = null;
     }
 
     public void Quit()

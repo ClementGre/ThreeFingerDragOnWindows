@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using ThreeFingersDragOnWindows.src.Utils;
 
 namespace ThreeFingersDragOnWindows.src.utils;
 
@@ -60,7 +59,7 @@ internal static class TouchpadHelper
         return false;
     }
 
-    public static bool RegisterInput(IntPtr windowHandle)
+    public static bool RegisterInput(IntPtr hwndTarget)
     {
         // Precision Touchpad (PTP) in HID Clients Supported in Windows
         // https://docs.microsoft.com/en-us/windows-hardware/drivers/hid/hid-architecture#hid-clients-supported-in-windows
@@ -68,8 +67,8 @@ internal static class TouchpadHelper
         {
             usUsagePage = 0x000D,
             usUsage = 0x0005,
-            dwFlags = 0x00000100, // Messages come even if the window is in the foreground.
-            hwndTarget = windowHandle
+            dwFlags = 0x00000100, // Messages come even if the window is in the background/foreground.
+            hwndTarget = hwndTarget
         };
 
         return RegisterRawInputDevices(new[] { device }, 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>());

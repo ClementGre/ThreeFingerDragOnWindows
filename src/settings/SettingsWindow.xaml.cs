@@ -2,7 +2,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
-using ThreeFingersDragOnWindows.src.Utils;
+using ThreeFingersDragOnWindows.src.utils;
+using Windows.Graphics;
 
 namespace ThreeFingersDragOnWindows.src.settings;
 
@@ -19,8 +20,10 @@ public sealed partial class SettingsWindow : Window
 
 
         this.InitializeComponent();
-        //ExtendsContentIntoTitleBar = true; // enable custom titlebar
-        //SetTitleBar(TitleBar); // set TitleBar element as titlebar
+        this.AppWindow.Resize(new SizeInt32(1000, 600));
+        
+        ExtendsContentIntoTitleBar = true; // enable custom titlebar
+        SetTitleBar(TitleBar); // set TitleBar element as titlebar
 
         /* TouchpadExists.Text = _app.DoTouchpadExist() ? "Yes" : "No";
         TouchpadRegistered.Text = _app.DoTouchpadRegistered() ? "Yes" : "No";
@@ -69,9 +72,9 @@ public sealed partial class SettingsWindow : Window
 
     private void Window_Closed(object sender, WindowEventArgs e)
     {
-        Debug.WriteLine("Hiding PrefsWindow, saving data...");
-        //App.SettingsData.save();
-        //_app.OnClosePrefsWindow();
+        Debug.WriteLine("Hiding SettingsWindow, saving data...");
+        App.SettingsData.save();
+        _app.OnClosePrefsWindow();
     }
 
 
