@@ -1,8 +1,7 @@
 <Window
-    x:Class="ThreeFingersDragOnWindows.src.touchpad.HandlerWindow"
+    x:Class="ThreeFingersDragOnWindows.touchpad.HandlerWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ThreeFingersDragOnWindows.src.touchpad"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tb="using:H.NotifyIcon"
@@ -11,7 +10,7 @@
     <Grid>
 
         <Grid.Resources>
-            <XamlUICommand 
+            <XamlUICommand
                 x:Uid="Taskbar_Menu_QuitApp"
                 x:Key="QuitAppCommand"
                 ExecuteRequested="QuitApp"
@@ -20,7 +19,7 @@
                     <SymbolIconSource Symbol="Cancel" />
                 </XamlUICommand.IconSource>
             </XamlUICommand>
-            <XamlUICommand 
+            <XamlUICommand
                 x:Uid="Taskbar_Menu_OpenSettingsWindow"
                 x:Key="OpenSettingsWindowCommand"
                 ExecuteRequested="OpenSettingsWindow"
@@ -41,8 +40,8 @@
 
             <tb:TaskbarIcon.ContextFlyout>
                 <MenuFlyout x:Name="MenuFlyout1" AreOpenCloseAnimationsEnabled="True">
-                    <MenuFlyoutItem Command="{StaticResource OpenSettingsWindowCommand}"/>
-                    <MenuFlyoutItem Command="{StaticResource QuitAppCommand}"/>
+                    <MenuFlyoutItem Command="{StaticResource OpenSettingsWindowCommand}" />
+                    <MenuFlyoutItem Command="{StaticResource QuitAppCommand}" />
                 </MenuFlyout>
             </tb:TaskbarIcon.ContextFlyout>
         </tb:TaskbarIcon>

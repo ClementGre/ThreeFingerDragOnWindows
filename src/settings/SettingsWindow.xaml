@@ -1,8 +1,7 @@
 <Window
-    x:Class="ThreeFingersDragOnWindows.src.settings.SettingsWindow"
+    x:Class="ThreeFingersDragOnWindows.settings.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ThreeFingersDragOnWindows.src.settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -29,27 +28,31 @@
         </StackPanel>
 
         <NavigationView x:Name="NavigationView"
-            IsSettingsVisible="True"
-            IsBackButtonVisible="Collapsed"
-            IsBackEnabled="False"
-            SelectionChanged="NavigationView_SelectionChanged"
-            Header="Header"
-            AlwaysShowHeader="True"
-            PaneDisplayMode="Left"
-            ExpandedModeThresholdWidth="400"
-            SelectionFollowsFocus="Disabled"
-            IsTabStop="False"
-            OpenPaneLength="250"
-            IsPaneToggleButtonVisible="False"
-            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-            RelativePanel.Below="TitleBar"
-            RelativePanel.AlignBottomWithPanel="True"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True">
+                        IsSettingsVisible="False"
+                        IsBackButtonVisible="Collapsed"
+                        IsBackEnabled="False"
+                        SelectionChanged="NavigationView_SelectionChanged"
+                        Header="Header"
+                        AlwaysShowHeader="True"
+                        PaneDisplayMode="Left"
+                        ExpandedModeThresholdWidth="400"
+                        SelectionFollowsFocus="Disabled"
+                        IsTabStop="False"
+                        OpenPaneLength="250"
+                        IsPaneToggleButtonVisible="False"
+                        Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                        RelativePanel.Below="TitleBar"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True">
 
             <NavigationView.PaneCustomContent>
                 <StackPanel Height="22" />
             </NavigationView.PaneCustomContent>
+            
+            <NavigationView.Resources>
+                <Thickness x:Key="NavigationViewHeaderMargin">20,20,0,20</Thickness>
+            </NavigationView.Resources>
 
 
             <NavigationView.MenuItems>
@@ -58,16 +61,22 @@
                         <FontIcon Glyph="&#xE759;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Other Settings" Tag="Other Settings" x:Name="OtherSettings">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE713;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <NavigationView.PaneFooter>
                 <StackPanel x:Name="FooterStackPanel" Orientation="Vertical" Visibility="Visible">
-                    <NavigationViewItem Content="Close Settings" Tag="CloseSettings" x:Name="CloseApp">
+                    <NavigationViewItem Content="Close Settings" Tag="CloseSettings" x:Name="CloseApp"
+                                        Tapped="CloseButton_Click">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE711;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="Quit App" Tag="QuitApp" x:Name="QuitApp">
+                    <NavigationViewItem Content="Quit App" Tag="QuitApp" x:Name="QuitApp" Tapped="QuitButton_Click">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE7E8;" />
                         </NavigationViewItem.Icon>
@@ -76,8 +85,7 @@
             </NavigationView.PaneFooter>
 
 
-
-            <Frame x:Name="contentFrame" />
+            <Frame x:Name="ContentFrame" />
         </NavigationView>
     </RelativePanel>
 </Window>

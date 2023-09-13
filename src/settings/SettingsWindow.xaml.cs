@@ -1,29 +1,38 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
-using ThreeFingersDragOnWindows.src.utils;
+using System.Linq;
 using Windows.Graphics;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using ThreeFingersDragOnWindows.utils;
 
-namespace ThreeFingersDragOnWindows.src.settings;
+namespace ThreeFingersDragOnWindows.settings;
 
-
-public sealed partial class SettingsWindow : Window
-{
-
+public sealed partial class SettingsWindow {
     private readonly App _app;
+    private int _inputCount;
 
-    public SettingsWindow(App app)
+    /*private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
     {
+        var regex = new Regex("[^0-9]+");
+        e.Handled = regex.IsMatch(e.Text);
+    }*/
+
+    private long _lastContact;
+    private long _lastEventSpeed;
+
+    public SettingsWindow(App app){
         _app = app;
         Debug.WriteLine("Starting SettingssWindow...");
 
 
-        this.InitializeComponent();
-        this.AppWindow.Resize(new SizeInt32(1000, 600));
-        
+        InitializeComponent();
+        AppWindow.Resize(new SizeInt32(1000, 600));
+
         ExtendsContentIntoTitleBar = true; // enable custom titlebar
         SetTitleBar(TitleBar); // set TitleBar element as titlebar
+        
+        NavigationView.SelectedItem = ThreeFingersDrag;
 
         /* TouchpadExists.Text = _app.DoTouchpadExist() ? "Yes" : "No";
         TouchpadRegistered.Text = _app.DoTouchpadRegistered() ? "Yes" : "No";
@@ -52,59 +61,48 @@ public sealed partial class SettingsWindow : Window
     }
 
 
-    private void NavigationView_SelectionChanged(object sender, NavigationViewSelectionChangedEventArgs e)
-    {
-        Debug.WriteLine("Selection Changed");
+    private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e){
+        if(e.SelectedItem.Equals(ThreeFingersDrag)){
+            sender.Header = "Three Fingers Drag";
+            ContentFrame.Navigate(typeof(ThreeFingersDragSettings));
+            
+        } else if(e.SelectedItem.Equals(OtherSettings)){
+            sender.Header = "Other Settings";
+        }
     }
 
 
     ////////// Close & quit //////////
 
-    private void CloseButton_Click(object sender, RoutedEventArgs e)
-    {
+    private void CloseButton_Click(object sender, RoutedEventArgs e){
         Close();
     }
 
-    private void QuitButton_Click(object sender, RoutedEventArgs e)
-    {
+    private void QuitButton_Click(object sender, RoutedEventArgs e){
         _app.Quit();
     }
 
-    private void Window_Closed(object sender, WindowEventArgs e)
-    {
+    private void Window_Closed(object sender, WindowEventArgs e){
         Debug.WriteLine("Hiding SettingsWindow, saving data...");
         App.SettingsData.save();
         _app.OnClosePrefsWindow();
     }
 
-
-    ////////// UI Tools //////////
-
-    /*private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
-    {
-        var regex = new Regex("[^0-9]+");
-        e.Handled = regex.IsMatch(e.Text);
-    }*/
-
-    private long _lastContact = 0;
-    private int _inputCount = 0;
-    private long _lastEventSpeed = 0;
-    public void OnTouchpadContact(TouchpadContact[] contacts)
-    {
+    public void OnTouchpadContact(TouchpadContact[] contacts){
         _inputCount++;
 
-        if (_inputCount >= 20)
-        {
+        if(_inputCount >= 20){
             _inputCount = 0;
             _lastEventSpeed = (Ctms() - _lastContact) / 20;
             _lastContact = Ctms();
         }
-        //TouchpadContacts = string.Join(" | ", contacts.Select(c => c.ToString())) + " | Event speed: " + _lastEventSpeed + "ms";
+        Page currentPage = ContentFrame.Content as Page;
+        if(currentPage is ThreeFingersDragSettings threeFingersDragSettings){
+            threeFingersDragSettings.UpdateContactsText(string.Join(" | ", contacts.Select(c => c.ToString())) + " | Event speed: " + _lastEventSpeed + "ms");
+        }
     }
 
-    private long Ctms()
-    {
+    private long Ctms(){
         return new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
     }
-
 }
