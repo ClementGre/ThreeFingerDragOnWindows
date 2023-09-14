@@ -15,16 +15,6 @@
         <Compile Remove="src\utils\Intero^p.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Remove="Assets\LargeTile.scale-100.png" />
-      <Content Remove="Assets\LargeTile.scale-125.png" />
-      <Content Remove="Assets\LargeTile.scale-150.png" />
-      <Content Remove="Assets\LargeTile.scale-200.png" />
-      <Content Remove="Assets\LargeTile.scale-400.png" />
-      <Content Remove="Assets\logo-150.scale-100.png" />
-      <Content Remove="Assets\logo-150.scale-125.png" />
-      <Content Remove="Assets\logo-150.scale-150.png" />
-      <Content Remove="Assets\logo-150.scale-200.png" />
-      <Content Remove="Assets\logo-150.scale-400.png" />
       <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-16.png" />
       <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-24.png" />
       <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-256.png" />
@@ -35,16 +25,6 @@
       <Content Remove="Assets\logo-44.altform-unplated_targetsize-256.png" />
       <Content Remove="Assets\logo-44.altform-unplated_targetsize-32.png" />
       <Content Remove="Assets\logo-44.altform-unplated_targetsize-48.png" />
-      <Content Remove="Assets\logo-44.targetsize-16.png" />
-      <Content Remove="Assets\logo-44.targetsize-24.png" />
-      <Content Remove="Assets\logo-44.targetsize-256.png" />
-      <Content Remove="Assets\logo-44.targetsize-32.png" />
-      <Content Remove="Assets\logo-44.targetsize-48.png" />
-      <Content Remove="Assets\WideTile.scale-100.png" />
-      <Content Remove="Assets\WideTile.scale-125.png" />
-      <Content Remove="Assets\WideTile.scale-150.png" />
-      <Content Remove="Assets\WideTile.scale-200.png" />
-      <Content Remove="Assets\WideTile.scale-400.png" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="Assets\BadgeLogo.scale-100.png" />
@@ -52,11 +32,35 @@
       <None Remove="Assets\BadgeLogo.scale-150.png" />
       <None Remove="Assets\BadgeLogo.scale-200.png" />
       <None Remove="Assets\BadgeLogo.scale-400.png" />
+      <None Remove="Assets\LargeTile.scale-100.png" />
+      <None Remove="Assets\LargeTile.scale-125.png" />
+      <None Remove="Assets\LargeTile.scale-150.png" />
+      <None Remove="Assets\LargeTile.scale-200.png" />
+      <None Remove="Assets\LargeTile.scale-400.png" />
+      <None Remove="Assets\logo-150.scale-100.png" />
+      <None Remove="Assets\logo-150.scale-125.png" />
+      <None Remove="Assets\logo-150.scale-150.png" />
+      <None Remove="Assets\logo-150.scale-200.png" />
+      <None Remove="Assets\logo-150.scale-400.png" />
       <None Remove="Assets\logo-44.scale-100.png" />
       <None Remove="Assets\logo-44.scale-125.png" />
       <None Remove="Assets\logo-44.scale-150.png" />
       <None Remove="Assets\logo-44.scale-200.png" />
       <None Remove="Assets\logo-44.scale-400.png" />
+      <None Remove="Assets\logo-44.targetsize-16.png" />
+      <None Remove="Assets\logo-44.targetsize-16_altform-lightunplated.png" />
+      <None Remove="Assets\logo-44.targetsize-24.png" />
+      <None Remove="Assets\logo-44.targetsize-24_altform-lightunplated.png" />
+      <None Remove="Assets\logo-44.targetsize-24_altform-unplated.png" />
+      <None Remove="Assets\logo-44.targetsize-256.png" />
+      <None Remove="Assets\logo-44.targetsize-256_altform-lightunplated.png" />
+      <None Remove="Assets\logo-44.targetsize-256_altform-unplated.png" />
+      <None Remove="Assets\logo-44.targetsize-32.png" />
+      <None Remove="Assets\logo-44.targetsize-32_altform-lightunplated.png" />
+      <None Remove="Assets\logo-44.targetsize-32_altform-unplated.png" />
+      <None Remove="Assets\logo-44.targetsize-48.png" />
+      <None Remove="Assets\logo-44.targetsize-48_altform-lightunplated.png" />
+      <None Remove="Assets\logo-44.targetsize-48_altform-unplated.png" />
       <None Remove="Assets\logo-512.scale-100.png" />
       <None Remove="Assets\logo-512.scale-125.png" />
       <None Remove="Assets\logo-512.scale-150.png" />
@@ -72,6 +76,11 @@
       <None Remove="Assets\SplashScreen.scale-150.png" />
       <None Remove="Assets\SplashScreen.scale-200.png" />
       <None Remove="Assets\SplashScreen.scale-400.png" />
+      <None Remove="Assets\WideTile.scale-100.png" />
+      <None Remove="Assets\WideTile.scale-125.png" />
+      <None Remove="Assets\WideTile.scale-150.png" />
+      <None Remove="Assets\WideTile.scale-200.png" />
+      <None Remove="Assets\WideTile.scale-400.png" />
     </ItemGroup>
 
     <ItemGroup>
