@@ -10,7 +10,7 @@ public class FingersCounter {
     private int _fingersCount;
     private float _lastFingersMove;
 
-    public (int, int) CountMovingFingers(TouchpadContact[] oldContacts, TouchpadContact[] newContacts, bool areContactsIdsCommons, float longestDist2D){
+    public (int, int) CountMovingFingers(TouchpadContact[] newContacts, bool areContactsIdsCommons, float longestDist2D){
 
         if(!areContactsIdsCommons){
             _lastFingersMove = 0;

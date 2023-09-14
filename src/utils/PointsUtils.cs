@@ -22,6 +22,8 @@ public struct Point
         this.y = point.y;
     }
 
+    public static Point Zero{ get; } = new(0, 0);
+
     public void Multiply(float multiplicator)
     {
         x = x * multiplicator;

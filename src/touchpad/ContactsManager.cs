@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using ThreeFingersDragOnWindows.utils;
 using WinRT.Interop;
 
@@ -46,13 +47,14 @@ public class ContactsManager {
 
 
     // Contacts managements
-
     private void RegisterTouchpadContacts(TouchpadContact[] contacts){
+        //_source.OnTouchpadContact(contacts);
+        // On some touchpads, contacts are sent one by one
         foreach(var contact in contacts) RegisterTouchpadContact(contact);
     }
 
     private void RegisterTouchpadContact(TouchpadContact contact){
-        foreach(var lastContact in _lastContacts)
+        foreach(var lastContact in _lastContacts){
             if(lastContact.ContactId == contact.ContactId){
                 // A contact is registered twice: send the event with the list of all contacts
                 if(Ctms() - _lastInput < 50)
@@ -61,6 +63,7 @@ public class ContactsManager {
                 _lastContacts.Clear();
                 break;
             }
+        }
 
         _lastInput = Ctms();
         // Add the contact to the list
