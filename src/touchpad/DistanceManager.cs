@@ -4,7 +4,7 @@ using ThreeFingersDragOnWindows.utils;
 namespace ThreeFingersDragOnWindows.touchpad;
 
 public class DistanceManager {
-    
+
     public static Point ApplySpeedAndAcc(Point delta, float dist2d, int elapsed){
 
         // Apply Speed
@@ -14,14 +14,14 @@ public class DistanceManager {
         var mouseVelocity = (float) Math.Max(0.2, Math.Min(dist2d / elapsed, 20));
         if(float.IsNaN(mouseVelocity) || float.IsInfinity(mouseVelocity)) mouseVelocity = 1;
 
-        
+
         float pointerVelocity = 1;
         if(App.SettingsData.MouseAcceleration != 0){
             // Apply acceleration
             pointerVelocity = (float) (App.SettingsData.MouseAcceleration / 10 * Math.Pow(mouseVelocity, 2) +
                                        0.4 * mouseVelocity);
             // Clamp
-            pointerVelocity = (float) Math.Max(0.4, Math.Min(pointerVelocity, 1.6)); 
+            pointerVelocity = (float) Math.Max(0.4, Math.Min(pointerVelocity, 1.6));
         }
 
         // Apply acceleration
@@ -29,7 +29,7 @@ public class DistanceManager {
 
         return delta;
     }
-    
+
     public static float ApplySpeed(float distance){
         distance *= App.SettingsData.MouseSpeed / 60;
         return distance;

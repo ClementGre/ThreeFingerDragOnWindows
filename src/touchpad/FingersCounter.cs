@@ -5,7 +5,7 @@ namespace ThreeFingersDragOnWindows.touchpad;
 public class FingersCounter {
 
 
-    private static readonly float FINGERS_MOVE_THRESHOLD = DistanceManager.ApplySpeed(50);
+    private static readonly float FINGERS_MOVE_THRESHOLD = 10;
 
     private int _fingersCount;
     private float _lastFingersMove;
@@ -17,7 +17,7 @@ public class FingersCounter {
             return (0, _fingersCount);
         }
 
-        _lastFingersMove += longestDist2D;
+        _lastFingersMove += DistanceManager.ApplySpeed(longestDist2D);
         if(_lastFingersMove > FINGERS_MOVE_THRESHOLD){
             _fingersCount = newContacts.Length;
             _lastFingersMove = 0;
