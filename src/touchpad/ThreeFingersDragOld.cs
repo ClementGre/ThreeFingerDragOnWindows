@@ -45,7 +45,7 @@ public class ThreeFingersDragOld {
 
             if(!_isDragging){
                 if(Ctms() - _firstThreeFingersContact > 100){
-                    //r fin When placing fougers, a three fingers input can be detected for less than 100ms
+                    //r fin When placing four fingers, a three fingers input can be detected for less than 100ms
                     //Debug.WriteLine("ThreeFingersDrag Start drag");
                     _isDragging = true;
                     MouseOperations.MouseClick(MouseOperations.MOUSEEVENTF_LEFTDOWN);

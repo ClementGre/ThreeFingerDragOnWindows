@@ -35,6 +35,10 @@ public struct TouchpadContact : IEquatable<TouchpadContact> {
     public override string ToString(){
         return $"ID: {ContactId} x,y: {X},{Y}";
     }
+
+    public float GetDist2D(TouchpadContact contact){
+        return (float) Math.Sqrt(Math.Pow(contact.X - X, 2) + Math.Pow(contact.Y - Y, 2));
+    }
 }
 
 // From  emoacht/RawInput.Touchpad

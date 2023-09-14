@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
@@ -47,8 +48,19 @@ public sealed partial class HandlerWindow : Window {
     }
 
     // Called when a new set of contacts has been registered
+    
+    private TouchpadContact[] _oldContacts = Array.Empty<TouchpadContact>();
+    private long _lastContactCtms = Ctms();
+    
     public void OnTouchpadContact(TouchpadContact[] contacts){
-        _threeFingersDrag.OnTouchpadContact(contacts);
+        _threeFingersDrag.OnTouchpadContact(_oldContacts, contacts, Ctms() - _lastContactCtms);
         _app.OnTouchpadContact(contacts); // Transfer to App for displaying contacts in SettingsWindow
+        
+        _lastContactCtms = Ctms();
+        _oldContacts = contacts;
+    }
+    
+    private static long Ctms(){
+        return new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
     }
 }
