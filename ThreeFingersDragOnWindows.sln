@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreeFingersDragOnWindows", "ThreeFingersDragOnWindows.csproj", "{DEF7D463-6621-407A-A8BC-F14E5797CD39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreeFingersDragOnWindows", "ThreeFingersDragOnWindows.csproj", "{DEF7D463-6621-407A-A8BC-F14E5797CD39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -24,7 +24,7 @@ public class ThreeFingersDrag {
         Debug.WriteLine("\nTFD: " + string.Join(", ", oldContacts.Select(c => c.ToString())) + " | " + string.Join(", ", contacts.Select(c => c.ToString())) + " | " + elapsed);
         bool areContactsIdsCommons = FingersCounter.AreContactsIdsCommons(oldContacts, contacts);
 
-        (int longestDistId, Point longestDistDelta, float longestDist2D) = _distanceManager.GetLongestDist2D(oldContacts, contacts, elapsed);
+        (_, Point longestDistDelta, float longestDist2D) = _distanceManager.GetLongestDist2D(oldContacts, contacts, elapsed);
         (int fingersCount, int movingFingersCount) = _fingersCounter.CountMovingFingers(contacts, areContactsIdsCommons, longestDist2D);
 
         Debug.WriteLine("    fingers: " + fingersCount + ", moving: " + movingFingersCount + ", dist: " + longestDist2D);

@@ -4,7 +4,7 @@
 
 ## Overview
 
-A windows app that allows the macos three fingers drag, using the Raw Inputs of precision touchpad.
+A windows app that enables macOS-style three-finger dragging functionality on Windows Precision touchpads.
 
 ## Preview
 

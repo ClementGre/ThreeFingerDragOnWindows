@@ -15,9 +15,15 @@
             RelativePanel.AlignRightWithPanel="True"
             x:Name="TitleBar"
             Height="44"
+            Orientation="Horizontal"
             Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
 
-            <Border Height="44" Margin="15,0,0,0">
+            <Border Height="44" Margin="9,0,0,0">
+                <Image Source="/Assets/icon-52.png" Height="26" />
+            </Border>
+            
+            
+            <Border Height="44" Margin="12,0,0,0">
                 <TextBlock
                     Text="ThreeFingersDragOnWindows"
                     FontSize="14"

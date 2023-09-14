@@ -12,26 +12,77 @@
         <EnableMsixTooling>true</EnableMsixTooling>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Remove="src\utils\Intero^p.cs"/>
+        <Compile Remove="src\utils\Intero^p.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Remove="Assets\LargeTile.scale-100.png" />
+      <Content Remove="Assets\LargeTile.scale-125.png" />
+      <Content Remove="Assets\LargeTile.scale-150.png" />
+      <Content Remove="Assets\LargeTile.scale-200.png" />
+      <Content Remove="Assets\LargeTile.scale-400.png" />
+      <Content Remove="Assets\logo-150.scale-100.png" />
+      <Content Remove="Assets\logo-150.scale-125.png" />
+      <Content Remove="Assets\logo-150.scale-150.png" />
+      <Content Remove="Assets\logo-150.scale-200.png" />
+      <Content Remove="Assets\logo-150.scale-400.png" />
+      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-16.png" />
+      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-24.png" />
+      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-256.png" />
+      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-32.png" />
+      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-48.png" />
+      <Content Remove="Assets\logo-44.altform-unplated_targetsize-16.png" />
+      <Content Remove="Assets\logo-44.altform-unplated_targetsize-24.png" />
+      <Content Remove="Assets\logo-44.altform-unplated_targetsize-256.png" />
+      <Content Remove="Assets\logo-44.altform-unplated_targetsize-32.png" />
+      <Content Remove="Assets\logo-44.altform-unplated_targetsize-48.png" />
+      <Content Remove="Assets\logo-44.targetsize-16.png" />
+      <Content Remove="Assets\logo-44.targetsize-24.png" />
+      <Content Remove="Assets\logo-44.targetsize-256.png" />
+      <Content Remove="Assets\logo-44.targetsize-32.png" />
+      <Content Remove="Assets\logo-44.targetsize-48.png" />
+      <Content Remove="Assets\WideTile.scale-100.png" />
+      <Content Remove="Assets\WideTile.scale-125.png" />
+      <Content Remove="Assets\WideTile.scale-150.png" />
+      <Content Remove="Assets\WideTile.scale-200.png" />
+      <Content Remove="Assets\WideTile.scale-400.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="Assets\BadgeLogo.scale-100.png" />
+      <None Remove="Assets\BadgeLogo.scale-125.png" />
+      <None Remove="Assets\BadgeLogo.scale-150.png" />
+      <None Remove="Assets\BadgeLogo.scale-200.png" />
+      <None Remove="Assets\BadgeLogo.scale-400.png" />
+      <None Remove="Assets\logo-44.scale-100.png" />
+      <None Remove="Assets\logo-44.scale-125.png" />
+      <None Remove="Assets\logo-44.scale-150.png" />
+      <None Remove="Assets\logo-44.scale-200.png" />
+      <None Remove="Assets\logo-44.scale-400.png" />
+      <None Remove="Assets\logo-512.scale-100.png" />
+      <None Remove="Assets\logo-512.scale-125.png" />
+      <None Remove="Assets\logo-512.scale-150.png" />
+      <None Remove="Assets\logo-512.scale-200.png" />
+      <None Remove="Assets\logo-512.scale-400.png" />
+      <None Remove="Assets\SmallTile.scale-100.png" />
+      <None Remove="Assets\SmallTile.scale-125.png" />
+      <None Remove="Assets\SmallTile.scale-150.png" />
+      <None Remove="Assets\SmallTile.scale-200.png" />
+      <None Remove="Assets\SmallTile.scale-400.png" />
+      <None Remove="Assets\SplashScreen.scale-100.png" />
+      <None Remove="Assets\SplashScreen.scale-125.png" />
+      <None Remove="Assets\SplashScreen.scale-150.png" />
+      <None Remove="Assets\SplashScreen.scale-200.png" />
+      <None Remove="Assets\SplashScreen.scale-400.png" />
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="Assets\icon.ico"/>
-        <Content Include="Assets\icon.png"/>
-        <Content Include="Assets\SplashScreen.scale-200.png"/>
-        <Content Include="Assets\LockScreenLogo.scale-200.png"/>
-        <Content Include="Assets\Square150x150Logo.scale-200.png"/>
-        <Content Include="Assets\Square44x44Logo.scale-200.png"/>
-        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png"/>
-        <Content Include="Assets\StoreLogo.png"/>
-        <Content Include="Assets\Wide310x150Logo.scale-200.png"/>
+        <Content Include="Assets\icon.ico" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.115"/>
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000"/>
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756"/>
-        <Manifest Include="$(ApplicationManifest)"/>
+        <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.115" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+        <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 
     <!-- 
@@ -40,7 +91,7 @@
       package has not yet been restored.
     -->
     <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-        <ProjectCapability Include="Msix"/>
+        <ProjectCapability Include="Msix" />
     </ItemGroup>
     <ItemGroup>
         <Page Update="src\touchpad\HandlerWindow.xaml">
