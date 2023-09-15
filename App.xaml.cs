@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security.Principal;
 using Microsoft.UI.Xaml;
 using ThreeFingersDragOnWindows.settings;
 using ThreeFingersDragOnWindows.touchpad;
@@ -61,7 +62,13 @@ public partial class App : Application {
 
     public void RegisterStartupTask()
     {
-        Console.WriteLine("Registering Startup Task...");
+
+        if(!IsAppRunningAsAdministrator()){
+            Debug.WriteLine("The app is not running as administrator.");
+            return;
+        }
+        
+        Debug.WriteLine("Registering Startup Task...");
         using TaskService taskService = new TaskService();
         TaskFolder folder = taskService.RootFolder.CreateFolder("ThreeFingersDragOnWindows", null, false);
 
@@ -92,6 +99,12 @@ public partial class App : Application {
             null, // User account password
             TaskLogonType.InteractiveToken);
 
-        Console.WriteLine("Task created successfully.");
+        Debug.WriteLine("Task created successfully.");
+    }
+    
+    public static bool IsAppRunningAsAdministrator()
+    {
+        var identity = new WindowsPrincipal(WindowsIdentity.GetCurrent());
+        return identity.IsInRole(WindowsBuiltInRole.Administrator);
     }
 }
