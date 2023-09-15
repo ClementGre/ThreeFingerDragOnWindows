@@ -10,6 +10,21 @@
         <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
         <UseWinUI>true</UseWinUI>
         <EnableMsixTooling>true</EnableMsixTooling>
+        <Description>Enables macOS-style three-finger dragging functionality on Windows Precision touchpads.</Description>
+        <PackageIcon>logo-44.targetsize-256.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/ClementGre/ThreeFingersDragOnWindows</RepositoryUrl>
+        <PackageTags>touchpad;tool;automation;finger</PackageTags>
+        <NeutralLanguage>en</NeutralLanguage>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Title>ThreeFingersDragOnWindows</Title>
+        <SignAssembly>False</SignAssembly>
+        <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+        <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+        <PackageCertificateThumbprint>6349A95D0136104C9F4661F4CF74E8F35FA2F9D2</PackageCertificateThumbprint>
+        <PackageCertificateKeyFile>ThreeFingersDragOnWindows.pfx</PackageCertificateKeyFile>
+        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     </PropertyGroup>
     <ItemGroup>
         <Compile Remove="src\utils\Intero^p.cs" />
@@ -52,7 +67,6 @@
       <None Remove="Assets\logo-44.targetsize-24.png" />
       <None Remove="Assets\logo-44.targetsize-24_altform-lightunplated.png" />
       <None Remove="Assets\logo-44.targetsize-24_altform-unplated.png" />
-      <None Remove="Assets\logo-44.targetsize-256.png" />
       <None Remove="Assets\logo-44.targetsize-256_altform-lightunplated.png" />
       <None Remove="Assets\logo-44.targetsize-256_altform-unplated.png" />
       <None Remove="Assets\logo-44.targetsize-32.png" />
@@ -82,6 +96,17 @@
       <None Remove="Assets\WideTile.scale-200.png" />
       <None Remove="Assets\WideTile.scale-400.png" />
     </ItemGroup>
+    <ItemGroup>
+      <COMReference Include="TaskScheduler">
+        <WrapperTool>tlbimp</WrapperTool>
+        <VersionMinor>0</VersionMinor>
+        <VersionMajor>1</VersionMajor>
+        <Guid>e34cb9f1-c7f7-424c-be29-027dcc09363a</Guid>
+        <Lcid>0</Lcid>
+        <Isolated>false</Isolated>
+        <EmbedInteropTypes>true</EmbedInteropTypes>
+      </COMReference>
+    </ItemGroup>
 
     <ItemGroup>
         <Content Include="Assets\icon.ico" />
@@ -91,6 +116,7 @@
         <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.115" />
         <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000" />
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+        <PackageReference Include="TaskScheduler" Version="2.10.1" />
         <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 
@@ -101,6 +127,16 @@
     -->
     <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
         <ProjectCapability Include="Msix" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="Assets\logo-44.targetsize-256.png">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+      <None Update="README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
     </ItemGroup>
     <ItemGroup>
         <Page Update="src\touchpad\HandlerWindow.xaml">

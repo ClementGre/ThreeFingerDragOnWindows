@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
-    <assemblyIdentity version="1.0.0.0" name="ThreeFingersDragOnWindows.app"/>
 
     <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
         <application>
@@ -17,4 +16,13 @@
             <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
         </windowsSettings>
     </application>
+
+    <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+        <security>
+            <requestedPrivileges>
+                <requestedExecutionLevel level="requireAdministrator" uiAccess="false" />
+            </requestedPrivileges>
+        </security>
+    </trustInfo>
+    
 </assembly>

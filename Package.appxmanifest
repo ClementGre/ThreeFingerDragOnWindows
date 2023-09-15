@@ -8,16 +8,16 @@
         IgnorableNamespaces="uap rescap">
 
     <Identity
-            Name="e437076c-bb7f-4c82-8b86-c347ed450072"
-            Publisher="CN=Clement"
-            Version="1.0.0.0"/>
+            Name="50931ClmentGrennerat.ThreeFingersDragOnWindows"
+            Publisher="CN=A5174EBF-789F-4CD5-BF8B-E0CB932DB9AD"
+            Version="2.0.0.0"/>
 
-    <mp:PhoneIdentity PhoneProductId="e437076c-bb7f-4c82-8b86-c347ed450072"
+    <mp:PhoneIdentity PhoneProductId="c9b9ff1d-920c-45c7-99c8-3e98f838bef5"
                       PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
     <Properties>
         <DisplayName>ThreeFingersDragOnWindows</DisplayName>
-        <PublisherDisplayName>Clement Grennerat</PublisherDisplayName>
+        <PublisherDisplayName>Clément Grennerat</PublisherDisplayName>
         <Logo>Assets\logo-512.png</Logo>
     </Properties>
 
@@ -48,10 +48,16 @@
                 <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badgeAndTileText"/>
                 <uap:SplashScreen Image="Assets\SplashScreen.png"/>
             </uap:VisualElements>
+            <Extensions>
+                <uap:Extension Category="windows.protocol">
+                    <uap:Protocol Name="threefingersdragonwindows"/>
+                </uap:Extension>
+            </Extensions>
         </Application>
     </Applications>
 
     <Capabilities>
         <rescap:Capability Name="runFullTrust"/>
+        <rescap:Capability Name="allowElevation" />
     </Capabilities>
 </Package>
