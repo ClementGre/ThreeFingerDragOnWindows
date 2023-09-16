@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "ThreeFingersDragOnWindows (Package)": {
+      "commandName": "MsixPackage",
+      "commandLineArgs": "",
+      "alwaysReinstallApp": false,
+      "remoteDebugEnabled": false,
+      "allowLocalNetworkLoopbackProperty": true,
+      "authenticationMode": "Windows",
+      "doNotLaunchApp": false,
+      "remoteDebugMachine": "",
+      "nativeDebugging": false
+    },
+    "ThreeFingersDragOnWindows (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
