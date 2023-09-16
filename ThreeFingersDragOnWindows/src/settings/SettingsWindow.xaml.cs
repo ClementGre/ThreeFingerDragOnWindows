@@ -73,12 +73,12 @@ public sealed partial class SettingsWindow {
 
     ////////// Close & quit //////////
 
-    private void CloseButton_Click(object sender, RoutedEventArgs e){
+    private async void CloseButton_Click(object sender, RoutedEventArgs e){
         // Close();
 
         if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0)){
             Debug.WriteLine("Launching FullTrustProcessForCurrentAppAsync...");
-            FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("User");
+            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("User");
         }
     }
 
