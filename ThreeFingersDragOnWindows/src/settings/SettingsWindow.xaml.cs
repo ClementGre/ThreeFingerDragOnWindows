@@ -1,5 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Windows.Graphics;
 using Microsoft.UI.Xaml;
@@ -73,12 +75,28 @@ public sealed partial class SettingsWindow {
 
     ////////// Close & quit //////////
 
-    private async void CloseButton_Click(object sender, RoutedEventArgs e){
+    private void CloseButton_Click(object sender, RoutedEventArgs e){
         // Close();
+        // Run the console app as admin
+        
+        
 
-        if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0)){
-            Debug.WriteLine("Launching FullTrustProcessForCurrentAppAsync...");
-            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("User");
+        var path = App.GetEnginePath();
+        
+        Debug.WriteLine(path);
+        
+        ProcessStartInfo processInfo = new ProcessStartInfo
+        {
+            UseShellExecute = true,
+            Verb = "runas",
+            FileName = path,
+            Arguments = ""
+        };
+        try{
+            Process.Start(processInfo);
+        }catch(Win32Exception ex){
+            // Do nothing. Probably the user canceled the UAC window
+            Debug.WriteLine(ex);
         }
     }
 

@@ -52,27 +52,9 @@
             </uap:VisualElements>
 			
             <Extensions>
-				
                 <uap:Extension Category="windows.protocol">
                     <uap:Protocol Name="threefingersdragonwindows"/>
                 </uap:Extension>
-				
-				<desktop:Extension Category="windows.fullTrustProcess"
-								   Executable="ThreeFingersDragEngine\ThreeFingersDragEngine.exe">
-					<desktop:FullTrustProcess>
-						<desktop:ParameterGroup GroupId="User" Parameters="/user" />
-						<desktop:ParameterGroup GroupId="Admin" Parameters="/admin" />
-					</desktop:FullTrustProcess>
-				</desktop:Extension>
-
-				<uap3:Extension Category="windows.appExecutionAlias"
-								Executable="ThreeFingersDragEngine\ThreeFingersDragEngine.exe"
-								EntryPoint="Windows.FullTrustApplication">
-					<uap3:AppExecutionAlias>
-						<desktop:ExecutionAlias Alias="ThreeFingersDragEngine.exe" />
-					</uap3:AppExecutionAlias>
-				</uap3:Extension>
-
 			</Extensions>
 
 		</Application>
