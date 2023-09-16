@@ -1,0 +1,8 @@
+<Window x:Class="ThreeFingersDragEngine.rawinputs.HandlerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Name="WindowRoot"
+        Title="ThreeFingersDragEngine Handler Window"
+        Height="260" Width="400" ResizeMode="NoResize">
+
+</Window>

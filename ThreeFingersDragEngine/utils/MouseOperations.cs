@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace ThreeFingersDragOnWindows.utils;
+namespace ThreeFingersDragEngine.utils;
 
 public class MouseOperations {
     private const int INPUT_MOUSE = 0;

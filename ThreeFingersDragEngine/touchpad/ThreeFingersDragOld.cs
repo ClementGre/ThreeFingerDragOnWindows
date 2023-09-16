@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Timers;
-using ThreeFingersDragOnWindows.utils;
+using ThreeFingersDragEngine.utils;
 
-namespace ThreeFingersDragOnWindows.touchpad;
+namespace ThreeFingersDragEngine.touchpad;
 
 public class ThreeFingersDragOld {
     /*private readonly Timer _dragEndTimer = new(50);

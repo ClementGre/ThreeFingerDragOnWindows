@@ -24,4 +24,13 @@
       <PackageReference Include="TaskScheduler" Version="2.10.1" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <Page Update="rawinputs\HandlerWindow.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>WinUI</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+    </ItemGroup>
+
 </Project>

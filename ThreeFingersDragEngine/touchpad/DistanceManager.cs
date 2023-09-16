@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ThreeFingersDragOnWindows.utils;
+using ThreeFingersDragEngine.utils;
 
-namespace ThreeFingersDragOnWindows.touchpad;
+namespace ThreeFingersDragEngine.touchpad;
 
 public class DistanceManager {
 

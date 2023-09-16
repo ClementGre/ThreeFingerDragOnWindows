@@ -55,6 +55,11 @@
                 <uap:Extension Category="windows.protocol">
                     <uap:Protocol Name="threefingersdragonwindows"/>
                 </uap:Extension>
+
+                <desktop:Extension Category="windows.startupTask" Executable="ThreeFingersDragOnWindows.exe"
+                                   EntryPoint="Windows.FullTrustApplication">
+                    <desktop:StartupTask TaskId="ThreeFingersDragOnWindows" Enabled="true" DisplayName="ThreeFingersDragOnWindows" />
+                </desktop:Extension>
 			</Extensions>
 
 		</Application>

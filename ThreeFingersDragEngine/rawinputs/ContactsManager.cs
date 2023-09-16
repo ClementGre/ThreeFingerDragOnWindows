@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ThreeFingersDragOnWindows.utils;
+using System.Windows;
+using System.Windows.Interop;
+using ThreeFingersDragEngine.utils;
 using WinRT.Interop;
 
-namespace ThreeFingersDragOnWindows.touchpad;
+namespace ThreeFingersDragEngine.rawinputs;
 
 public class ContactsManager {
     private readonly List<TouchpadContact> _lastContacts = new();
     private readonly HandlerWindow _source;
-
+    private HwndSource? _targetSource;
+    
     private long _lastInput;
-
-
-    private IntPtr _oldWndProc;
 
     public ContactsManager(HandlerWindow source){
         _source = source;
@@ -23,18 +23,20 @@ public class ContactsManager {
     public void InitializeSource(){
         var touchpadExists = TouchpadHelper.Exists();
         Debug.WriteLine("Touchpad exists: " + touchpadExists);
+        if(!touchpadExists){
+            _source.OnTouchpadInitialized(false, false);
+            return;
+        }
+        
+        _targetSource = PresentationSource.FromVisual(_source) as HwndSource;
+        _targetSource?.AddHook(WindowProcess);
 
-
-        var hwnd = WindowNative.GetWindowHandle(_source);
-        _oldWndProc = Interop.SetWndProc(hwnd, WindowProcess);
-
-        var success = touchpadExists && TouchpadHelper.RegisterInput(hwnd);
-
-        _source.OnTouchpadInitialized(touchpadExists, success);
+        var success =  _targetSource != null && TouchpadHelper.RegisterInput(_targetSource.Handle);
+        _source.OnTouchpadInitialized(true, success);
     }
 
     // WindowProc Listener
-    private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam){
+    private IntPtr WindowProcess(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam, ref bool handled){
         switch(message){
             case TouchpadHelper.WM_INPUT:
                 var contacts = TouchpadHelper.ParseInput(lParam);
@@ -42,7 +44,7 @@ public class ContactsManager {
                 break;
         }
 
-        return Interop.CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
+        return IntPtr.Zero;
     }
 
 

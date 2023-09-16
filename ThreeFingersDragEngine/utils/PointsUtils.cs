@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ThreeFingersDragOnWindows.utils;
+namespace ThreeFingersDragEngine.utils;
 
 public struct PointUtils {
     

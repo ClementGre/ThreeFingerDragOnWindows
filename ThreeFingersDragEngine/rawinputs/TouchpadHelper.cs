@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace ThreeFingersDragOnWindows.utils;
+namespace ThreeFingersDragEngine.utils;
 
 // From  emoacht/RawInput.Touchpad
 internal static class TouchpadHelper {

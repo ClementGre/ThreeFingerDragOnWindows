@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ThreeFingersDragOnWindows.utils;
+namespace ThreeFingersDragEngine.utils;
 
 // From  emoacht/RawInput.Touchpad
 public struct TouchpadContact : IEquatable<TouchpadContact> {

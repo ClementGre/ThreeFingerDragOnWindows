@@ -27,7 +27,7 @@
         <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Remove="src\utils\Intero^p.cs" />
+        <Compile Remove="utils\Intero^p.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-16.png" />
@@ -131,9 +131,13 @@
       </None>
     </ItemGroup>
     <ItemGroup>
-        <Page Update="src\touchpad\HandlerWindow.xaml">
-            <Generator>MSBuild:Compile</Generator>
-        </Page>
+      <Resource Remove="settings\SettingsWindow.xaml" />
+      <Resource Remove="src\settings\ThreeFingersDragSettings.xaml" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="utils\TrayWindow.xaml">
+        <SubType>Designer</SubType>
+      </Page>
     </ItemGroup>
     
     <!-- 

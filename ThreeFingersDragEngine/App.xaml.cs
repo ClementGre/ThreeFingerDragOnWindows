@@ -5,15 +5,24 @@ using System.Reflection;
 using System.Security.Principal;
 using System.Windows;
 using Microsoft.Win32.TaskScheduler;
+using ThreeFingersDragEngine.rawinputs;
+using ThreeFingersDragEngine.touchpad;
 
 namespace ThreeFingersDragEngine;
 
-public partial class App : Application {
+public partial class App {
+
+    public static SettingsData SettingsData;
+    private HandlerWindow _handlerWindow;
     
-    public App(){
+    protected override void OnStartup(StartupEventArgs e){
         Debug.WriteLine("Starting ThreeFingersDragEngine...");
-        InitializeComponent();
         RegisterStartupTask();
+
+        SettingsData = new SettingsData();
+        _handlerWindow = new HandlerWindow(this);
+        
+        base.OnStartup(e);
     }
 
     public void RegisterStartupTask(){
