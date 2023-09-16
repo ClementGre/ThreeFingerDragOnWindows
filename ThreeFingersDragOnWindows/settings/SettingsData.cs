@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
 using Windows.Storage;
@@ -20,8 +21,16 @@ public class SettingsData {
     public static SettingsData load(){
         var mySerializer = new XmlSerializer(typeof(SettingsData));
         var myFileStream = new FileStream(getPath(true), FileMode.Open);
-        var up = (SettingsData) mySerializer.Deserialize(myFileStream);
-        myFileStream.Close();
+        SettingsData up;
+        try{
+            up = (SettingsData) mySerializer.Deserialize(myFileStream);
+            myFileStream.Close();
+        } catch(Exception e){
+            Console.WriteLine(e);
+            myFileStream.Close();
+            up = new SettingsData();
+            up.save();
+        }
         return up;
     }
 

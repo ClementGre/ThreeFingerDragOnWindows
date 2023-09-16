@@ -2,8 +2,12 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Reflection;
+using System.Security.AccessControl;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using ThreeFingersDragOnWindows.settings;
@@ -12,14 +16,14 @@ using ThreeFingersDragOnWindows.utils;
 namespace ThreeFingersDragOnWindows;
 
 public partial class App : Application {
-    
+
     public static DispatcherQueue DispatcherQueue;
-    
+
     public static SettingsData SettingsData;
     private SettingsWindow _settingsWindow;
-    
+
     public TrayWindow TrayWindow;
-    
+
     public App(){
         Debug.WriteLine("Starting ThreeFingersDragOnWindows...");
         InitializeComponent();
@@ -29,14 +33,34 @@ public partial class App : Application {
         if(SettingsData.IsFirstRun){
             OpenSettingsWindow();
             Utils.runOnMainThreadAfter(3000, () => TrayWindow = new TrayWindow(this));
-        }else{
+        } else{
             TrayWindow = new TrayWindow(this);
         }
-        
+
         if(!Environment.GetCommandLineArgs().Contains("FromWPFEngine")){
             Debug.WriteLine("Not started from WPF Engine -> starting the WPF Engine.");
             StartWpfEngine(SettingsData.RunElevated);
         }
+    }
+
+    private void SendPipeMessageForDispose(){
+        new Thread(() => {
+            Debug.WriteLine("Sending Dispose message to WPF Engine...");
+            
+            NamedPipeClientStream client = new NamedPipeClientStream(".", "ThreeFingersDragOnWindows-DisposeEngine", PipeDirection.Out);
+            
+            client.Connect();
+            
+            Debug.WriteLine("Connected, sending message...");
+
+            StreamWriter writer = new StreamWriter(client);
+            writer.AutoFlush = true;
+
+            writer.WriteLine("Dispose");
+            writer.Flush();
+            client.Close();
+
+        }).Start();
     }
 
 
@@ -53,6 +77,7 @@ public partial class App : Application {
     }
 
     public void Quit(){
+        SendPipeMessageForDispose();
         TrayWindow?.Close();
         _settingsWindow?.Close();
     }
@@ -60,8 +85,7 @@ public partial class App : Application {
     public static void StartWpfEngine(bool elevated){
         var path = GetEnginePath();
         Debug.WriteLine("Runnig the WPF Engine app at " + path);
-        ProcessStartInfo processInfo = new ProcessStartInfo
-        {
+        ProcessStartInfo processInfo = new ProcessStartInfo{
             UseShellExecute = true,
             FileName = path,
             Arguments = "FromWinUIApp"
@@ -69,9 +93,10 @@ public partial class App : Application {
         if(elevated){
             processInfo.Verb = "runas";
         }
+
         try{
             Process.Start(processInfo);
-        }catch(Win32Exception ex){
+        } catch(Win32Exception ex){
             // Probably the user canceled the UAC window, 
             Debug.WriteLine(ex);
             if(elevated){
@@ -80,11 +105,11 @@ public partial class App : Application {
             }
         }
     }
-    
-    
+
+
     public static string GetEnginePath(){
         var dir = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory;
-        if (dir == null) throw new Exception("Could not get the directory of the current assembly.");
+        if(dir == null) throw new Exception("Could not get the directory of the current assembly.");
         return Path.Combine(dir.FullName, "ThreeFingersDragEngine.exe");
     }
 }
