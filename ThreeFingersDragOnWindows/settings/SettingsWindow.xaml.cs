@@ -76,28 +76,7 @@ public sealed partial class SettingsWindow {
     ////////// Close & quit //////////
 
     private void CloseButton_Click(object sender, RoutedEventArgs e){
-        // Close();
-        // Run the console app as admin
-        
-        
-
-        var path = App.GetEnginePath();
-        
-        Debug.WriteLine(path);
-        
-        ProcessStartInfo processInfo = new ProcessStartInfo
-        {
-            UseShellExecute = true,
-            Verb = "runas",
-            FileName = path,
-            Arguments = ""
-        };
-        try{
-            Process.Start(processInfo);
-        }catch(Win32Exception ex){
-            // Do nothing. Probably the user canceled the UAC window
-            Debug.WriteLine(ex);
-        }
+        Close();
     }
 
     private void QuitButton_Click(object sender, RoutedEventArgs e){

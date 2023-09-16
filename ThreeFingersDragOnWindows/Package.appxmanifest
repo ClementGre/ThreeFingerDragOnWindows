@@ -52,6 +52,13 @@
             </uap:VisualElements>
 			
             <Extensions>
+
+                <uap3:Extension Category="windows.appExecutionAlias" EntryPoint="Windows.FullTrustApplication">
+                    <uap3:AppExecutionAlias>
+                        <desktop:ExecutionAlias Alias="ThreeFingersDragOnWindows.exe" />
+                    </uap3:AppExecutionAlias>
+                </uap3:Extension>
+
                 <uap:Extension Category="windows.protocol">
                     <uap:Protocol Name="threefingersdragonwindows"/>
                 </uap:Extension>

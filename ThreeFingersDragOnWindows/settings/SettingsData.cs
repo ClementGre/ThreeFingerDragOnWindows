@@ -12,6 +12,8 @@ public class SettingsData {
     public bool ThreeFingersMove{ get; set; } = true;
     public float MouseSpeed{ get; set; } = 30;
     public float MouseAcceleration{ get; set; } = 1;
+    
+    public bool RunElevated{ get; set; } = true;
 
     public static bool IsFirstRun{ get; set; } = true;
 

@@ -25,6 +25,7 @@
         <PackageCertificateThumbprint>6349A95D0136104C9F4661F4CF74E8F35FA2F9D2</PackageCertificateThumbprint>
         <PackageCertificateKeyFile>ThreeFingersDragOnWindows.pfx</PackageCertificateKeyFile>
         <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <defineconstants>DISABLE_XAML_GENERATED_MAIN</defineconstants>
     </PropertyGroup>
     <ItemGroup>
         <Compile Remove="utils\Intero^p.cs" />
