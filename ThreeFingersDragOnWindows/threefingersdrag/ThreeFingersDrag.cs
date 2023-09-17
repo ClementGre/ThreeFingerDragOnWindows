@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using ThreeFingersDragEngine.utils;
+using ThreeFingersDragOnWindows.utils;
 
-namespace ThreeFingersDragEngine.touchpad;
+namespace ThreeFingersDragOnWindows.threefingersdrag;
 
 public class ThreeFingersDrag {
 

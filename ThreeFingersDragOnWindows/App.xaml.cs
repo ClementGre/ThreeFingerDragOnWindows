@@ -3,64 +3,54 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
 using System.Reflection;
-using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using ThreeFingersDragEngine.utils;
+using ThreeFingersDragOnWindows.dialogs;
 using ThreeFingersDragOnWindows.settings;
+using ThreeFingersDragOnWindows.touchpad;
 using ThreeFingersDragOnWindows.utils;
+using Application = Microsoft.UI.Xaml.Application;
+using Style = Microsoft.UI.Xaml.Style;
 
 namespace ThreeFingersDragOnWindows;
 
+
+
+
 public partial class App : Application {
 
-    public static DispatcherQueue DispatcherQueue;
+    public DispatcherQueue DispatcherQueue;
 
     public static SettingsData SettingsData;
     private SettingsWindow _settingsWindow;
 
-    public TrayWindow TrayWindow;
+    public HandlerWindow HandlerWindow;
 
     public App(){
         Debug.WriteLine("Starting ThreeFingersDragOnWindows...");
         InitializeComponent();
+        
         DispatcherQueue = DispatcherQueue.GetForCurrentThread();
         SettingsData = SettingsData.load();
 
         if(SettingsData.IsFirstRun){
             OpenSettingsWindow();
-            Utils.runOnMainThreadAfter(3000, () => TrayWindow = new TrayWindow(this));
+            Utils.runOnMainThreadAfter(3000, () => HandlerWindow = new HandlerWindow(this));
         } else{
-            TrayWindow = new TrayWindow(this);
+            HandlerWindow = new HandlerWindow(this);
         }
-
-        if(!Environment.GetCommandLineArgs().Contains("FromWPFEngine")){
-            Debug.WriteLine("Not started from WPF Engine -> starting the WPF Engine.");
-            StartWpfEngine(SettingsData.RunElevated);
+        
+        
+        
+        if(!Utils.IsAppRunningAsAdministrator()){
+             RestartElevated();
         }
-    }
-
-    private void SendPipeMessageForDispose(){
-        new Thread(() => {
-            Debug.WriteLine("Sending Dispose message to WPF Engine...");
-            
-            NamedPipeClientStream client = new NamedPipeClientStream(".", "ThreeFingersDragOnWindows-DisposeEngine", PipeDirection.Out);
-            
-            client.Connect();
-            
-            Debug.WriteLine("Connected, sending message...");
-
-            StreamWriter writer = new StreamWriter(client);
-            writer.AutoFlush = true;
-
-            writer.WriteLine("Dispose");
-            writer.Flush();
-            client.Close();
-
-        }).Start();
+        
     }
 
 
@@ -77,33 +67,41 @@ public partial class App : Application {
     }
 
     public void Quit(){
-        SendPipeMessageForDispose();
-        TrayWindow?.Close();
+        HandlerWindow?.Close();
         _settingsWindow?.Close();
     }
 
-    public static void StartWpfEngine(bool elevated){
+    public bool RestartElevated(){
         var path = GetEnginePath();
-        Debug.WriteLine("Runnig the WPF Engine app at " + path);
+        Debug.WriteLine("Runnig the Elevator app at " + path);
         ProcessStartInfo processInfo = new ProcessStartInfo{
+            Verb = "runas",
             UseShellExecute = true,
-            FileName = path,
-            Arguments = "FromWinUIApp"
+            FileName = path
         };
-        if(elevated){
-            processInfo.Verb = "runas";
-        }
 
         try{
             Process.Start(processInfo);
         } catch(Win32Exception ex){
             // Probably the user canceled the UAC window, 
             Debug.WriteLine(ex);
-            if(elevated){
-                Debug.WriteLine("The user canceled the UAC window, running the engine app in non elevated mode.");
-                StartWpfEngine(false);
-            }
+            return false;
         }
+        // Close app
+        Quit();
+        return true;
+    }
+    
+    public void OnTouchpadContact(TouchpadContact[] contacts){
+        _settingsWindow?.OnTouchpadContact(contacts);
+    }
+
+    public bool DoTouchpadExist(){
+        return HandlerWindow.TouchpadExists;
+    }
+
+    public bool DoTouchpadRegistered(){
+        return HandlerWindow.TouchpadRegistered;
     }
 
 

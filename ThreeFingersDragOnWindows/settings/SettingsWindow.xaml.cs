@@ -10,6 +10,7 @@ using ThreeFingersDragOnWindows.utils;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using System.Reflection;
+using ThreeFingersDragEngine.utils;
 
 namespace ThreeFingersDragOnWindows.settings;
 
@@ -89,23 +90,23 @@ public sealed partial class SettingsWindow {
         _app.OnClosePrefsWindow();
     }
 
-    // private int _inputCount;
-    // private long _lastContact;
-    // private long _lastEventSpeed;
-    // public void OnTouchpadContact(TouchpadContact[] contacts){
-    //     _inputCount++;
-    //
-    //     // Event speed is an average over 20 inputs calls (usually about 200 ms)
-    //     if(_inputCount >= 20){
-    //         _inputCount = 0;
-    //         _lastEventSpeed = (Ctms() - _lastContact) / 20;
-    //         _lastContact = Ctms();
-    //     }
-    //     Page currentPage = ContentFrame.Content as Page;
-    //     if(currentPage is ThreeFingersDragSettings threeFingersDragSettings){
-    //         threeFingersDragSettings.UpdateContactsText(string.Join(" | ", contacts.Select(c => c.ToString())) + " | Event speed: " + _lastEventSpeed + "ms");
-    //     }
-    // }
+    private int _inputCount;
+    private long _lastContact;
+    private long _lastEventSpeed;
+    public void OnTouchpadContact(TouchpadContact[] contacts){
+        _inputCount++;
+    
+        // Event speed is an average over 20 inputs calls (usually about 200 ms)
+        if(_inputCount >= 20){
+            _inputCount = 0;
+            _lastEventSpeed = (Ctms() - _lastContact) / 20;
+            _lastContact = Ctms();
+        }
+        Page currentPage = ContentFrame.Content as Page;
+        if(currentPage is ThreeFingersDragSettings threeFingersDragSettings){
+            threeFingersDragSettings.UpdateContactsText(string.Join(" | ", contacts.Select(c => c.ToString())) + " | Event speed: " + _lastEventSpeed + "ms");
+        }
+    }
 
     private long Ctms(){
         return new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();

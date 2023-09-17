@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics;
-using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
 
-namespace ThreeFingersDragEngine.utils; 
+namespace ThreeFingersDragOnWindows.utils; 
 
 public static class StartupManager {
 
@@ -28,7 +27,7 @@ public static class StartupManager {
         taskDefinition.Triggers.Add(logonTrigger);
 
         // Set an action (what the task does)
-        ExecAction execAction = new ExecAction(Utils.GetEnginePath(), "");
+        ExecAction execAction = new ExecAction(Utils.GetElevatorPath(), "");
         taskDefinition.Actions.Add(execAction);
 
         // Register the task

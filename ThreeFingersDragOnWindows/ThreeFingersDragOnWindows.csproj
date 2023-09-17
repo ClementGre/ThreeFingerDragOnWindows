@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
@@ -27,9 +27,6 @@
         <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
         <defineconstants>DISABLE_XAML_GENERATED_MAIN</defineconstants>
     </PropertyGroup>
-    <ItemGroup>
-        <Compile Remove="utils\Intero^p.cs" />
-    </ItemGroup>
     <ItemGroup>
       <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-16.png" />
       <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-24.png" />
@@ -119,7 +116,7 @@
         <ProjectCapability Include="Msix" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\ThreeFingersDragEngine\ThreeFingersDragEngine.csproj" />
+      <ProjectReference Include="..\ThreeFingersDragElevator\ThreeFingersDragElevator.csproj" />
     </ItemGroup>
     <ItemGroup>
       <None Update="Assets\logo-44.targetsize-256.png">
@@ -134,11 +131,6 @@
     <ItemGroup>
       <Resource Remove="settings\SettingsWindow.xaml" />
       <Resource Remove="src\settings\ThreeFingersDragSettings.xaml" />
-    </ItemGroup>
-    <ItemGroup>
-      <Page Update="utils\TrayWindow.xaml">
-        <SubType>Designer</SubType>
-      </Page>
     </ItemGroup>
     
     <!-- 

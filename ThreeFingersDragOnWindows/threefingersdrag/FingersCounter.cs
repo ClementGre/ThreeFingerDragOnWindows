@@ -1,6 +1,7 @@
 ﻿using ThreeFingersDragEngine.utils;
+using ThreeFingersDragOnWindows.utils;
 
-namespace ThreeFingersDragEngine.touchpad;
+namespace ThreeFingersDragOnWindows.threefingersdrag;
 
 public class FingersCounter {
 

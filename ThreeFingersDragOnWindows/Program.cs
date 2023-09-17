@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
 using Application = Microsoft.UI.Xaml.Application;
+using Utils = ThreeFingersDragOnWindows.utils.Utils;
 
 namespace ThreeFingersDragOnWindows;
 
@@ -11,37 +13,69 @@ public class Program {
     [STAThread]
     static async Task<int> Main(string[] args){
         WinRT.ComWrappersSupport.InitializeComWrappers();
-        bool isRedirect = await DecideRedirection();
-        if(!isRedirect){
-            Microsoft.UI.Xaml.Application.Start((p) => {
-                var context = new DispatcherQueueSynchronizationContext(
-                    DispatcherQueue.GetForCurrentThread());
-                SynchronizationContext.SetSynchronizationContext(context);
-                new App();
-            });
-        }
 
+        (AppInstance existingInstance, bool existingInstanceIsAdmin) = FindExistingInstance();
+
+        if(existingInstance != null){
+            if(Utils.IsAppRunningAsAdministrator() && !existingInstanceIsAdmin && TerminateOldInstance(existingInstance.ProcessId)){
+                Debug.WriteLine("Unelevated instance found and killed. Starting the app");
+                StartApp();
+            } else{
+                Debug.WriteLine("Instance found, redirecting activation.");
+                RedirectActivation(existingInstance);
+            }
+        } else{
+            Debug.WriteLine("No instance found, starting the app.");
+            StartApp();
+        }
         return 0;
     }
 
-    private static async Task<bool> DecideRedirection(){
-        bool isRedirect = false;
+    private static void RedirectActivation(AppInstance instance){
         AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
-        AppInstance keyInstance = AppInstance.FindOrRegisterForKey("randomKey");
+        instance.RedirectActivationToAsync(args);
+    }
 
-        if(keyInstance.IsCurrent){
-            keyInstance.Activated += OnActivated;
-        } else{
-            isRedirect = true;
-            await keyInstance.RedirectActivationToAsync(args);
+    private static void StartApp(){
+        AppInstance.FindOrRegisterForKey("ThreeFingersDragOnWindows-SingleInstance-" + (Utils.IsAppRunningAsAdministrator() ? "Admin" : "User"));
+        AppInstance.GetCurrent().Activated += OnActivated;
+
+        Application.Start((p) => {
+            var context = new DispatcherQueueSynchronizationContext(
+                DispatcherQueue.GetForCurrentThread());
+            SynchronizationContext.SetSynchronizationContext(context);
+            new App();
+        });
+    }
+
+    private static (AppInstance, bool) FindExistingInstance(){
+        foreach(AppInstance appInstance in AppInstance.GetInstances()){
+            if(appInstance.IsCurrent) continue;
+            if(appInstance.Key.Equals("ThreeFingersDragOnWindows-SingleInstance-User")){
+                return (appInstance, false);
+            }
+
+            if(appInstance.Key.Equals("ThreeFingersDragOnWindows-SingleInstance-Admin")){
+                return (appInstance, true);
+            }
         }
 
-        return isRedirect;
+        return (null, false);
     }
 
     private static void OnActivated(object sender, AppActivationArguments args){
-        App.DispatcherQueue.TryEnqueue(() => {
-            (Application.Current as App)?.OpenSettingsWindow();
-        });
+        (Application.Current as App)?.DispatcherQueue.TryEnqueue(() => { (Application.Current as App)?.OpenSettingsWindow(); });
+    }
+
+    private static bool TerminateOldInstance(uint processId){
+        try{
+            Process oldInstance = Process.GetProcessById((int) processId);
+            oldInstance.Kill();
+        } catch(Exception ex){
+            Debug.WriteLine(ex);
+            return false;
+        }
+
+        return true;
     }
 }
