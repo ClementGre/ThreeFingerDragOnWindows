@@ -10,21 +10,18 @@ using System.Windows;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using ThreeFingersDragEngine.utils;
-using ThreeFingersDragOnWindows.dialogs;
 using ThreeFingersDragOnWindows.settings;
 using ThreeFingersDragOnWindows.touchpad;
 using ThreeFingersDragOnWindows.utils;
-using Application = Microsoft.UI.Xaml.Application;
-using Style = Microsoft.UI.Xaml.Style;
 
 namespace ThreeFingersDragOnWindows;
 
 
 
 
-public partial class App : Application {
+public partial class App {
 
-    public DispatcherQueue DispatcherQueue;
+    public readonly DispatcherQueue DispatcherQueue;
 
     public static SettingsData SettingsData;
     private SettingsWindow _settingsWindow;
@@ -32,6 +29,10 @@ public partial class App : Application {
     public HandlerWindow HandlerWindow;
 
     public App(){
+        if(!Utils.IsAppRunningAsAdministrator()){
+            if(RestartElevated()) return;
+        }
+        
         Debug.WriteLine("Starting ThreeFingersDragOnWindows...");
         InitializeComponent();
         
@@ -44,13 +45,6 @@ public partial class App : Application {
         } else{
             HandlerWindow = new HandlerWindow(this);
         }
-        
-        
-        
-        if(!Utils.IsAppRunningAsAdministrator()){
-             RestartElevated();
-        }
-        
     }
 
 
@@ -59,7 +53,6 @@ public partial class App : Application {
         _settingsWindow ??= new SettingsWindow(this);
         _settingsWindow.Activate();
         Utils.FocusWindow(_settingsWindow);
-
     }
 
     public void OnClosePrefsWindow(){
@@ -72,8 +65,8 @@ public partial class App : Application {
     }
 
     public bool RestartElevated(){
-        var path = GetEnginePath();
-        Debug.WriteLine("Runnig the Elevator app at " + path);
+        var path = Utils.GetElevatorPath();
+        Debug.WriteLine("Running the Elevator app at " + path);
         ProcessStartInfo processInfo = new ProcessStartInfo{
             Verb = "runas",
             UseShellExecute = true,
@@ -102,12 +95,5 @@ public partial class App : Application {
 
     public bool DoTouchpadRegistered(){
         return HandlerWindow.TouchpadRegistered;
-    }
-
-
-    public static string GetEnginePath(){
-        var dir = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory;
-        if(dir == null) throw new Exception("Could not get the directory of the current assembly.");
-        return Path.Combine(dir.FullName, "ThreeFingersDragEngine.exe");
     }
 }

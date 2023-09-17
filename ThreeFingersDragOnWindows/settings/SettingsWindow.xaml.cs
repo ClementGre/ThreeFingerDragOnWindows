@@ -25,7 +25,7 @@ public sealed partial class SettingsWindow {
 
     public SettingsWindow(App app){
         _app = app;
-        Debug.WriteLine("Starting SettingssWindow...");
+        Debug.WriteLine("Starting SettingsWindow...");
 
 
         InitializeComponent();
