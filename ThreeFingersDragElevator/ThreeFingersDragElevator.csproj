@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 		<SelfContained>true</SelfContained>
+		<RootNamespace>ThreeFingersDragOnWindows</RootNamespace>
     </PropertyGroup>
+
 
 </Project>

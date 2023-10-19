@@ -4,13 +4,64 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wuc="using:WinUICommunity"
     mc:Ignorable="d">
     
-    <StackPanel Margin="20,0,20,0">
-        <TextBlock Text="Inputs..." 
-                   x:Name="ContactsDebug"
-                   Style="{ThemeResource BodyTextBlockStyle}"/>
 
-    </StackPanel>
+    <ScrollView Margin="0"
+                HorizontalAlignment="Stretch"
+                VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20,0,20,0"
+                    ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
+                    Spacing="5">
+            
+                <wuc:SettingsExpander
+                        Description="After releasing the three fingers, using only one or two fingers will instantly release the click. However, if you hang on, the click will be released only after a short delay. This feature allows you to reposition your fingers on the touchpad without releasing the click."
+                        Header="Allow releasing fingers and restarting drag without releasing the click"
+                        HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},
+                                                                    Glyph=&#xEDA7;}"
+                        IsExpanded="True">
+                    <ToggleSwitch />
+                    <wuc:SettingsExpander.Items>
+                        <wuc:SettingsCard Description="Recommended: 500 ms."
+                                              Header="Delay before click release (ms)">
+                            <NumberBox MinWidth="240"
+                                           LargeChange="50"
+                                           Maximum="2000"
+                                           Minimum="0"
+                                           SmallChange="100"
+                                           SpinButtonPlacementMode="Compact" />
+                        </wuc:SettingsCard>
+                    </wuc:SettingsExpander.Items>
+
+                </wuc:SettingsExpander>
+
+                <wuc:SettingsExpander
+                        Description="By default, three-finger movement on the touchpad doesn't affect the mouse pointer. ThreeFingersDragOnWindows autonomously handles cursor movement. This might result in some variations compared to single-finger control. You can customize this behavior here or disable it if you found another way to move the cursor with three fingers."
+                        Header="Enable three fingers mouse move"
+                        HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},
+                                                                    Glyph=&#xEDA7;}"
+                        IsExpanded="True">
+                    <ToggleSwitch />
+                    <wuc:SettingsExpander.Items>
+                        <wuc:SettingsCard Header="Mouse speed">
+                            <Slider MinWidth="240"
+                                        StepFrequency="0.1"
+                                        Maximum="200"
+                                        Minimum="0.5" />
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard Description="Default to 1, 0 to disable."
+                                              Header="Mouse acceleration">
+                            <Slider MinWidth="240"
+                                        StepFrequency="0.02"
+                                        Maximum="5"
+                                        Minimum="0" />
+                        </wuc:SettingsCard>
+                    </wuc:SettingsExpander.Items>
+
+                </wuc:SettingsExpander>
+            
+        </StackPanel>
+    </ScrollView>
 
 </Page>

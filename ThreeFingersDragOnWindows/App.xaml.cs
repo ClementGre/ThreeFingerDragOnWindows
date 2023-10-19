@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using ThreeFingersDragEngine.utils;
 using ThreeFingersDragOnWindows.settings;
 using ThreeFingersDragOnWindows.touchpad;
@@ -23,13 +24,15 @@ public partial class App {
 
     public readonly DispatcherQueue DispatcherQueue;
 
+    public static App Instance;
     public static SettingsData SettingsData;
     private SettingsWindow _settingsWindow;
 
     public HandlerWindow HandlerWindow;
 
     public App(){
-        if(!Utils.IsAppRunningAsAdministrator()){
+        Instance = this;
+        if(!Utils.IsAppRunningAsAdministrator() && false){
             if(RestartElevated()) return;
         }
         
@@ -87,6 +90,9 @@ public partial class App {
     
     public void OnTouchpadContact(TouchpadContact[] contacts){
         _settingsWindow?.OnTouchpadContact(contacts);
+    }
+    public void OnTouchpadInitialized(){
+        _settingsWindow?.OnTouchpadInitialized();
     }
 
     public bool DoTouchpadExist(){

@@ -62,6 +62,11 @@
 
 
             <NavigationView.MenuItems>
+                <NavigationViewItem Content="Touchpad" Tag="Touchpad" x:Name="Touchpad">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE759;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Three Fingers Drag" Tag="ThreeFingersDrag" x:Name="ThreeFingersDrag">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE759;" />

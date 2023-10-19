@@ -13,6 +13,7 @@ public sealed partial class HandlerWindow : Window {
     private readonly ContactsManager _contactsManager;
     private readonly ThreeFingersDrag _threeFingersDrag;
 
+    public bool TouchpadInitialized;
     public bool TouchpadExists;
     public bool TouchpadRegistered;
 
@@ -24,7 +25,11 @@ public sealed partial class HandlerWindow : Window {
         _contactsManager = new ContactsManager(this);
         _threeFingersDrag = new ThreeFingersDrag();
 
-        _contactsManager.InitializeSource();
+        // Let the _handlerWindow to be defined in App.xaml.cs before initializing the source
+        Utils.runOnMainThreadAfter(100, () => {
+            _contactsManager.InitializeSource();
+        });
+        
     }
 
     // TaskbarIcon Actions
@@ -47,6 +52,9 @@ public sealed partial class HandlerWindow : Window {
         if(!touchpadExists) Debug.WriteLine("Touchpad is not detected.");
         else if(!touchpadRegistered) Debug.WriteLine("Touchpad is detected but not registered.");
         else Debug.WriteLine("Touchpad is detected and registered.");
+        
+        TouchpadInitialized = true;
+        _app.OnTouchpadInitialized();
     }
 
     // Called when a new set of contacts has been registered

@@ -1,0 +1,8 @@
+﻿<win:ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:labs="using:WinUICommunity" xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" xmlns:local="using:WinUICommunity" xmlns:contract5NotPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract,5)" xmlns:contract5Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,5)" xmlns:contract7NotPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract,7)" xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,7)">
+    <win:TransitionCollection x:Key="SettingsCardsAnimations">
+        <win:EntranceThemeTransition FromVerticalOffset="50" />
+        <!--  Animates cards when loaded  -->
+        <win:RepositionThemeTransition IsStaggeringEnabled="False" />
+        <!--  Smoothly animates individual cards upon whenever Expanders are expanded/collapsed  -->
+    </win:TransitionCollection>
+</win:ResourceDictionary>

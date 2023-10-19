@@ -8,8 +8,4 @@ public sealed partial class ThreeFingersDragSettings {
         InitializeComponent();
     }
 
-    public void UpdateContactsText(string text){
-        ContactsDebug.Text = text;
-    }
-
 }

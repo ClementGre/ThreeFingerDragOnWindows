@@ -15,7 +15,7 @@ using ThreeFingersDragEngine.utils;
 namespace ThreeFingersDragOnWindows.settings;
 
 public sealed partial class SettingsWindow {
-    private readonly App _app;
+    public readonly App App;
     
     /*private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
     {
@@ -24,7 +24,7 @@ public sealed partial class SettingsWindow {
     }*/
 
     public SettingsWindow(App app){
-        _app = app;
+        App = app;
         Debug.WriteLine("Starting SettingsWindow...");
 
 
@@ -34,11 +34,9 @@ public sealed partial class SettingsWindow {
         ExtendsContentIntoTitleBar = true; // enable custom titlebar
         SetTitleBar(TitleBar); // set TitleBar element as titlebar
         
-        NavigationView.SelectedItem = ThreeFingersDrag;
+        NavigationView.SelectedItem = Touchpad;
 
-        /* TouchpadExists.Text = _app.DoTouchpadExist() ? "Yes" : "No";
-        TouchpadRegistered.Text = _app.DoTouchpadRegistered() ? "Yes" : "No";
-
+        /* 
         AllowReleaseAndRestart.IsChecked = App.Prefs.AllowReleaseAndRestart;
         AllowReleaseAndRestart.Checked += (_, _) => App.Prefs.AllowReleaseAndRestart = true;
         AllowReleaseAndRestart.Unchecked += (_, _) => App.Prefs.AllowReleaseAndRestart = false;
@@ -64,7 +62,11 @@ public sealed partial class SettingsWindow {
 
 
     private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e){
-        if(e.SelectedItem.Equals(ThreeFingersDrag)){
+        if(e.SelectedItem.Equals(Touchpad)){
+            sender.Header = "Touchpad";
+            ContentFrame.Navigate(typeof(TouchpadSettings));
+            
+        }if(e.SelectedItem.Equals(ThreeFingersDrag)){
             sender.Header = "Three Fingers Drag";
             ContentFrame.Navigate(typeof(ThreeFingersDragSettings));
             
@@ -81,13 +83,13 @@ public sealed partial class SettingsWindow {
     }
 
     private void QuitButton_Click(object sender, RoutedEventArgs e){
-        _app.Quit();
+        App.Quit();
     }
 
     private void Window_Closed(object sender, WindowEventArgs e){
         Debug.WriteLine("Hiding SettingsWindow, saving data...");
         App.SettingsData.save();
-        _app.OnClosePrefsWindow();
+        App.OnClosePrefsWindow();
     }
 
     private int _inputCount;
@@ -103,8 +105,14 @@ public sealed partial class SettingsWindow {
             _lastContact = Ctms();
         }
         Page currentPage = ContentFrame.Content as Page;
-        if(currentPage is ThreeFingersDragSettings threeFingersDragSettings){
-            threeFingersDragSettings.UpdateContactsText(string.Join(" | ", contacts.Select(c => c.ToString())) + " | Event speed: " + _lastEventSpeed + "ms");
+        if(currentPage is TouchpadSettings touchpadSettings){
+            touchpadSettings.UpdateContactsText(string.Join('\n', contacts.Select(c => c.ToString())) + "\nEvent speed: " + _lastEventSpeed + "ms");
+        }
+    }
+    public void OnTouchpadInitialized(){
+        Page currentPage = ContentFrame.Content as Page;
+        if(currentPage is TouchpadSettings touchpadSettings){
+            touchpadSettings.OnTouchpadInitialized();
         }
     }
 
