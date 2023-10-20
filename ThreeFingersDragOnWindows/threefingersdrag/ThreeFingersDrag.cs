@@ -38,7 +38,7 @@ public class ThreeFingersDrag {
 
         } else if(fingersCount >= 3 && areContactsIdsCommons && _isDragging){
             // Dragging
-            if(App.SettingsData.ThreeFingersMove){
+            if(App.SettingsData.ThreeFingersDragCursorMove){
                 Debug.WriteLine("    MOVING, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
 
                 Point delta = DistanceManager.ApplySpeedAndAcc(longestDistDelta, longestDist2D, (int) elapsed);
@@ -70,7 +70,7 @@ public class ThreeFingersDrag {
 
     private int GetReleaseDelay(){
         // Delay after which the click is released if no input is detected
-        return App.SettingsData.AllowReleaseAndRestart ? Math.Max(App.SettingsData.ReleaseDelay, RELEASE_FINGERS_THRESHOLD_MS) : RELEASE_FINGERS_THRESHOLD_MS;
+        return App.SettingsData.ThreeFingersDragAllowReleaseAndRestart ? Math.Max(App.SettingsData.ThreeFingersDragReleaseDelay, RELEASE_FINGERS_THRESHOLD_MS) : RELEASE_FINGERS_THRESHOLD_MS;
     }
 
 }

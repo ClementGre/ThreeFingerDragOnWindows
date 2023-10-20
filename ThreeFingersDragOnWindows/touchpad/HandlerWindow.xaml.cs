@@ -14,7 +14,7 @@ public sealed partial class HandlerWindow : Window {
     private readonly ContactsManager _contactsManager;
     private readonly ThreeFingersDrag _threeFingersDrag;
 
-    public bool TouchpadInitialized;
+    public bool TouchpadInitialized; // Became true when the touchpad check is done, but does not confirm that the touchpad has been registered, see TouchpadRegistered
     public bool TouchpadExists;
     public bool TouchpadRegistered;
 
@@ -32,12 +32,20 @@ public sealed partial class HandlerWindow : Window {
             _contactsManager.InitializeSource();
             
             Timer timer = new Timer();
-            
             timer.Interval = 1000; 
             timer.AutoReset = true;
-            timer.Elapsed += (sender, args) => {
-                queue.TryEnqueue(() => _contactsManager.InitializeSource());
-            };
+            timer.Elapsed += (sender, args) => queue.TryEnqueue(() => {
+                if(!App.SettingsData.RegularTouchpadCheck){
+                    timer.Interval = 5000;
+                    return;
+                }
+                if(App.SettingsData.RegularTouchpadCheckInterval > 0){
+                    timer.Interval = App.SettingsData.RegularTouchpadCheckInterval * 1000;
+                }
+                if(TouchpadInitialized && (!TouchpadRegistered || App.SettingsData.RegularTouchpadCheckEvenAlreadyRegistered)){
+                    _contactsManager.InitializeSource();
+                }
+            });
             timer.Start();
         });
         
@@ -74,9 +82,11 @@ public sealed partial class HandlerWindow : Window {
     private long _lastContactCtms = Ctms();
     
     public void OnTouchpadContact(TouchpadContact[] contacts){
-        _threeFingersDrag.OnTouchpadContact(_oldContacts, contacts, Ctms() - _lastContactCtms);
-        _app.OnTouchpadContact(contacts); // Transfer to App for displaying contacts in SettingsWindow
+        if(App.SettingsData.ThreeFingersDrag){
+            _threeFingersDrag.OnTouchpadContact(_oldContacts, contacts, Ctms() - _lastContactCtms);
+        }
         
+        _app.OnTouchpadContact(contacts); // Transfer to App for displaying contacts in SettingsWindow
         _lastContactCtms = Ctms();
         _oldContacts = contacts;
     }

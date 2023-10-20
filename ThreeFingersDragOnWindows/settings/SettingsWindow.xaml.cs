@@ -15,7 +15,7 @@ using ThreeFingersDragEngine.utils;
 namespace ThreeFingersDragOnWindows.settings;
 
 public sealed partial class SettingsWindow {
-    public readonly App App;
+    private readonly App App;
     
     /*private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
     {

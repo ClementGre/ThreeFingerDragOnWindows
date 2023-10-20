@@ -19,14 +19,19 @@
                               Description="ThreeFingersDragOnWindows will lunch automatically."
                               HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},
                                                                     Glyph=&#xF83E;}">
-                <ToggleSwitch />
+                <ToggleSwitch x:Name="RunAtStartup" Toggled="RunAtStartup_Toggled"/>
             </wuc:SettingsCard>
             <wuc:SettingsCard Header="Run as administrator"
                               Description="If the app is not running as an administrator, the dragging processes will not function when a window with administrator privileges is in focus."
                               HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},
                                                                     Glyph=&#xE7EF;}">
-                <ToggleSwitch />
+                <ToggleSwitch x:Name="RunElevated" Toggled="RunElevated_Toggled" IsOn="{x:Bind RunElevatedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </wuc:SettingsCard>
+            <InfoBar Title=""
+                     x:Name="ElevatedStatus"
+                     IsClosable="False"
+                     IsOpen="True"
+                     Severity="Informational" />
             
             <wuc:SettingsGroup Header="About">
                 <wuc:SettingsExpander Description="© 2023. All rights reserved."

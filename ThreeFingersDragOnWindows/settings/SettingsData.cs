@@ -7,15 +7,27 @@ using Windows.Storage;
 namespace ThreeFingersDragOnWindows.settings;
 
 public class SettingsData {
-    public bool AllowReleaseAndRestart{ get; set; } = true;
-    public int ReleaseDelay{ get; set; } = 500;
-
-    public bool ThreeFingersMove{ get; set; } = true;
-    public float MouseSpeed{ get; set; } = 30;
-    public float MouseAcceleration{ get; set; } = 1;
     
-    public bool RunElevated{ get; set; } = true;
+    // Three fingers drag Settings
+    public bool RegularTouchpadCheck{ get; set; } = true;
+    public int RegularTouchpadCheckInterval{ get; set; } = 5;
+    public bool RegularTouchpadCheckEvenAlreadyRegistered{ get; set; } = false;
+    
+    // Three fingers drag Settings
+    public bool ThreeFingersDrag{ get; set; } = true;
+    
+    public bool ThreeFingersDragAllowReleaseAndRestart{ get; set; } = true;
+    public int ThreeFingersDragReleaseDelay{ get; set; } = 500;
 
+    public bool ThreeFingersDragCursorMove{ get; set; } = true;
+    public float ThreeFingersDragCursorSpeed{ get; set; } = 25;
+    public float ThreeFingersDragCursorAcceleration{ get; set; } = 1;
+    
+    
+    // Other settings
+    public bool RunElevated{ get; set; } = false;
+
+    // Other
     public static bool IsFirstRun{ get; set; } = true;
 
     public static SettingsData load(){

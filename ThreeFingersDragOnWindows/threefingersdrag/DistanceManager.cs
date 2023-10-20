@@ -81,7 +81,7 @@ public class DistanceManager {
     public static Point ApplySpeedAndAcc(Point delta, float dist2d, int elapsed){
 
         // Apply Speed
-        delta.Multiply(App.SettingsData.MouseSpeed / 60);
+        delta.Multiply(App.SettingsData.ThreeFingersDragCursorSpeed / 60);
 
         // Calculate the mouse velocity
         var mouseVelocity = (float) Math.Max(0.2, Math.Min(dist2d / elapsed, 20));
@@ -89,9 +89,9 @@ public class DistanceManager {
 
 
         float pointerVelocity = 1;
-        if(App.SettingsData.MouseAcceleration != 0){
+        if(App.SettingsData.ThreeFingersDragCursorAcceleration != 0){
             // Apply acceleration
-            pointerVelocity = (float) (App.SettingsData.MouseAcceleration / 10 * Math.Pow(mouseVelocity, 2) +
+            pointerVelocity = (float) (App.SettingsData.ThreeFingersDragCursorAcceleration / 10 * Math.Pow(mouseVelocity, 2) +
                                        0.4 * mouseVelocity);
             // Clamp
             pointerVelocity = (float) Math.Max(0.4, Math.Min(pointerVelocity, 1.6));
@@ -104,7 +104,7 @@ public class DistanceManager {
     }
 
     public static float ApplySpeed(float distance){
-        distance *= App.SettingsData.MouseSpeed / 60;
+        distance *= App.SettingsData.ThreeFingersDragCursorSpeed / 60;
         return distance;
     }
 

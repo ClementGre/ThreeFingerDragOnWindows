@@ -1,24 +1,12 @@
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.IO.Pipes;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
 using ThreeFingersDragEngine.utils;
 using ThreeFingersDragOnWindows.settings;
 using ThreeFingersDragOnWindows.touchpad;
 using ThreeFingersDragOnWindows.utils;
 
 namespace ThreeFingersDragOnWindows;
-
-
-
 
 public partial class App {
 
@@ -32,16 +20,16 @@ public partial class App {
 
     public App(){
         Instance = this;
-        if(!Utils.IsAppRunningAsAdministrator() && false){
+        DispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        SettingsData = SettingsData.load();
+        
+        if(SettingsData.RunElevated && !Utils.IsAppRunningAsAdministrator()){
             if(RestartElevated()) return;
         }
         
         Debug.WriteLine("Starting ThreeFingersDragOnWindows...");
         InitializeComponent();
         
-        DispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        SettingsData = SettingsData.load();
-
         if(SettingsData.IsFirstRun){
             OpenSettingsWindow();
             Utils.runOnMainThreadAfter(3000, () => HandlerWindow = new HandlerWindow(this));
@@ -67,7 +55,7 @@ public partial class App {
         _settingsWindow?.Close();
     }
 
-    public bool RestartElevated(){
+    public static bool RestartElevated(){
         var path = Utils.GetElevatorPath();
         Debug.WriteLine("Running the Elevator app at " + path);
         ProcessStartInfo processInfo = new ProcessStartInfo{
@@ -84,7 +72,7 @@ public partial class App {
             return false;
         }
         // Close app
-        Quit();
+        Instance.Quit();
         return true;
     }
     

@@ -37,5 +37,23 @@ public sealed partial class TouchpadSettings {
             ContactsDebug.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
         }
     }
+    
+    public bool RegularTouchpadCheckProperty
+    {
+        get { return App.SettingsData.RegularTouchpadCheck; }
+        set { App.SettingsData.RegularTouchpadCheck = value; }
+    }
+    
+    public int RegularTouchpadCheckIntervalProperty
+    {
+        get { return App.SettingsData.RegularTouchpadCheckInterval; }
+        set { App.SettingsData.RegularTouchpadCheckInterval = value; }
+    }
+    
+    public bool RegularTouchpadCheckEvenAlreadyRegisteredProperty
+    {
+        get { return App.SettingsData.RegularTouchpadCheckEvenAlreadyRegistered; }
+        set { App.SettingsData.RegularTouchpadCheckEvenAlreadyRegistered = value; }
+    }
 
 }
