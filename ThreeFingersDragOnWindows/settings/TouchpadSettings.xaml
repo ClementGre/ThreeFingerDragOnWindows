@@ -11,9 +11,19 @@
     <ScrollView Margin="0"
                 HorizontalAlignment="Stretch"
                 VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="20,0,20,0"
+        <StackPanel Margin="20,0,20,20"
                     ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
                     Spacing="5">
+            
+            <StackPanel Orientation="Horizontal" x:Name="Loader">
+                <ProgressRing Width="20"
+                              Height="20"
+                              Margin="18,18"
+                              IsActive="True" />
+                <TextBlock VerticalAlignment="Center"
+                           Style="{ThemeResource BodyTextBlockStyle}"
+                           Text="Initializing touchpad service..." />
+            </StackPanel>
             
             <InfoBar Title=""
                      x:Name="TouchpadStatus"
@@ -26,6 +36,34 @@
                      IsClosable="False"
                      IsOpen="True"
                      Severity="Informational" />
+            
+            
+            
+            <wuc:SettingsGroup Header="Touchpad detection update">
+                
+                <wuc:SettingsExpander
+                    Header="Check if a touchpad is detected on a regular basis if no touchpad have been detected"
+                    Description="This is useful if you use an external touchpad that is not always connected. Resource consumption is minimal."
+                    HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE8EE;}"
+                    IsExpanded="True">
+                    <ToggleSwitch />
+                    <wuc:SettingsExpander.Items>
+                        <wuc:SettingsCard Header="Update interval"
+                                          Description="Recommended: 5 s.">
+                            <Slider MinWidth="240"
+                                    StepFrequency="1"
+                                    Maximum="60"
+                                    Minimum="1" />
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard Header="Update even if a touchpad is already registered"
+                                          Description="This can help is you use different external touchpads on the same computer.">
+                            <ToggleSwitch />
+                        </wuc:SettingsCard>
+                    </wuc:SettingsExpander.Items>
+
+                </wuc:SettingsExpander>
+                
+            </wuc:SettingsGroup>
             
         </StackPanel>
     </ScrollView>

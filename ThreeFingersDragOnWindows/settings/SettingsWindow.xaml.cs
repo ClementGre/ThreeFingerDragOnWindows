@@ -72,6 +72,7 @@ public sealed partial class SettingsWindow {
             
         } else if(e.SelectedItem.Equals(OtherSettings)){
             sender.Header = "Other Settings";
+            ContentFrame.Navigate(typeof(OtherSettings));
         }
     }
 

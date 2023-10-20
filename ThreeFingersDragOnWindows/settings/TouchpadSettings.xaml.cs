@@ -5,8 +5,8 @@ public sealed partial class TouchpadSettings {
     public TouchpadSettings(){
         InitializeComponent();
         if(App.Instance.HandlerWindow == null || !App.Instance.HandlerWindow.TouchpadInitialized){
-            TouchpadStatus.Title = "Registering touchpad...";
-            TouchpadStatus.Severity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational;
+            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            TouchpadStatus.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             ContactsDebug.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
         } else{
             OnTouchpadInitialized();
@@ -18,6 +18,9 @@ public sealed partial class TouchpadSettings {
     }
 
     public void OnTouchpadInitialized(){
+        Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+        TouchpadStatus.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+        
         if(App.Instance.HandlerWindow.TouchpadExists){
             if(App.Instance.HandlerWindow.TouchpadRegistered){
                 TouchpadStatus.Title = "Touchpad exists and is registered !";

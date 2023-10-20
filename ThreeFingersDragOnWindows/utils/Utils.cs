@@ -16,9 +16,6 @@ class Utils {
         timer.AutoReset = false;
         timer.Start();
     }
-    public static void runOnMainThread(Action action){
-        DispatcherQueue.GetForCurrentThread().TryEnqueue(() => action());
-    }
     
     [DllImport("user32.dll")]
     public static extern bool SetForegroundWindow(IntPtr hWnd);

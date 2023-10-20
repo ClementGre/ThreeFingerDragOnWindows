@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Timers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
 using ThreeFingersDragEngine.utils;
@@ -26,8 +27,18 @@ public sealed partial class HandlerWindow : Window {
         _threeFingersDrag = new ThreeFingersDrag();
 
         // Let the _handlerWindow to be defined in App.xaml.cs before initializing the source
+        var queue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         Utils.runOnMainThreadAfter(100, () => {
             _contactsManager.InitializeSource();
+            
+            Timer timer = new Timer();
+            
+            timer.Interval = 1000; 
+            timer.AutoReset = true;
+            timer.Elapsed += (sender, args) => {
+                queue.TryEnqueue(() => _contactsManager.InitializeSource());
+            };
+            timer.Start();
         });
         
     }

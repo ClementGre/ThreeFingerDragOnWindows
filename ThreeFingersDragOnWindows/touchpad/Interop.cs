@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace ThreeFingersDragOnWindows.utils;
+namespace ThreeFingersDragOnWindows.touchpad;
 
 // From https://www.travelneil.com/wndproc-in-uwp.html
 internal class Interop {

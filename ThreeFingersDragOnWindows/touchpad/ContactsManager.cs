@@ -14,23 +14,22 @@ public class ContactsManager {
 
     private long _lastInput;
 
-
+    private readonly IntPtr _hwnd;
     private IntPtr _oldWndProc;
 
     public ContactsManager(HandlerWindow source){
         _source = source;
+        
+        _hwnd = WindowNative.GetWindowHandle(_source);
+        _oldWndProc = Interop.SetWndProc(_hwnd, WindowProcess);
     }
 
     public void InitializeSource(){
         var touchpadExists = TouchpadHelper.Exists();
         Debug.WriteLine("Touchpad exists: " + touchpadExists);
 
-
-        var hwnd = WindowNative.GetWindowHandle(_source);
-        _oldWndProc = Interop.SetWndProc(hwnd, WindowProcess);
-
-        var success = touchpadExists && TouchpadHelper.RegisterInput(hwnd);
-
+        var success = touchpadExists && TouchpadHelper.RegisterInput(_hwnd);
+        
         _source.OnTouchpadInitialized(touchpadExists, success);
     }
 
