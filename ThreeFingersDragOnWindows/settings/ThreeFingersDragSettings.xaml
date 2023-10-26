@@ -95,17 +95,17 @@
                     <wuc:SettingsCard Header="Mouse speed"
                                       IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
                         <Slider MinWidth="240"
-                                StepFrequency="0.2"
+                                StepFrequency="1"
                                 Maximum="200"
-                                Minimum="0.5"
+                                Minimum="1"
                                 Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </wuc:SettingsCard>
                     <wuc:SettingsCard Description="Default to 1, 0 to disable."
                                       Header="Mouse acceleration"
                                       IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
                         <Slider MinWidth="240"
-                                StepFrequency="0.02"
-                                Maximum="5"
+                                StepFrequency="0.1"
+                                Maximum="3"
                                 Minimum="0"
                                 Value="{x:Bind CursorAccelerationProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </wuc:SettingsCard>

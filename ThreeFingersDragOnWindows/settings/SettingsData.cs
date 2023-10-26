@@ -20,7 +20,7 @@ public class SettingsData {
     public int ThreeFingersDragReleaseDelay{ get; set; } = 500;
 
     public bool ThreeFingersDragCursorMove{ get; set; } = true;
-    public float ThreeFingersDragCursorSpeed{ get; set; } = 25;
+    public float ThreeFingersDragCursorSpeed{ get; set; } = 30;
     public float ThreeFingersDragCursorAcceleration{ get; set; } = 1;
     
     

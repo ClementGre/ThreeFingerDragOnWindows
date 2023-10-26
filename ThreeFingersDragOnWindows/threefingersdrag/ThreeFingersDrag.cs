@@ -41,7 +41,7 @@ public class ThreeFingersDrag {
             if(App.SettingsData.ThreeFingersDragCursorMove){
                 Debug.WriteLine("    MOVING, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
 
-                Point delta = DistanceManager.ApplySpeedAndAcc(longestDistDelta, longestDist2D, (int) elapsed);
+                Point delta = DistanceManager.ApplySpeedAndAcc(longestDistDelta, (int) elapsed);
                 MouseOperations.ShiftCursorPosition(delta.x, delta.y);
 
                 _dragEndTimer.Stop();
