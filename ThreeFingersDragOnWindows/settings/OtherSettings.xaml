@@ -15,12 +15,30 @@
                     ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
                     Spacing="5">
             
+            
+            
             <wuc:SettingsCard Header="Run at startup"
                               Description="ThreeFingersDragOnWindows will lunch automatically."
                               HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},
                                                                     Glyph=&#xF83E;}">
-                <ToggleSwitch x:Name="RunAtStartup" Toggled="RunAtStartup_Toggled"/>
+                <ToggleSwitch x:Name="RunAtStartup"
+                              Toggled="RunAtStartup_Toggled"/>
             </wuc:SettingsCard>
+            
+            <InfoBar Title=""
+                     x:Name="StartupStatus"
+                     IsClosable="False"
+                     IsOpen="True"
+                     Severity="Informational" />
+            
+            <InfoBar Title="The app is set to run with administrator privileges. The start task of the task manager is then disabled. Another task is registered in the task scheduler to start the app without the UAC prompt."
+                     x:Name="ElevatedStartupInformation"
+                     IsClosable="False"
+                     IsOpen="True"
+                     Severity="Informational" />
+            
+            
+            
             <wuc:SettingsCard Header="Run as administrator"
                               Description="If the app is not running as an administrator, the dragging processes will not function when a window with administrator privileges is in focus."
                               HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},

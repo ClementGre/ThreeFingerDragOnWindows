@@ -25,10 +25,21 @@ public class SettingsData {
     
     
     // Other settings
+    
+    public enum StartupActioType {
+        NONE,
+        ENABLE_ELEVATED_RUN_WITH_STARTUP,
+        DISABLE_ELEVATED_RUN_WITH_STARTUP,
+        ENABLE_ELEVATED_STARTUP,
+        DISABLE_ELEVATED_STARTUP,
+    }
+
+    public StartupActioType StartupAction{ get; set; } = StartupActioType.NONE;
+    
     public bool RunElevated{ get; set; } = false;
 
     // Other
-    public static bool IsFirstRun{ get; set; } = true;
+    public static bool IsFirstRun{ get; set; } = false;
 
     public static SettingsData load(){
         var mySerializer = new XmlSerializer(typeof(SettingsData));

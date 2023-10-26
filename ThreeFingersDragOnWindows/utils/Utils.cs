@@ -10,7 +10,10 @@ namespace ThreeFingersDragOnWindows.utils;
 
 class Utils {
     public static void runOnMainThreadAfter(int ms, Action action){
-        var queue = DispatcherQueue.GetForCurrentThread();
+        runOnMainThreadAfter(ms, DispatcherQueue.GetForCurrentThread(), action);
+    }
+
+    public static void runOnMainThreadAfter(int ms, DispatcherQueue queue, Action action){
         var timer = new System.Timers.Timer(ms);
         timer.Elapsed += (_, _) => queue.TryEnqueue(() => action());
         timer.AutoReset = false;

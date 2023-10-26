@@ -26,12 +26,38 @@ public partial class App {
         if(SettingsData.RunElevated && !Utils.IsAppRunningAsAdministrator()){
             if(RestartElevated()) return;
         }
-        
         Debug.WriteLine("Starting ThreeFingersDragOnWindows...");
         InitializeComponent();
         
-        if(SettingsData.IsFirstRun){
-            OpenSettingsWindow();
+        bool openOtherSettings = false;
+        if(SettingsData.StartupAction != SettingsData.StartupActioType.NONE){
+            if(Utils.IsAppRunningAsAdministrator()){
+                openOtherSettings = true;
+                switch(SettingsData.StartupAction){
+                    case SettingsData.StartupActioType.ENABLE_ELEVATED_RUN_WITH_STARTUP :
+                        StartupManager.EnableElevatedStartup();
+                        SettingsData.RunElevated = true;
+                        break;
+                    case SettingsData.StartupActioType.DISABLE_ELEVATED_RUN_WITH_STARTUP :
+                        StartupManager.DisableElevatedStartup();
+                        StartupManager.EnableUnelevatedStartup();
+                        SettingsData.RunElevated = false;
+                        break;
+                    case SettingsData.StartupActioType.ENABLE_ELEVATED_STARTUP :
+                        StartupManager.EnableElevatedStartup();
+                        break;
+                    case SettingsData.StartupActioType.DISABLE_ELEVATED_STARTUP :
+                        StartupManager.DisableElevatedStartup();
+                        StartupManager.EnableUnelevatedStartup();
+                        break;
+                }
+            }
+            SettingsData.StartupAction = SettingsData.StartupActioType.NONE;
+            SettingsData.save();
+        }
+        
+        if(SettingsData.IsFirstRun || openOtherSettings || true){
+            OpenSettingsWindow(openOtherSettings);
             Utils.runOnMainThreadAfter(3000, () => HandlerWindow = new HandlerWindow(this));
         } else{
             HandlerWindow = new HandlerWindow(this);
@@ -39,9 +65,9 @@ public partial class App {
     }
 
 
-    public void OpenSettingsWindow(){
+    public void OpenSettingsWindow(bool openOtherSettings = false){
         Debug.WriteLine("Opening SettingsWindow...");
-        _settingsWindow ??= new SettingsWindow(this);
+        _settingsWindow ??= new SettingsWindow(this, openOtherSettings);
         _settingsWindow.Activate();
         Utils.FocusWindow(_settingsWindow);
     }
@@ -55,7 +81,10 @@ public partial class App {
         _settingsWindow?.Close();
     }
 
-    public static bool RestartElevated(){
+    public static bool RestartElevated(SettingsData.StartupActioType startupActioType = SettingsData.StartupActioType.NONE){
+        SettingsData.StartupAction = startupActioType;
+        SettingsData.save();
+        
         var path = Utils.GetElevatorPath();
         Debug.WriteLine("Running the Elevator app at " + path);
         ProcessStartInfo processInfo = new ProcessStartInfo{
@@ -68,6 +97,8 @@ public partial class App {
             Process.Start(processInfo);
         } catch(Win32Exception ex){
             // Probably the user canceled the UAC window, 
+            SettingsData.StartupAction = SettingsData.StartupActioType.NONE;
+            SettingsData.save();
             Debug.WriteLine(ex);
             return false;
         }

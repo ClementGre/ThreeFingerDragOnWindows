@@ -23,7 +23,7 @@ public sealed partial class SettingsWindow {
         e.Handled = regex.IsMatch(e.Text);
     }*/
 
-    public SettingsWindow(App app){
+    public SettingsWindow(App app, bool openOtherSettings){
         App = app;
         Debug.WriteLine("Starting SettingsWindow...");
 
@@ -34,30 +34,7 @@ public sealed partial class SettingsWindow {
         ExtendsContentIntoTitleBar = true; // enable custom titlebar
         SetTitleBar(TitleBar); // set TitleBar element as titlebar
         
-        NavigationView.SelectedItem = Touchpad;
-
-        /* 
-        AllowReleaseAndRestart.IsChecked = App.Prefs.AllowReleaseAndRestart;
-        AllowReleaseAndRestart.Checked += (_, _) => App.Prefs.AllowReleaseAndRestart = true;
-        AllowReleaseAndRestart.Unchecked += (_, _) => App.Prefs.AllowReleaseAndRestart = false;
-        ReleaseDelay.Text = App.Prefs.ReleaseDelay.ToString();
-        ReleaseDelay.TextChanged += (_, _) => {
-            if (!int.TryParse(ReleaseDelay.Text, out var delay))
-            {
-                ReleaseDelay.Text = App.Prefs.ReleaseDelay.ToString();
-                return;
-            }
-
-            App.Prefs.ReleaseDelay = delay;
-        };
-
-        ThreeFingersMove.IsChecked = App.Prefs.ThreeFingersMove;
-        ThreeFingersMove.Checked += (_, _) => App.Prefs.ThreeFingersMove = true;
-        ThreeFingersMove.Unchecked += (_, _) => App.Prefs.ThreeFingersMove = false;
-        MouseSpeed.Value = App.Prefs.MouseSpeed;
-        MouseSpeed.ValueChanged += (_, _) => App.Prefs.MouseSpeed = (float)MouseSpeed.Value;
-        MouseAcceleration.Value = App.Prefs.MouseAcceleration;
-        MouseAcceleration.ValueChanged += (_, _) => App.Prefs.MouseAcceleration = (float)MouseAcceleration.Value; */
+        NavigationView.SelectedItem = openOtherSettings ? OtherSettings : Touchpad;
     }
 
 
@@ -90,6 +67,10 @@ public sealed partial class SettingsWindow {
     private void Window_Closed(object sender, WindowEventArgs e){
         Debug.WriteLine("Hiding SettingsWindow, saving data...");
         App.SettingsData.save();
+        
+        // Navigate to another page, so the "OnNavigatedFrom()" of OtherSettings gets called (for the timer).
+        ContentFrame.Navigate(typeof(TouchpadSettings));
+        
         App.OnClosePrefsWindow();
     }
 
