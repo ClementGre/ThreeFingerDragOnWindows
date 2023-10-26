@@ -56,7 +56,7 @@ public partial class App {
             SettingsData.save();
         }
         
-        if(SettingsData.IsFirstRun || openOtherSettings || true){
+        if(SettingsData.IsFirstRun || openOtherSettings){
             OpenSettingsWindow(openOtherSettings);
             Utils.runOnMainThreadAfter(3000, () => HandlerWindow = new HandlerWindow(this));
         } else{
