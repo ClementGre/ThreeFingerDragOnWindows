@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.UI.Xaml;
 
 namespace ThreeFingersDragOnWindows.settings;
 
@@ -6,6 +8,10 @@ public sealed partial class ThreeFingersDragSettings {
 
     public ThreeFingersDragSettings(){
         InitializeComponent();
+    }
+
+    private void OpenSettings(object sender, RoutedEventArgs e){
+        Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:devices-touchpad"));
     }
     
     public bool EnabledProperty
@@ -43,5 +49,4 @@ public sealed partial class ThreeFingersDragSettings {
         get { return App.SettingsData.ThreeFingersDragCursorAcceleration; }
         set { App.SettingsData.ThreeFingersDragCursorAcceleration = value; }
     }
-
 }

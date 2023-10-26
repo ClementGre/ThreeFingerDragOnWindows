@@ -17,13 +17,47 @@
 
             <wuc:SettingsCard
                 Description="Allows to select text, drag windows and other objects with three fingers on the touchpad (left click simulation)."
-                HeaderIcon="{wuc:BitmapIcon Source='ms-appx:///Assets/icon-threefingers.png', ShowAsMonochrome=True}" 
+                HeaderIcon="{wuc:BitmapIcon Source='ms-appx:///Assets/icon-threefingers.png', ShowAsMonochrome=True}"
                 Header="Enable three fingers drag">
                 <ToggleSwitch x:Name="Enabled"
                               IsOn="{x:Bind EnabledProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </wuc:SettingsCard>
-            
-            
+
+            <wuc:SettingsExpander
+                IsEnabled="{Binding ElementName=Enabled, Path=IsOn}"
+                Description="You can do this in the windows settings (Bluetooth &amp; Devices > Touchpad). You can also disable the &quot;Tap twice and drag to multi-select&quot;."
+                Header="Make sure to disable windows three fingers drag gestures"
+                IsExpanded="False"
+                HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xEA37;}">
+                <HyperlinkButton Content="Go to Settings"
+                        Click="OpenSettings"/>
+                <wuc:SettingsExpander.ItemsHeader>
+                    <InfoBar
+                             BorderThickness="0"
+                             CornerRadius="0"
+                             IsIconVisible="False"
+                             IsOpen="True"
+                             IsClosable="False"
+                             Severity="Informational"
+                             Margin="-17,0,0,0">
+                        <Grid Margin="5"
+                              ColumnSpacing="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Image Source="ms-appx:///Assets/TouchpadThreeFingersSettings.png"
+                                   Grid.Column="0"
+                                   VerticalAlignment="Top"/>
+                            <Image Source="ms-appx:///Assets/TouchpadTapsSettings.png"
+                                   Grid.Column="1"
+                                   VerticalAlignment="Top"/>
+                        </Grid>
+                    </InfoBar>
+                </wuc:SettingsExpander.ItemsHeader>
+
+            </wuc:SettingsExpander>
 
             <wuc:SettingsExpander
                 IsEnabled="{Binding ElementName=Enabled, Path=IsOn}"
