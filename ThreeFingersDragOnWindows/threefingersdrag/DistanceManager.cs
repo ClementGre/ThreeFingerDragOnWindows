@@ -21,10 +21,10 @@ public class DistanceManager {
     /// </summary>
     /// <param name="oldContacts">First contacts list</param>
     /// <param name="newContacts">Second contacts list</param>
-    /// <param name="elapsed">Elapsed ms between two contacts inputs</param>
+    /// <param name="hasFingersReleased">Wether if fingers has been released and replaced on the touchpad</param>
     /// <returns>(ID of the TouchpadContact, Point distance (in x and y), 2D distance)</returns>
-    public (int, Point, float) GetLongestDist2D(TouchpadContact[] oldContacts, TouchpadContact[] newContacts, long elapsed){
-        if(elapsed > ThreeFingersDrag.RELEASE_FINGERS_THRESHOLD_MS){
+    public (int, Point, float) GetLongestDist2D(TouchpadContact[] oldContacts, TouchpadContact[] newContacts, bool hasFingersReleased){
+        if(hasFingersReleased){
             return (0, new Point(0, 0), 0);
         }
 

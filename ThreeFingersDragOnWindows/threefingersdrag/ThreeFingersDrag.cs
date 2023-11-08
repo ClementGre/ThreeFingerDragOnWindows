@@ -13,7 +13,7 @@ public class ThreeFingersDrag {
 
     private readonly DistanceManager _distanceManager = new();
     private readonly FingersCounter _fingersCounter = new();
-    private readonly System.Timers.Timer _dragEndTimer = new();
+    private readonly Timer _dragEndTimer = new();
     private bool _isDragging;
     
     public ThreeFingersDrag(){
@@ -22,21 +22,28 @@ public class ThreeFingersDrag {
     }
 
     public void OnTouchpadContact(TouchpadContact[] oldContacts, TouchpadContact[] contacts, long elapsed){
+        bool hasFingersReleased = elapsed > RELEASE_FINGERS_THRESHOLD_MS;
         Debug.WriteLine("\nTFD: " + string.Join(", ", oldContacts.Select(c => c.ToString())) + " | " + string.Join(", ", contacts.Select(c => c.ToString())) + " | " + elapsed);
         bool areContactsIdsCommons = FingersCounter.AreContactsIdsCommons(oldContacts, contacts);
 
-        (_, Point longestDistDelta, float longestDist2D) = _distanceManager.GetLongestDist2D(oldContacts, contacts, elapsed);
-        (int fingersCount, int movingFingersCount) = _fingersCounter.CountMovingFingers(contacts, areContactsIdsCommons, longestDist2D);
+        (_, Point longestDistDelta, float longestDist2D) = _distanceManager.GetLongestDist2D(oldContacts, contacts, hasFingersReleased);
+        (int fingersCount, int shortDelayMovingFingersCount, int longDelayMovingFingersCount, int originalFingersCount) = _fingersCounter.CountMovingFingers(contacts, areContactsIdsCommons, longestDist2D, hasFingersReleased);
 
-        Debug.WriteLine("    fingers: " + fingersCount + ", moving: " + movingFingersCount + ", dist: " + longestDist2D);
+        Debug.WriteLine("    fingers: " + fingersCount + ", original: " + originalFingersCount + ", moving: " + shortDelayMovingFingersCount + "/" + longDelayMovingFingersCount + ", dist: " + longestDist2D);
 
-        if(movingFingersCount == 3 && !_isDragging){
+        if(fingersCount >= 3 && areContactsIdsCommons && longDelayMovingFingersCount == 3 && originalFingersCount == 3 && !_isDragging){
             // Start dragging
             _isDragging = true;
             Debug.WriteLine("    START DRAG, Left click down");
             MouseOperations.MouseClick(MouseOperations.MOUSEEVENTF_LEFTDOWN);
 
-        } else if(fingersCount >= 3 && areContactsIdsCommons && _isDragging){
+        }else if((shortDelayMovingFingersCount < 2 || (originalFingersCount != 3 && originalFingersCount >= 2)) && _isDragging){
+            // Stop dragging
+            // Condition over originalFingersCount to catch cases where the drag has continued with only two or four fingers
+            Debug.WriteLine("    STOP DRAG, Left click up");
+            StopDrag();
+            
+        }else if(fingersCount >= 2 && originalFingersCount == 3 && areContactsIdsCommons && _isDragging){
             // Dragging
             if(App.SettingsData.ThreeFingersDragCursorMove){
                 Debug.WriteLine("    MOVING, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
@@ -48,11 +55,6 @@ public class ThreeFingersDrag {
                 _dragEndTimer.Interval = GetReleaseDelay();
                 _dragEndTimer.Start();
             }
-
-        } else if(movingFingersCount < 3 && _isDragging){
-            // Stop dragging
-            Debug.WriteLine("    STOP DRAG, Left click up");
-            StopDrag();
         }
     }
 
