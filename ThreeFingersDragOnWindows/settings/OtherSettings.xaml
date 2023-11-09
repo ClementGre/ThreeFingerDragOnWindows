@@ -62,7 +62,7 @@
                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                IsTextSelectionEnabled="True"
                                Style="{StaticResource CaptionTextBlockStyle}"
-                               Text="Version 2.0.0.1" />
+                               Text="Version 2.0.1.0" />
                 
                     <wuc:SettingsExpander.Items>
                         <wuc:SettingsCard HorizontalContentAlignment="Left"
