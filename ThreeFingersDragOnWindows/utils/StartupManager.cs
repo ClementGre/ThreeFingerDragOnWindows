@@ -27,7 +27,7 @@ public static class StartupManager {
         LogonTrigger logonTrigger = new LogonTrigger();
         taskDefinition.Triggers.Add(logonTrigger);
 
-        ExecAction execAction = new ExecAction(Utils.GetElevatorPath(), "");
+        ExecAction execAction = new ExecAction(Utils.GetAppPath(), "");
         taskDefinition.Actions.Add(execAction);
 
         folder.RegisterTaskDefinition(

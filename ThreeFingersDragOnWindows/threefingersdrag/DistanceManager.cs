@@ -17,7 +17,7 @@ public class DistanceManager {
     /// <summary>
     /// Find the longest distance between two TouchpadContact of same ID.
     /// When new contacts are registered, there is a delay (quarantine) before they can affect the distance.
-    /// Returned distance is 0 if the delay between this call and the last one is higher than RELEASE_FINGERS_THRESHOLD_MS.
+    /// Returned distance is 0 if the delay between this call and the last one is higher than RELEASE_FINGERS_THRESHOLD_MS (if hasFingersReleased is true).
     /// </summary>
     /// <param name="oldContacts">First contacts list</param>
     /// <param name="newContacts">Second contacts list</param>
@@ -25,6 +25,8 @@ public class DistanceManager {
     /// <returns>(ID of the TouchpadContact, Point distance (in x and y), 2D distance)</returns>
     public (int, Point, float) GetLongestDist2D(TouchpadContact[] oldContacts, TouchpadContact[] newContacts, bool hasFingersReleased){
         if(hasFingersReleased){
+            _quarantineContacts.Clear();
+            _trustedContacts.Clear();
             return (0, new Point(0, 0), 0);
         }
 
