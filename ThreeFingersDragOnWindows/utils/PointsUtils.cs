@@ -8,6 +8,18 @@ public struct PointUtils {
 
 public struct Point
 {
+    public bool Equals(Point other){
+        return x.Equals(other.x) && y.Equals(other.y);
+    }
+
+    public override bool Equals(object obj){
+        return obj is Point other && Equals(other);
+    }
+
+    public override int GetHashCode(){
+        return HashCode.Combine(x, y);
+    }
+
     public float x;
     public float y;
 

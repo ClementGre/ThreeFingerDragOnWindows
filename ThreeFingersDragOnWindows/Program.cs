@@ -11,7 +11,7 @@ namespace ThreeFingersDragOnWindows;
 
 public class Program {
     [STAThread]
-    static async Task<int> Main(string[] args){
+    static Task<int> Main(string[] args){
         WinRT.ComWrappersSupport.InitializeComWrappers();
 
         (AppInstance existingInstance, bool existingInstanceIsAdmin) = FindExistingInstance();
@@ -28,12 +28,12 @@ public class Program {
             Debug.WriteLine("No instance found, starting the app.");
             StartApp();
         }
-        return 0;
+        return Task.FromResult(0);
     }
 
     private static void RedirectActivation(AppInstance instance){
         AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
-        instance.RedirectActivationToAsync(args);
+        _ = instance.RedirectActivationToAsync(args);
     }
 
     private static void StartApp(){

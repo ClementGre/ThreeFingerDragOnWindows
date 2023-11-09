@@ -11,7 +11,7 @@ public static class StartupManager {
 
 
     public static void EnableElevatedStartup(){
-        DisableUnelevatedStartup();
+        _ = DisableUnelevatedStartup();
         
         Debug.WriteLine("Enabling elevated startup task...");
         

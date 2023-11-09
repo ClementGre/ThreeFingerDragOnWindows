@@ -40,7 +40,7 @@ public partial class App {
                         break;
                     case SettingsData.StartupActioType.DISABLE_ELEVATED_RUN_WITH_STARTUP :
                         StartupManager.DisableElevatedStartup();
-                        StartupManager.EnableUnelevatedStartup();
+                        _ = StartupManager.EnableUnelevatedStartup();
                         SettingsData.RunElevated = false;
                         break;
                     case SettingsData.StartupActioType.ENABLE_ELEVATED_STARTUP :
@@ -48,7 +48,7 @@ public partial class App {
                         break;
                     case SettingsData.StartupActioType.DISABLE_ELEVATED_STARTUP :
                         StartupManager.DisableElevatedStartup();
-                        StartupManager.EnableUnelevatedStartup();
+                        _ = StartupManager.EnableUnelevatedStartup();
                         break;
                 }
             }

@@ -15,7 +15,7 @@ using ThreeFingersDragEngine.utils;
 namespace ThreeFingersDragOnWindows.settings;
 
 public sealed partial class SettingsWindow {
-    private readonly App App;
+    private readonly App _app;
     
     /*private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
     {
@@ -24,7 +24,7 @@ public sealed partial class SettingsWindow {
     }*/
 
     public SettingsWindow(App app, bool openOtherSettings){
-        App = app;
+        _app = app;
         Debug.WriteLine("Starting SettingsWindow...");
 
 
@@ -61,7 +61,7 @@ public sealed partial class SettingsWindow {
     }
 
     private void QuitButton_Click(object sender, RoutedEventArgs e){
-        App.Quit();
+        _app.Quit();
     }
 
     private void Window_Closed(object sender, WindowEventArgs e){
@@ -71,7 +71,7 @@ public sealed partial class SettingsWindow {
         // Navigate to another page, so the "OnNavigatedFrom()" of OtherSettings gets called (for the timer).
         ContentFrame.Navigate(typeof(TouchpadSettings));
         
-        App.OnClosePrefsWindow();
+        _app.OnClosePrefsWindow();
     }
 
     private int _inputCount;

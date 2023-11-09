@@ -11,7 +11,7 @@ public sealed partial class ThreeFingersDragSettings {
     }
 
     private void OpenSettings(object sender, RoutedEventArgs e){
-        Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:devices-touchpad"));
+        _ = Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:devices-touchpad"));
     }
     
     public bool EnabledProperty
