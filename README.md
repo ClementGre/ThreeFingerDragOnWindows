@@ -9,8 +9,12 @@ The goal of ThreeFingersDragOnWindows is to bring the macOS-style three-finger d
 This allow to drag windows and select text (drag the cursor with left click pressed) with a simple.
 
 ## Preview
+<p align="center">
+  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/ThreeFingersDragOnWindows/Assets/Screenshot-1.png' alt="App screenshot: Touchpad tab" width='700'>
+  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/ThreeFingersDragOnWindows/Assets/Screenshot-2.png' alt="App screenshot: Three Fingers Drag tab" width='700'>
+  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/ThreeFingersDragOnWindows/Assets/Screenshot-3.png' alt="App screenshot: Other Settings tab" width='700'>
+</p>
 
-TODO
 
 ## How to use
 
