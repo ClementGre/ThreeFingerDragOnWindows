@@ -16,6 +16,9 @@ This allow to drag windows and select text (drag the cursor with left click pres
   <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/ThreeFingersDragOnWindows/Assets/Screenshot-3.png' alt="App screenshot: Other Settings tab" width='700'>
 </p>
 
+## Installation
+
+If the installation fails, your computer might need to have the Windows App SDK redistributable installed. You can download it from this page: [https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads).
 
 ## How to use
 
