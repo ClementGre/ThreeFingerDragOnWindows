@@ -18,7 +18,7 @@
             
             
             <wuc:SettingsCard Header="Run at startup"
-                              Description="ThreeFingersDragOnWindows will lunch automatically."
+                              Description="ThreeFingersDragOnWindows will launch automatically."
                               HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},
                                                                     Glyph=&#xF83E;}">
                 <ToggleSwitch x:Name="RunAtStartup"
