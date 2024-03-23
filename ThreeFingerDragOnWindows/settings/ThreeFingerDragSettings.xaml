@@ -92,22 +92,45 @@
                 <ToggleSwitch x:Name="CursorMove"
                               IsOn="{x:Bind CursorMoveProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <wuc:SettingsExpander.Items>
+                    <!-- content is an alignment of a numberbox and a slider  in a horizontal box -->
                     <wuc:SettingsCard Header="Mouse speed"
+                                        Description="Default to 30"
                                       IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
-                        <Slider MinWidth="240"
-                                StepFrequency="1"
-                                Maximum="200"
-                                Minimum="1"
-                                Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
+                            <Slider MinWidth="200"
+                                    StepFrequency="1"
+                                    Maximum="200"
+                                    Minimum="1"
+                                    Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            
+                            <NumberBox MinWidth="60"
+                                       Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                       Maximum="100000"
+                                       Minimum="0"
+                                       SmallChange="5"
+                                       LargeChange="10"
+                                       SpinButtonPlacementMode="Compact" />
+                        </StackPanel>
                     </wuc:SettingsCard>
-                    <wuc:SettingsCard Description="Default to 1, 0 to disable."
+                    <wuc:SettingsCard Description="Default to 10, 0 to disable."
                                       Header="Mouse acceleration"
                                       IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
-                        <Slider MinWidth="240"
-                                StepFrequency="0.1"
-                                Maximum="3"
-                                Minimum="0"
-                                Value="{x:Bind CursorAccelerationProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
+                            <Slider MinWidth="200"
+                                    StepFrequency="1"
+                                    Maximum="30"
+                                    Minimum="0"
+                                    Value="{x:Bind CursorAccelerationProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            
+                            <NumberBox MinWidth="60"
+                                       Value="{x:Bind CursorAccelerationProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                       Minimum="0"
+                                       Maximum="1000"
+                                       SmallChange="5"
+                                       LargeChange="10"
+                                       SpinButtonPlacementMode="Compact" />
+                        </StackPanel>
                     </wuc:SettingsCard>
                 </wuc:SettingsExpander.Items>
 

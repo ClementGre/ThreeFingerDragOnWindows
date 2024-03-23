@@ -58,14 +58,14 @@ public sealed partial class OtherSettings {
             if(DoRunAtStartup){
                 if(!Utils.IsAppRunningAsAdministrator()){
                     DoRunAtStartup = false;
-                    App.RestartElevated(SettingsData.StartupActioType.ENABLE_ELEVATED_STARTUP);
+                    App.RestartElevated(SettingsData.StartupActionType.ENABLE_ELEVATED_STARTUP);
                     return;
                 }
                 StartupManager.EnableElevatedStartup();
             } else{
                 if(!Utils.IsAppRunningAsAdministrator()){
                     DoRunAtStartup = true;
-                    App.RestartElevated(SettingsData.StartupActioType.DISABLE_ELEVATED_STARTUP);
+                    App.RestartElevated(SettingsData.StartupActionType.DISABLE_ELEVATED_STARTUP);
                     return;
                 }
                 StartupManager.DisableElevatedStartup();
@@ -163,7 +163,7 @@ public sealed partial class OtherSettings {
                     Debug.WriteLine("RunElevated_Toggled : Restarting elevated to enable startup");
                     setRunElevatedProperty(false); // The settings will be changed after the restart, with the settings StartupAction
                     
-                    if(!App.RestartElevated(SettingsData.StartupActioType.ENABLE_ELEVATED_RUN_WITH_STARTUP)){
+                    if(!App.RestartElevated(SettingsData.StartupActionType.ENABLE_ELEVATED_RUN_WITH_STARTUP)){
                         StartupManager.DisableUnelevatedStartup().ContinueWith(_ => DispatcherQueue.TryEnqueue(UpdateStartupStatus));
                         RunElevated.IsOn = true;
                     }
@@ -176,7 +176,7 @@ public sealed partial class OtherSettings {
                     Debug.WriteLine("RunElevated_Toggled : Restarting elevated to disable startup");
                     setRunElevatedProperty(true); // The settings will be changed after the restart, with the settings StartupAction
                     RunElevated.IsOn = true;
-                    App.RestartElevated(SettingsData.StartupActioType.DISABLE_ELEVATED_RUN_WITH_STARTUP);
+                    App.RestartElevated(SettingsData.StartupActionType.DISABLE_ELEVATED_RUN_WITH_STARTUP);
                 }
             }
         }else if(DoRunAtStartup){

@@ -8,6 +8,12 @@ namespace ThreeFingerDragOnWindows.settings;
 
 public class SettingsData {
     
+    private static int CURRENT_SETTINGS_VERSION = 1;
+
+    // Other
+    public static bool IsFirstRun{ get; set; } = false;
+    public int SettingsVersion{ get; set; } = 0;
+
     // Three fingers drag Settings
     public bool RegularTouchpadCheck{ get; set; } = true;
     public int RegularTouchpadCheckInterval{ get; set; } = 5;
@@ -21,12 +27,12 @@ public class SettingsData {
 
     public bool ThreeFingerDragCursorMove{ get; set; } = true;
     public float ThreeFingerDragCursorSpeed{ get; set; } = 30;
-    public float ThreeFingerDragCursorAcceleration{ get; set; } = 1;
+    public float ThreeFingerDragCursorAcceleration{ get; set; } = 10;
     
     
     // Other settings
     
-    public enum StartupActioType {
+    public enum StartupActionType {
         NONE,
         ENABLE_ELEVATED_RUN_WITH_STARTUP,
         DISABLE_ELEVATED_RUN_WITH_STARTUP,
@@ -34,17 +40,16 @@ public class SettingsData {
         DISABLE_ELEVATED_STARTUP,
     }
 
-    public StartupActioType StartupAction{ get; set; } = StartupActioType.NONE;
+    public StartupActionType StartupAction{ get; set; } = StartupActionType.NONE;
     
     public bool RunElevated{ get; set; } = false;
 
-    // Other
-    public static bool IsFirstRun{ get; set; } = false;
-
+    
     public static SettingsData load(){
         var mySerializer = new XmlSerializer(typeof(SettingsData));
         var myFileStream = new FileStream(getPath(true), FileMode.Open);
         SettingsData up;
+        
         try{
             up = (SettingsData) mySerializer.Deserialize(myFileStream);
             myFileStream.Close();
@@ -54,10 +59,19 @@ public class SettingsData {
             up = new SettingsData();
             up.save();
         }
+
+        if (up.SettingsVersion < 1)
+        {
+            Debug.WriteLine("Updating settings to version 1");
+            up.ThreeFingerDragCursorAcceleration *= 10;
+            up.save();
+        }
+        
         return up;
     }
 
     public void save(){
+        SettingsVersion = CURRENT_SETTINGS_VERSION;
         var mySerializer = new XmlSerializer(typeof(SettingsData));
         var myWriter = new StreamWriter(getPath(false));
         mySerializer.Serialize(myWriter, this);
