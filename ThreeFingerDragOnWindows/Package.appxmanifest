@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+        xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+        xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+        xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+        xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+		xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+        xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+        IgnorableNamespaces="uap3 desktop uap rescap">
+
+    <Identity
+            Name="50931ClmentGrennerat.ThreeFingerDragOnWindows"
+            Publisher="CN=A5174EBF-789F-4CD5-BF8B-E0CB932DB9AD"
+            Version="2.0.1.0"/>
+
+    <mp:PhoneIdentity PhoneProductId="c9b9ff1d-920c-45c7-99c8-3e98f838bef5"
+                      PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+
+    <Properties>
+        <DisplayName>ThreeFingerDragOnWindows</DisplayName>
+        <PublisherDisplayName>Clément Grennerat</PublisherDisplayName>
+        <Logo>Assets\logo-512.png</Logo>
+    </Properties>
+
+    <Dependencies>
+        <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0"/>
+        <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0"/>
+    </Dependencies>
+
+    <Resources>
+        <Resource Language="x-generate"/>
+    </Resources>
+
+    <Applications>
+        <Application Id="App"
+                     Executable="$targetnametoken$.exe"
+                     EntryPoint="$targetentrypoint$">
+            <uap:VisualElements
+                    DisplayName="ThreeFingerDragOnWindows"
+                    Description="Enables macOS-style three-finger dragging functionality on Windows Precision touchpads."
+                    BackgroundColor="transparent" Square150x150Logo="Assets\logo-150.png"  Square44x44Logo="Assets\logo-44.png">
+                <uap:DefaultTile Square71x71Logo="Assets\SmallTile.png" Wide310x150Logo="Assets\WideTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="ThreeFingerDragOnWindows">
+                    <uap:ShowNameOnTiles>
+                        <uap:ShowOn Tile="square150x150Logo"/>
+                        <uap:ShowOn Tile="wide310x150Logo"/>
+                        <uap:ShowOn Tile="square310x310Logo"/>
+                    </uap:ShowNameOnTiles>
+                </uap:DefaultTile>
+                <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badgeAndTileText"/>
+                <uap:SplashScreen Image="Assets\SplashScreen.png"/>
+            </uap:VisualElements>
+			
+            <Extensions>
+
+                <uap3:Extension Category="windows.appExecutionAlias" EntryPoint="Windows.FullTrustApplication">
+                    <uap3:AppExecutionAlias>
+                        <desktop:ExecutionAlias Alias="ThreeFingerDragOnWindows.exe" />
+                    </uap3:AppExecutionAlias>
+                </uap3:Extension>
+
+                <uap:Extension Category="windows.protocol">
+                    <uap:Protocol Name="threefingerdragonwindows"/>
+                </uap:Extension>
+
+                <desktop:Extension Category="windows.startupTask" Executable="ThreeFingerDragOnWindows.exe"
+                                   EntryPoint="Windows.FullTrustApplication">
+                    <desktop:StartupTask TaskId="ThreeFingerDragOnWindows" Enabled="true" DisplayName="ThreeFingerDragOnWindows" />
+                </desktop:Extension>
+			</Extensions>
+
+		</Application>
+    </Applications>
+
+    <Capabilities>
+        <rescap:Capability Name="runFullTrust"/>
+<!--        <rescap:Capability Name="allowElevation" />-->
+    </Capabilities>
+</Package>

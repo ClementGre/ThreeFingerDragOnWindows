@@ -1,19 +1,19 @@
 [![Microsoft Store Badge](https://img.shields.io/badge/Microsoft%20Store-005FB8?logo=microsoftstore&logoColor=fff&style=flat)](https://apps.microsoft.com/detail/9MSX91WQCM2V?)
-[![Release](https://img.shields.io/github/v/release/clementgre/ThreeFingersDragOnWindows?label=Download%20version)](https://github.com/clementgre/ThreeFingersDragOnWindows/releases/latest)
-[![TotalDownloads](https://img.shields.io/github/downloads/clementgre/ThreeFingersDragOnWindows/total)](https://github.com/clementgre/ThreeFingersDragOnWindows/releases/latest)
-[![LatestDownloads](https://img.shields.io/github/downloads/clementgre/ThreeFingersDragOnWindows/latest/total)](https://github.com/clementgre/ThreeFingersDragOnWindows/releases/latest)
+[![Release](https://img.shields.io/github/v/release/clementgre/ThreeFingerDragOnWindows?label=Download%20version)](https://github.com/clementgre/ThreeFingerDragOnWindows/releases/latest)
+[![TotalDownloads](https://img.shields.io/github/downloads/clementgre/ThreeFingerDragOnWindows/total)](https://github.com/clementgre/ThreeFingerDragOnWindows/releases/latest)
+[![LatestDownloads](https://img.shields.io/github/downloads/clementgre/ThreeFingerDragOnWindows/latest/total)](https://github.com/clementgre/ThreeFingerDragOnWindows/releases/latest)
 
 ## Overview
 
-The goal of ThreeFingersDragOnWindows is to bring the macOS-style three-finger dragging functionality to Windows Precision touchpads.
+The goal of ThreeFingerDragOnWindows is to bring the macOS-style three-finger dragging functionality to Windows Precision touchpads.
 
 This allow to drag windows and select text (drag the cursor with left click pressed) with a simple.
 
 ## Preview
 <p align="center">
-  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/ThreeFingersDragOnWindows/Assets/Screenshot-1.png' alt="App screenshot: Touchpad tab" width='700'>
-  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/ThreeFingersDragOnWindows/Assets/Screenshot-2.png' alt="App screenshot: Three Fingers Drag tab" width='700'>
-  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingersDragOnWindows/main/ThreeFingersDragOnWindows/Assets/Screenshot-3.png' alt="App screenshot: Other Settings tab" width='700'>
+  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingerDragOnWindows/main/ThreeFingerDragOnWindows/Assets/Screenshot-1.png' alt="App screenshot: Touchpad tab" width='700'>
+  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingerDragOnWindows/main/ThreeFingerDragOnWindows/Assets/Screenshot-2.png' alt="App screenshot: Three Fingers Drag tab" width='700'>
+  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingerDragOnWindows/main/ThreeFingerDragOnWindows/Assets/Screenshot-3.png' alt="App screenshot: Other Settings tab" width='700'>
 </p>
 
 ## Installation
@@ -25,7 +25,7 @@ If the installation fails, your computer might need to have the Windows App SDK 
 Make sure to disable the "Tap twice and drag to multi-select" behaviour and all of the defaults 3-finger swipe behaviour
 via ``Touchpad settings`` in windows preferences for the drag to work without interferences.
 
-To open the configuration pane, click the ThreeFingersDragOnWindows tray icon on the Windows task bar.
+To open the configuration pane, click the ThreeFingerDragOnWindows tray icon on the Windows task bar.
 
 ## Build and Execute
 
