@@ -10,7 +10,7 @@
         IgnorableNamespaces="uap3 desktop uap rescap">
 
     <Identity
-            Name="50931ClmentGrennerat.ThreeFingerDragOnWindows"
+            Name="50931ClmentGrennerat.ThreeFingersDragOnWindows"
             Publisher="CN=A5174EBF-789F-4CD5-BF8B-E0CB932DB9AD"
             Version="2.0.2.0"/>
 
@@ -18,7 +18,7 @@
                       PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
     <Properties>
-        <DisplayName>ThreeFingerDragOnWindows</DisplayName>
+        <DisplayName>Three Finger Drag</DisplayName>
         <PublisherDisplayName>Clément Grennerat</PublisherDisplayName>
         <Logo>Assets\logo-512.png</Logo>
     </Properties>
@@ -60,7 +60,10 @@
                 </uap3:Extension>
 
                 <uap:Extension Category="windows.protocol">
-                    <uap:Protocol Name="threefingerdragonwindows"/>
+                    <uap:Protocol Name="threefingerdragonwindows">
+                        <uap:Logo>Assets\icon-52.png</uap:Logo>
+                        <uap:DisplayName>ThreeFingerDragOnWindows</uap:DisplayName>
+                    </uap:Protocol >
                 </uap:Extension>
 
                 <desktop:Extension Category="windows.startupTask" Executable="ThreeFingerDragOnWindows.exe"
