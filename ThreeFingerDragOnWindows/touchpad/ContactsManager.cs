@@ -38,7 +38,7 @@ public class ContactsManager {
         switch(message){
             case TouchpadHelper.WM_INPUT:
                 var contacts = TouchpadHelper.ParseInput(lParam);
-                RegisterTouchpadContacts(contacts);
+                ReceiveTouchpadContacts(contacts);
                 break;
         }
 
@@ -47,10 +47,15 @@ public class ContactsManager {
 
 
     // Contacts managements
-    private void RegisterTouchpadContacts(TouchpadContact[] contacts){
-        //_source.OnTouchpadContact(contacts);
-        // On some touchpads, contacts are sent one by one
-        foreach(var contact in contacts) RegisterTouchpadContact(contact);
+    private void ReceiveTouchpadContacts(TouchpadContact[] contacts){
+        Debug.WriteLine("Receiving contacts: " + string.Join(", ", contacts.Select(c => c.ToString())));
+        
+        if (contacts.Length == 1){
+            // On some touchpads, contacts are sent one by one
+            RegisterTouchpadContact(contacts[0]);
+        }else{
+            _source.OnTouchpadContact(contacts);
+        }
     }
 
     private void RegisterTouchpadContact(TouchpadContact contact){
