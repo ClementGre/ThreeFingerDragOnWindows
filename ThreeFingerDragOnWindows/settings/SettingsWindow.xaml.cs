@@ -25,7 +25,7 @@ public sealed partial class SettingsWindow {
 
     public SettingsWindow(App app, bool openOtherSettings){
         _app = app;
-        Debug.WriteLine("Starting SettingsWindow...");
+        Logger.Log("Starting SettingsWindow...");
 
 
         InitializeComponent();
@@ -61,11 +61,12 @@ public sealed partial class SettingsWindow {
     }
 
     private void QuitButton_Click(object sender, RoutedEventArgs e){
+        Logger.Log("Quitting SettingsWindow...");
         _app.Quit();
     }
 
     private void Window_Closed(object sender, WindowEventArgs e){
-        Debug.WriteLine("Hiding SettingsWindow, saving data...");
+        Logger.Log("Hiding SettingsWindow, saving data...");
         App.SettingsData.save();
         
         // Navigate to another page, so the "OnNavigatedFrom()" of OtherSettings gets called (for the timer).

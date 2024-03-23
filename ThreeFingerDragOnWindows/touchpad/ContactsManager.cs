@@ -26,7 +26,7 @@ public class ContactsManager {
 
     public void InitializeSource(){
         var touchpadExists = TouchpadHelper.Exists();
-        Debug.WriteLine("Touchpad exists: " + touchpadExists);
+        Logger.Log("Touchpad exists: " + touchpadExists);
 
         var success = touchpadExists && TouchpadHelper.RegisterInput(_hwnd);
         
@@ -48,7 +48,7 @@ public class ContactsManager {
 
     // Contacts managements
     private void ReceiveTouchpadContacts(TouchpadContact[] contacts){
-        Debug.WriteLine("Receiving contacts: " + string.Join(", ", contacts.Select(c => c.ToString())));
+        Logger.Log("Receiving contacts: " + string.Join(", ", contacts.Select(c => c.ToString())));
         
         if (contacts.Length == 1){
             // On some touchpads, contacts are sent one by one
@@ -69,7 +69,7 @@ public class ContactsManager {
                 break;
             }
         }
-
+        
         _lastInput = Ctms();
         // Add the contact to the list
         _lastContacts.Add(contact);

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
+using ThreeFingerDragOnWindows.utils;
 using Application = Microsoft.UI.Xaml.Application;
 using Utils = ThreeFingerDragOnWindows.utils.Utils;
 
@@ -18,14 +19,14 @@ public class Program {
 
         if(existingInstance != null){
             if(Utils.IsAppRunningAsAdministrator() && !existingInstanceIsAdmin && TerminateOldInstance(existingInstance.ProcessId)){
-                Debug.WriteLine("Unelevated instance found and killed. Starting the app");
+                Logger.Log("Unelevated instance found and killed. Starting the app");
                 StartApp();
             } else{
-                Debug.WriteLine("Instance found, redirecting activation.");
+                Logger.Log("Instance found, redirecting activation.");
                 RedirectActivation(existingInstance);
             }
         } else{
-            Debug.WriteLine("No instance found, starting the app.");
+            Logger.Log("No instance found, starting the app.");
             StartApp();
         }
         return Task.FromResult(0);
@@ -72,7 +73,7 @@ public class Program {
             Process oldInstance = Process.GetProcessById((int) processId);
             oldInstance.Kill();
         } catch(Exception ex){
-            Debug.WriteLine(ex);
+            Logger.Log(ex.ToString());
             return false;
         }
 

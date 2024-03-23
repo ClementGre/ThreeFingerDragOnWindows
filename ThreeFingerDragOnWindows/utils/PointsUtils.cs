@@ -66,4 +66,9 @@ public struct Point
     {
         return a.x != b.x || a.y != b.y;
     }
+    
+    public bool IsNull()
+    {
+        return x == 0 && y == 0;
+    }
 }

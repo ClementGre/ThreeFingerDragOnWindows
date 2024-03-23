@@ -13,7 +13,7 @@ public static class StartupManager {
     public static void EnableElevatedStartup(){
         _ = DisableUnelevatedStartup();
         
-        Debug.WriteLine("Enabling elevated startup task...");
+        Logger.Log("Enabling elevated startup task...");
         
         using TaskService taskService = new TaskService();
         TaskFolder folder = taskService.RootFolder.CreateFolder("ThreeFingerDragOnWindows", null, false);
@@ -39,7 +39,7 @@ public static class StartupManager {
             TaskLogonType.InteractiveToken);
     }
     public static void DisableElevatedStartup(){
-        Debug.WriteLine("Disabling elevated startup task...");
+        Logger.Log("Disabling elevated startup task...");
         
         using TaskService taskService = new TaskService();
         TaskFolder folder = taskService.RootFolder.CreateFolder("ThreeFingerDragOnWindows", null, false);
@@ -53,7 +53,7 @@ public static class StartupManager {
     
     
     public static async Task<bool> EnableUnelevatedStartup(){
-        Debug.WriteLine("Enabling unelevated startup task...");
+        Logger.Log("Enabling unelevated startup task...");
         
         StartupTask startupTask = await StartupTask.GetAsync("ThreeFingerDragOnWindows");
         startupTask.Disable();
@@ -63,13 +63,13 @@ public static class StartupManager {
         {
             case StartupTaskState.Disabled:
                 StartupTaskState newState = await startupTask.RequestEnableAsync();
-                Debug.WriteLine("Request to enable startup, result = {0}", newState);
+                Logger.Log($"Request to enable startup, result = {newState}");
                 break;
         }
         return startupTask.State is StartupTaskState.Enabled or StartupTaskState.EnabledByPolicy;
     }
     public static async Task<bool> DisableUnelevatedStartup(){
-        Debug.WriteLine("Disabling unelevated startup task...");
+        Logger.Log("Disabling unelevated startup task...");
         StartupTask startupTask = await StartupTask.GetAsync("ThreeFingerDragOnWindows");
         startupTask.Disable();
         return startupTask.State is StartupTaskState.Disabled or StartupTaskState.DisabledByUser or StartupTaskState.DisabledByPolicy;

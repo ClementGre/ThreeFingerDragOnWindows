@@ -98,7 +98,7 @@ public class DistanceManager {
             float a = App.SettingsData.ThreeFingerDragCursorAcceleration / 10f; // Acceleration is multiplied by 10 in settings.
             pointerVelocity = (float) (0.7 + 0.8 * Sigmoid(2.6 * a * (mouseVelocity - 1 + (3 - Math.Log2(0.8/0.3 - 1)) / (2.6 * a)) - 3));
             // No need to clamp, the function gives values between 0.7 and 1.5.
-            Debug.WriteLine("    pointerVelocity: " + pointerVelocity + " (mouseVelocity: " + mouseVelocity + ")");
+            Logger.Log("    pointerVelocity: " + pointerVelocity + " (mouseVelocity: " + mouseVelocity + ")");
         }
 
         // Apply acceleration

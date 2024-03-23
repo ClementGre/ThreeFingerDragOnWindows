@@ -19,7 +19,7 @@ public sealed partial class HandlerWindow : Window {
     public bool TouchpadRegistered;
 
     public HandlerWindow(App app){
-        Debug.WriteLine("Starting HandlerWindow...");
+        Logger.Log("Starting HandlerWindow...");
         InitializeComponent();
 
         _app = app;
@@ -53,12 +53,12 @@ public sealed partial class HandlerWindow : Window {
 
     // TaskbarIcon Actions
     private void OpenSettingsWindow(object sender, ExecuteRequestedEventArgs e){
-        Debug.WriteLine("Opening SettingsWindow from HandlerWindow TaskbarIcon");
+        Logger.Log("Opening SettingsWindow from HandlerWindow TaskbarIcon");
         _app.OpenSettingsWindow();
     }
 
     private void QuitApp(object sender, ExecuteRequestedEventArgs e){
-        Debug.WriteLine("Quitting App from HandlerWindow TaskbarIcon");
+        Logger.Log("Quitting App from HandlerWindow TaskbarIcon");
         _app.Quit();
     }
 
@@ -68,9 +68,9 @@ public sealed partial class HandlerWindow : Window {
     public void OnTouchpadInitialized(bool touchpadExists, bool touchpadRegistered){
         TouchpadExists = touchpadExists;
         TouchpadRegistered = touchpadRegistered;
-        if(!touchpadExists) Debug.WriteLine("Touchpad is not detected.");
-        else if(!touchpadRegistered) Debug.WriteLine("Touchpad is detected but not registered.");
-        else Debug.WriteLine("Touchpad is detected and registered.");
+        if(!touchpadExists) Logger.Log("Touchpad is not detected.");
+        else if(!touchpadRegistered) Logger.Log("Touchpad is detected but not registered.");
+        else Logger.Log("Touchpad is detected and registered.");
         
         TouchpadInitialized = true;
         _app.OnTouchpadInitialized();

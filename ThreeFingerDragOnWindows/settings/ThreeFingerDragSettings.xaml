@@ -14,11 +14,18 @@
         <StackPanel Margin="20,0,20,20"
                     ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
                     Spacing="5">
+            
+            <InfoBar
+                Title="The three finger drag might not work properly on this Settings window, but you can try it out on other windows!"
+                IsIconVisible="False"
+                IsOpen="True"
+                IsClosable="True"
+                Severity="Warning"/>
 
             <wuc:SettingsCard
                 Description="Allows to select text, drag windows and other objects with three fingers on the touchpad (left click simulation)."
                 HeaderIcon="{wuc:BitmapIcon Source='ms-appx:///Assets/icon-threefinger.png', ShowAsMonochrome=True}"
-                Header="Enable three fingers drag">
+                Header="Enable three finger drag">
                 <ToggleSwitch x:Name="Enabled"
                               IsOn="{x:Bind EnabledProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </wuc:SettingsCard>
@@ -26,7 +33,7 @@
             <wuc:SettingsExpander
                 IsEnabled="{Binding ElementName=Enabled, Path=IsOn}"
                 Description="You can do this in the windows settings (Bluetooth &amp; Devices > Touchpad). You can also disable the &quot;Tap twice and drag to multi-select&quot;."
-                Header="Make sure to disable windows three fingers drag gestures"
+                Header="Make sure to disable windows three finger drag gestures"
                 IsExpanded="False"
                 HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xEA37;}">
                 <HyperlinkButton Content="Go to Settings"
@@ -86,7 +93,7 @@
             <wuc:SettingsExpander
                 IsEnabled="{Binding ElementName=Enabled, Path=IsOn}"
                 Description="By default, three-finger movement on the touchpad doesn't affect the mouse pointer. ThreeFingerDragOnWindows autonomously handles cursor movement. This might result in some variations compared to single-finger control. You can customize this behavior here or disable it if you found another way to move the cursor with three fingers."
-                Header="Enable three fingers mouse move"
+                Header="Enable three finger mouse move"
                 HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE7C2;}"
                 IsExpanded="True">
                 <ToggleSwitch x:Name="CursorMove"

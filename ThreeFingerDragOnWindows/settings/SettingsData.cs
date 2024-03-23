@@ -3,36 +3,36 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
 using Windows.Storage;
+using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.settings;
 
-public class SettingsData {
-    
+public class SettingsData{
     private static int CURRENT_SETTINGS_VERSION = 1;
 
     // Other
-    public static bool IsFirstRun{ get; set; } = false;
-    public int SettingsVersion{ get; set; } = 0;
+    public static bool IsFirstRun { get; set; } = false;
+    public int SettingsVersion { get; set; } = 0;
 
     // Three fingers drag Settings
-    public bool RegularTouchpadCheck{ get; set; } = true;
-    public int RegularTouchpadCheckInterval{ get; set; } = 5;
-    public bool RegularTouchpadCheckEvenAlreadyRegistered{ get; set; } = false;
-    
-    // Three fingers drag Settings
-    public bool ThreeFingerDrag{ get; set; } = true;
-    
-    public bool ThreeFingerDragAllowReleaseAndRestart{ get; set; } = true;
-    public int ThreeFingerDragReleaseDelay{ get; set; } = 500;
+    public bool RegularTouchpadCheck { get; set; } = true;
+    public int RegularTouchpadCheckInterval { get; set; } = 5;
+    public bool RegularTouchpadCheckEvenAlreadyRegistered { get; set; } = false;
 
-    public bool ThreeFingerDragCursorMove{ get; set; } = true;
-    public float ThreeFingerDragCursorSpeed{ get; set; } = 30;
-    public float ThreeFingerDragCursorAcceleration{ get; set; } = 10;
-    
-    
+    // Three fingers drag Settings
+    public bool ThreeFingerDrag { get; set; } = true;
+
+    public bool ThreeFingerDragAllowReleaseAndRestart { get; set; } = true;
+    public int ThreeFingerDragReleaseDelay { get; set; } = 500;
+
+    public bool ThreeFingerDragCursorMove { get; set; } = true;
+    public float ThreeFingerDragCursorSpeed { get; set; } = 30;
+    public float ThreeFingerDragCursorAcceleration { get; set; } = 10;
+
+
     // Other settings
-    
-    public enum StartupActionType {
+
+    public enum StartupActionType{
         NONE,
         ENABLE_ELEVATED_RUN_WITH_STARTUP,
         DISABLE_ELEVATED_RUN_WITH_STARTUP,
@@ -40,19 +40,24 @@ public class SettingsData {
         DISABLE_ELEVATED_STARTUP,
     }
 
-    public StartupActionType StartupAction{ get; set; } = StartupActionType.NONE;
-    
-    public bool RunElevated{ get; set; } = false;
+    public StartupActionType StartupAction { get; set; } = StartupActionType.NONE;
 
-    
+    public bool RunElevated { get; set; } = false;
+
+    public bool RecordLogs { get; set; } = false;
+
+
     public static SettingsData load(){
+        Logger.Log("Loading settings...");
+        
         var mySerializer = new XmlSerializer(typeof(SettingsData));
         var myFileStream = new FileStream(getPath(true), FileMode.Open);
         SettingsData up;
         
         try{
-            up = (SettingsData) mySerializer.Deserialize(myFileStream);
+            up = (SettingsData)mySerializer.Deserialize(myFileStream);
             myFileStream.Close();
+            Logger.Log($"Settings loaded, version = {up.SettingsVersion}");
         } catch(Exception e){
             Console.WriteLine(e);
             myFileStream.Close();
@@ -60,13 +65,12 @@ public class SettingsData {
             up.save();
         }
 
-        if (up.SettingsVersion < 1)
-        {
-            Debug.WriteLine("Updating settings to version 1");
+        if(up.SettingsVersion < 1){
+            Logger.Log("Updating settings to version 1");
             up.ThreeFingerDragCursorAcceleration *= 10;
             up.save();
         }
-        
+
         return up;
     }
 
@@ -83,7 +87,7 @@ public class SettingsData {
         var filePath = Path.Combine(dirPath, "preferences.xml");
 
         if(!Directory.Exists(dirPath) || !File.Exists(filePath)){
-            Debug.WriteLine("First run: creating settings file");
+            Logger.Log("First run: creating settings file");
             Directory.CreateDirectory(dirPath);
             IsFirstRun = true;
             if(createIfEmpty) new SettingsData().save();

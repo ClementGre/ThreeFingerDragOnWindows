@@ -14,7 +14,7 @@ public partial class App {
 
     public static App Instance;
     public static SettingsData SettingsData;
-    private SettingsWindow _settingsWindow;
+    public static SettingsWindow SettingsWindow;
 
     public HandlerWindow HandlerWindow;
 
@@ -26,10 +26,11 @@ public partial class App {
         if(SettingsData.RunElevated && !Utils.IsAppRunningAsAdministrator()){
             if(RestartElevated()) return;
         }
-        Debug.WriteLine("Starting ThreeFingerDragOnWindows...");
+        Logger.Log("Starting ThreeFingerDragOnWindows...");
         InitializeComponent();
         
         bool openOtherSettings = false;
+        Logger.Log("StartupAction: " + SettingsData.StartupAction);
         if(SettingsData.StartupAction != SettingsData.StartupActionType.NONE){
             if(Utils.IsAppRunningAsAdministrator()){
                 openOtherSettings = true;
@@ -57,6 +58,7 @@ public partial class App {
         }
         
         if(SettingsData.IsFirstRun || openOtherSettings){
+            Logger.Log("First run detected, or StartupAction not NONE.");
             OpenSettingsWindow(openOtherSettings);
             Utils.runOnMainThreadAfter(3000, () => HandlerWindow = new HandlerWindow(this));
         } else{
@@ -66,19 +68,19 @@ public partial class App {
 
 
     public void OpenSettingsWindow(bool openOtherSettings = false){
-        Debug.WriteLine("Opening SettingsWindow...");
-        _settingsWindow ??= new SettingsWindow(this, openOtherSettings);
-        _settingsWindow.Activate();
-        Utils.FocusWindow(_settingsWindow);
+        Logger.Log("Opening SettingsWindow...");
+        SettingsWindow ??= new SettingsWindow(this, openOtherSettings);
+        SettingsWindow.Activate();
+        Utils.FocusWindow(SettingsWindow);
     }
 
     public void OnClosePrefsWindow(){
-        _settingsWindow = null;
+        SettingsWindow = null;
     }
 
     public void Quit(){
         HandlerWindow?.Close();
-        _settingsWindow?.Close();
+        SettingsWindow?.Close();
     }
 
     public static bool RestartElevated(SettingsData.StartupActionType startupActionType = SettingsData.StartupActionType.NONE){
@@ -86,7 +88,7 @@ public partial class App {
         SettingsData.save();
         
         var path = Utils.GetElevatorPath();
-        Debug.WriteLine("Running the Elevator app at " + path);
+        Logger.Log("Running the Elevator app at " + path);
         ProcessStartInfo processInfo = new ProcessStartInfo{
             Verb = "runas",
             UseShellExecute = true,
@@ -99,7 +101,7 @@ public partial class App {
             // Probably the user canceled the UAC window, 
             SettingsData.StartupAction = SettingsData.StartupActionType.NONE;
             SettingsData.save();
-            Debug.WriteLine(ex);
+            Logger.Log(ex.ToString());
             return false;
         }
         // Close app
@@ -108,10 +110,10 @@ public partial class App {
     }
     
     public void OnTouchpadContact(TouchpadContact[] contacts){
-        _settingsWindow?.OnTouchpadContact(contacts);
+        SettingsWindow?.OnTouchpadContact(contacts);
     }
     public void OnTouchpadInitialized(){
-        _settingsWindow?.OnTouchpadInitialized();
+        SettingsWindow?.OnTouchpadInitialized();
     }
 
     public bool DoTouchpadExist(){

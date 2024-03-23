@@ -67,7 +67,7 @@
                         <FontIcon Glyph="&#xEFA5;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Three Fingers Drag" Tag="ThreeFingerDrag" x:Name="ThreeFingerDrag">
+                <NavigationViewItem Content="Three Finger Drag" Tag="ThreeFingerDrag" x:Name="ThreeFingerDrag">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE759;" />
                     </NavigationViewItem.Icon>
