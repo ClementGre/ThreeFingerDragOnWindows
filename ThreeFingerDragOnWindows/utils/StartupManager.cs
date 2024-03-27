@@ -23,6 +23,11 @@ public static class StartupManager {
         taskDefinition.RegistrationInfo.Description = "Starting ThreeFingerDragOnWindows on system startup with elevated privileges.";
         taskDefinition.RegistrationInfo.Author = "Clément Grennerat";
         taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
+        taskDefinition.Settings.DisallowStartIfOnBatteries = false;
+        taskDefinition.Settings.StopIfGoingOnBatteries = false;
+        taskDefinition.Settings.IdleSettings.StopOnIdleEnd = false;
+        taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+        taskDefinition.Settings.AllowHardTerminate = false;
 
         LogonTrigger logonTrigger = new LogonTrigger();
         taskDefinition.Triggers.Add(logonTrigger);
