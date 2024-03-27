@@ -28,6 +28,7 @@ public static class StartupManager {
         taskDefinition.Settings.IdleSettings.StopOnIdleEnd = false;
         taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
         taskDefinition.Settings.AllowHardTerminate = false;
+        taskDefinition.Settings.Priority = ProcessPriorityClass.High;
 
         LogonTrigger logonTrigger = new LogonTrigger();
         taskDefinition.Triggers.Add(logonTrigger);
