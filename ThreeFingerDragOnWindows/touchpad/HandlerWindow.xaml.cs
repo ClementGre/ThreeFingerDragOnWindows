@@ -86,7 +86,7 @@ public sealed partial class HandlerWindow : Window {
             _threeFingersDrag.OnTouchpadContact(_oldContacts, contacts, Ctms() - _lastContactCtms);
         }
         
-        _app.OnTouchpadContact(contacts); // Transfer to App for displaying contacts in SettingsWindow
+        _app.OnTouchpadContact(contacts, _contactsManager.isSingleContactMode); // Transfer to App for displaying contacts in SettingsWindow
         _lastContactCtms = Ctms();
         _oldContacts = contacts;
     }

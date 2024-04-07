@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-public class Logger{
+public class Logger {
     private static readonly ConcurrentQueue<string> _logMessages = new();
     private static readonly int _maxLogCount = 10000;
 

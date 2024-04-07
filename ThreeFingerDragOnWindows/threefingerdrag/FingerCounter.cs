@@ -22,9 +22,9 @@ public class FingerCounter {
     /// Count the number of fingers that are moving.
     /// </summary>
     /// <param name="newContacts">new contacts list</param>
-    /// <param name="areContactsIdsCommons">weather if contacts have changed since last call</param>
+    /// <param name="areContactsIdsCommons">Whether if contacts have changed since last call</param>
     /// <param name="longestDist2D">longest distance calculated by DistanceManager</param>
-    /// <param name="hasFingersReleased">Weather if fingers has been released and replaced on the touchpad</param>
+    /// <param name="hasFingersReleased">Whether if fingers has been released and replaced on the touchpad</param>
     /// <returns>
     /// fingersCount : real number of fingers on the touchpad, or 0 if contacts changed
     /// shortDelayMovingFingersCount : number of fingers that are on the touchpad and that have led to a moving distance higher than FINGERS_MOVE_THRESHOLD_SHORT

@@ -109,8 +109,8 @@ public partial class App {
         return true;
     }
     
-    public void OnTouchpadContact(TouchpadContact[] contacts){
-        SettingsWindow?.OnTouchpadContact(contacts);
+    public void OnTouchpadContact(TouchpadContact[] contacts, bool isSingleContactMode){
+        SettingsWindow?.OnTouchpadContact(contacts, isSingleContactMode);
     }
     public void OnTouchpadInitialized(){
         SettingsWindow?.OnTouchpadInitialized();

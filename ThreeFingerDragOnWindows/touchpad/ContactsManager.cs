@@ -8,7 +8,7 @@ using WinRT.Interop;
 
 namespace ThreeFingerDragOnWindows.touchpad;
 
-public class ContactsManager {
+public class ContactsManager{
     private readonly List<TouchpadContact> _lastContacts = new();
     private readonly HandlerWindow _source;
 
@@ -19,7 +19,7 @@ public class ContactsManager {
 
     public ContactsManager(HandlerWindow source){
         _source = source;
-        
+
         _hwnd = WindowNative.GetWindowHandle(_source);
         _oldWndProc = Interop.SetWndProc(_hwnd, WindowProcess);
     }
@@ -29,7 +29,7 @@ public class ContactsManager {
         Logger.Log("Touchpad exists: " + touchpadExists);
 
         var success = touchpadExists && TouchpadHelper.RegisterInput(_hwnd);
-        
+
         _source.OnTouchpadInitialized(touchpadExists, success);
     }
 
@@ -47,13 +47,22 @@ public class ContactsManager {
 
 
     // Contacts managements
+    public bool isSingleContactMode = true;
+
     private void ReceiveTouchpadContacts(TouchpadContact[] contacts){
         Logger.Log("Receiving contacts: " + string.Join(", ", contacts.Select(c => c.ToString())));
-        
-        if (contacts.Length == 1){
-            // On some touchpads, contacts are sent one by one
-            RegisterTouchpadContact(contacts[0]);
-        }else{
+
+        if(isSingleContactMode){
+            if(contacts.Length == 1){
+                RegisterTouchpadContact(contacts[0]);
+            } else{
+                isSingleContactMode = false;
+                if(_lastContacts.Count > 0)
+                    _source.OnTouchpadContact(_lastContacts.ToArray());
+                if(contacts.Length > 0)
+                    _source.OnTouchpadContact(contacts);
+            }
+        } else if(contacts.Length > 0){
             _source.OnTouchpadContact(contacts);
         }
     }
@@ -69,7 +78,7 @@ public class ContactsManager {
                 break;
             }
         }
-        
+
         _lastInput = Ctms();
         // Add the contact to the list
         _lastContacts.Add(contact);
