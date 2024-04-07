@@ -57,7 +57,7 @@ public partial class App {
             SettingsData.save();
         }
         
-        if(SettingsData.IsFirstRun || openOtherSettings){
+        if(SettingsData.DidVersionChanged || openOtherSettings){
             Logger.Log("First run detected, or StartupAction not NONE.");
             OpenSettingsWindow(openOtherSettings);
             Utils.runOnMainThreadAfter(3000, () => HandlerWindow = new HandlerWindow(this));

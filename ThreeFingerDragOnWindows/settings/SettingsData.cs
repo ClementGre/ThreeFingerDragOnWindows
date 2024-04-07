@@ -3,15 +3,17 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
 using Windows.Storage;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.settings;
 
 public class SettingsData{
-    private static int CURRENT_SETTINGS_VERSION = 1;
+    private static int CURRENT_SETTINGS_VERSION = 4;
 
     // Other
-    public static bool IsFirstRun { get; set; } = false;
+    public static bool DidVersionChanged { get; set; } = false;
     public int SettingsVersion { get; set; } = 0;
 
     // Three fingers drag Settings
@@ -70,6 +72,38 @@ public class SettingsData{
             up.ThreeFingerDragCursorAcceleration *= 10;
             up.save();
         }
+        if(up.SettingsVersion < 4){
+            Logger.Log("Updating settings to version 2");
+            if(up.RunElevated && StartupManager.IsElevatedStartupOn()){
+
+                if(Utils.IsAppRunningAsAdministrator()){
+                    StartupManager.DisableElevatedStartup();
+                    StartupManager.EnableElevatedStartup();
+                } else{
+                    Utils.runOnMainThreadAfter(2000, () => {
+                        if(App.SettingsWindow?.Content?.XamlRoot == null){
+                            Logger.Log("SettingsWindow not ready, skipping v2.0.3 upgrade dialog");
+                            return;
+                        }
+                    
+                        ContentDialog dialog = new ContentDialog{
+                            XamlRoot = App.SettingsWindow.Content.XamlRoot,
+                            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                            Title = "Fixing startup task issue",
+                            Content = "The v2.0.3 fixed a bug in the app startup task with elevated privileges. Please disable and re-enable the \"Run at startup\" option in the Other Settings tab to fix this bug.",
+                            CloseButtonText = "Ok"
+                        };
+                        dialog.ShowAsync();
+                    });
+                }
+            }
+            
+        }
+
+        if(up.SettingsVersion != CURRENT_SETTINGS_VERSION){
+            DidVersionChanged = true;
+            up.save();
+        }
 
         return up;
     }
@@ -89,7 +123,7 @@ public class SettingsData{
         if(!Directory.Exists(dirPath) || !File.Exists(filePath)){
             Logger.Log("First run: creating settings file");
             Directory.CreateDirectory(dirPath);
-            IsFirstRun = true;
+            DidVersionChanged = true;
             if(createIfEmpty) new SettingsData().save();
         }
 
