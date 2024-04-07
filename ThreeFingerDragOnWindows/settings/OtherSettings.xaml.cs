@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using ThreeFingerDragOnWindows.utils;
 using WinRT.Interop;
+using KnownFolders = ThreeFingerDragOnWindows.utils.KnownFolders;
 
 namespace ThreeFingerDragOnWindows.settings;
 
@@ -245,24 +246,17 @@ public sealed partial class OtherSettings{
     }
 
     private async void SaveLogsButton_Click(object sender, RoutedEventArgs e){
-        if(App.SettingsWindow == null){
-            return;
-        }
 
-        FileSavePicker savePicker = new FileSavePicker();
-
-        var hWnd = WindowNative.GetWindowHandle(App.SettingsWindow);
-        InitializeWithWindow.Initialize(savePicker, hWnd);
-
+        string path = Path.Combine(KnownFolders.GetPath(KnownFolder.Downloads), "Logs_ThreeFingerDragOnWindows.txt");
+        await Logger.ExportLogsAsync(path);
         
-        savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
-        savePicker.FileTypeChoices.Add("Plain Text", new List<string>(){ ".txt" });
-        
-        savePicker.SuggestedFileName = "Logs_ThreeFingerDragOnWindows";
-
-        StorageFile file = await savePicker.PickSaveFileAsync();
-        if(file != null){
-            await Logger.ExportLogsAsync(file);
-        }
+        ContentDialog dialog = new ContentDialog{
+            XamlRoot = XamlRoot,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            Title = "Logs saved",
+            Content = "The logs have been saved to the Downloads folder.",
+            CloseButtonText = "Ok"
+        };
+        await dialog.ShowAsync();
     }
 }

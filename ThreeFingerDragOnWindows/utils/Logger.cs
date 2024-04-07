@@ -27,7 +27,7 @@ public class Logger{
         _logMessages.Enqueue(logEntry);
     }
 
-    public static Task ExportLogsAsync(StorageFile file){
-        return File.WriteAllLinesAsync(file.Path, _logMessages.ToArray());
+    public static Task ExportLogsAsync(string path){
+        return File.WriteAllLinesAsync(path, _logMessages.ToArray());
     }
 }

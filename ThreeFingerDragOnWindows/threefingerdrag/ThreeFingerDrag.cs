@@ -37,7 +37,7 @@ public class ThreeFingerDrag {
             Logger.Log("    START DRAG, Left click down");
             MouseOperations.MouseClick(MouseOperations.MOUSEEVENTF_LEFTDOWN);
 
-        }else if((shortDelayMovingFingersCount < 2 || (originalFingersCount != 3 && originalFingersCount >= 2)) && _isDragging){
+        }else if(_isDragging && (shortDelayMovingFingersCount < 2 || (originalFingersCount != 3 && originalFingersCount >= 2))){
             // Stop dragging
             // Condition over originalFingersCount to catch cases where the drag has continued with only two or four fingers
             Logger.Log("    STOP DRAG, Left click up");

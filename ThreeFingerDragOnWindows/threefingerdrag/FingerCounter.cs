@@ -24,12 +24,12 @@ public class FingerCounter {
     /// <param name="newContacts">new contacts list</param>
     /// <param name="areContactsIdsCommons">weather if contacts have changed since last call</param>
     /// <param name="longestDist2D">longest distance calculated by DistanceManager</param>
-    /// <param name="hasFingersReleased">Wether if fingers has been released and replaced on the touchpad</param>
+    /// <param name="hasFingersReleased">Weather if fingers has been released and replaced on the touchpad</param>
     /// <returns>
     /// fingersCount : real number of fingers on the touchpad, or 0 if contacts changed
     /// shortDelayMovingFingersCount : number of fingers that are on the touchpad and that have led to a moving distance higher than FINGERS_MOVE_THRESHOLD_SHORT
     ///     Used to determine what is the real number of fingers on the touchpad when contacts changed
-    /// longDelayMovingFingersCount : number of fingers that are on the touchpad and that have led to a moving distance higher than FINGERS_MOVE_THRESHOLD
+    /// longDelayMovingFingersCount : number of fingers that are on the touchpad and that have led to a moving distance higher than FINGERS_MOVE_THRESHOLD_LONG
     ///     Used to determine if the user has really started to drag
     /// originalFingersCount : number of original fingers on the touchpad after the short delay.
     ///     This is updated only when contacts list length is &lt;= 1 or when contacts have been released for more than RELEASE_FINGERS_THRESHOLD_MS ms.
