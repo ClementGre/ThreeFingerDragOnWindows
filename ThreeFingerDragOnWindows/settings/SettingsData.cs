@@ -10,7 +10,7 @@ using ThreeFingerDragOnWindows.utils;
 namespace ThreeFingerDragOnWindows.settings;
 
 public class SettingsData{
-    private static int CURRENT_SETTINGS_VERSION = 4;
+    private static int CURRENT_SETTINGS_VERSION = 2;
 
     // Other
     public static bool DidVersionChanged { get; set; } = false;
