@@ -12,7 +12,7 @@ public class ContactsManager{
     private readonly List<TouchpadContact> _lastContacts = new();
     private readonly HandlerWindow _source;
 
-    private long _lastInput;
+    private long _lastSendContacts;
 
     private readonly IntPtr _hwnd;
     private IntPtr _oldWndProc;
@@ -50,6 +50,10 @@ public class ContactsManager{
     public bool isSingleContactMode = true;
 
     private void ReceiveTouchpadContacts(TouchpadContact[] contacts){
+        if(contacts == null || contacts.Length == 0){
+            Logger.Log("Receiving empty contacts");
+            return;
+        }
         Logger.Log("Receiving contacts: " + string.Join(", ", contacts.Select(c => c.ToString())));
 
         if(isSingleContactMode){
@@ -57,12 +61,10 @@ public class ContactsManager{
                 RegisterTouchpadContact(contacts[0]);
             } else{
                 isSingleContactMode = false;
-                if(_lastContacts.Count > 0)
-                    _source.OnTouchpadContact(_lastContacts.ToArray());
-                if(contacts.Length > 0)
-                    _source.OnTouchpadContact(contacts);
+                SendLastContacts();
             }
-        } else if(contacts.Length > 0){
+        }
+        if(!isSingleContactMode){
             _source.OnTouchpadContact(contacts);
         }
     }
@@ -71,17 +73,20 @@ public class ContactsManager{
         foreach(var lastContact in _lastContacts){
             if(lastContact.ContactId == contact.ContactId){
                 // A contact is registered twice: send the event with the list of all contacts
-                if(Ctms() - _lastInput < 50)
-                    // If contacts have all been released for a long time, cancel the last contact list
-                    _source.OnTouchpadContact(_lastContacts.ToArray());
-                _lastContacts.Clear();
+                SendLastContacts();
                 break;
             }
         }
-
-        _lastInput = Ctms();
-        // Add the contact to the list
         _lastContacts.Add(contact);
+    }
+    
+    private void SendLastContacts(){
+        // If contacts have all been released for a long time, cancel the last contact list
+        if(Ctms() - _lastSendContacts < 50 && _lastContacts.Count > 0)
+            _source.OnTouchpadContact(_lastContacts.ToArray());
+        
+        _lastContacts.Clear();
+        _lastSendContacts = Ctms();
     }
 
     private long Ctms(){
