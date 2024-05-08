@@ -7,7 +7,7 @@
 
 The goal of ThreeFingerDragOnWindows is to bring the macOS-style three-finger dragging functionality to Windows Precision touchpads.
 
-This allow to drag windows and select text (drag the cursor with left click pressed) with a simple.
+This allows you to drag windows and select text (by emulating a cursor drag holding down the left mouse button) with a simple touchpad gesture.
 
 ## Preview
 <p align="center">
