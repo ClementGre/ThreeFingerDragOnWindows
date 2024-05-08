@@ -12,7 +12,7 @@
     <Identity
             Name="50931ClmentGrennerat.ThreeFingersDragOnWindows"
             Publisher="CN=A5174EBF-789F-4CD5-BF8B-E0CB932DB9AD"
-            Version="2.0.3.0"/>
+            Version="2.0.4.0"/>
 
     <mp:PhoneIdentity PhoneProductId="c9b9ff1d-920c-45c7-99c8-3e98f838bef5"
                       PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
