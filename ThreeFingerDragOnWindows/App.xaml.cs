@@ -115,12 +115,4 @@ public partial class App {
     public void OnTouchpadInitialized(){
         SettingsWindow?.OnTouchpadInitialized();
     }
-
-    public bool DoTouchpadExist(){
-        return HandlerWindow.TouchpadExists;
-    }
-
-    public bool DoTouchpadRegistered(){
-        return HandlerWindow.TouchpadRegistered;
-    }
 }

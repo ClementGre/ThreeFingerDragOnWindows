@@ -10,16 +10,11 @@ using ThreeFingerDragOnWindows.utils;
 namespace ThreeFingerDragOnWindows.settings;
 
 public class SettingsData{
-    private static int CURRENT_SETTINGS_VERSION = 2;
+    private static int CURRENT_SETTINGS_VERSION = 3;
 
     // Other
     public static bool DidVersionChanged { get; set; } = false;
     public int SettingsVersion { get; set; } = 0;
-
-    // Three fingers drag Settings
-    public bool RegularTouchpadCheck { get; set; } = true;
-    public int RegularTouchpadCheckInterval { get; set; } = 5;
-    public bool RegularTouchpadCheckEvenAlreadyRegistered { get; set; } = false;
 
     // Three fingers drag Settings
     public bool ThreeFingerDrag { get; set; } = true;
@@ -30,7 +25,7 @@ public class SettingsData{
     public bool ThreeFingerDragCursorMove { get; set; } = true;
     public float ThreeFingerDragCursorSpeed { get; set; } = 30;
     public float ThreeFingerDragCursorAcceleration { get; set; } = 10;
-
+    public int ThreeFingerDragCursorAveraging { get; set; } = 1;
 
     // Other settings
 
@@ -72,7 +67,7 @@ public class SettingsData{
             up.ThreeFingerDragCursorAcceleration *= 10;
             up.save();
         }
-        if(up.SettingsVersion < 4){
+        if(up.SettingsVersion < 2){
             Logger.Log("Updating settings to version 2");
             if(up.RunElevated && StartupManager.IsElevatedStartupOn()){
 

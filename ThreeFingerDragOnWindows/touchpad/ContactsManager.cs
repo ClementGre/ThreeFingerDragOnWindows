@@ -26,11 +26,9 @@ public class ContactsManager{
 
     public void InitializeSource(){
         var touchpadExists = TouchpadHelper.Exists();
-        Logger.Log("Touchpad exists: " + touchpadExists);
-
-        var success = touchpadExists && TouchpadHelper.RegisterInput(_hwnd);
-
-        _source.OnTouchpadInitialized(touchpadExists, success);
+        var inputReceiverInstalled = TouchpadHelper.RegisterInput(_hwnd);
+        
+        _source.OnTouchpadInitialized(touchpadExists, inputReceiverInstalled);
     }
 
     // WindowProc Listener
@@ -39,6 +37,9 @@ public class ContactsManager{
             case TouchpadHelper.WM_INPUT:
                 var contacts = TouchpadHelper.ParseInput(lParam);
                 ReceiveTouchpadContacts(contacts);
+                break;
+            case TouchpadHelper.WM_INPUT_DEVICE_CHANGE:
+                _source.OnTouchpadInitialized(TouchpadHelper.Exists(), true);
                 break;
         }
 

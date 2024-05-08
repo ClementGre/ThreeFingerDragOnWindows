@@ -22,12 +22,12 @@ public sealed partial class TouchpadSettings {
         TouchpadStatus.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
         
         if(App.Instance.HandlerWindow.TouchpadExists){
-            if(App.Instance.HandlerWindow.TouchpadRegistered){
-                TouchpadStatus.Title = "Touchpad exists and is registered !";
+            if(App.Instance.HandlerWindow.InputReceiverInstalled){
+                TouchpadStatus.Title = "Touchpad exists and is registered!";
                 TouchpadStatus.Severity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Success;
                 ContactsDebug.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
             } else{
-                TouchpadStatus.Title = "Touchpad exists, but can't be registered.";
+                TouchpadStatus.Title = "Touchpad exists, but the input receiver can't be installed!.";
                 TouchpadStatus.Severity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Warning;
                 ContactsDebug.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             } 
@@ -36,24 +36,6 @@ public sealed partial class TouchpadSettings {
             TouchpadStatus.Severity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Error;
             ContactsDebug.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
         }
-    }
-    
-    public bool RegularTouchpadCheckProperty
-    {
-        get { return App.SettingsData.RegularTouchpadCheck; }
-        set { App.SettingsData.RegularTouchpadCheck = value; }
-    }
-    
-    public int RegularTouchpadCheckIntervalProperty
-    {
-        get { return App.SettingsData.RegularTouchpadCheckInterval; }
-        set { App.SettingsData.RegularTouchpadCheckInterval = value; }
-    }
-    
-    public bool RegularTouchpadCheckEvenAlreadyRegisteredProperty
-    {
-        get { return App.SettingsData.RegularTouchpadCheckEvenAlreadyRegistered; }
-        set { App.SettingsData.RegularTouchpadCheckEvenAlreadyRegistered = value; }
     }
 
 }

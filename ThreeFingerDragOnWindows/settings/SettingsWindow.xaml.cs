@@ -29,7 +29,7 @@ public sealed partial class SettingsWindow {
 
 
         InitializeComponent();
-        AppWindow.Resize(new SizeInt32(1500, 900));
+        AppWindow.Resize(new SizeInt32(1700, 1000));
 
         ExtendsContentIntoTitleBar = true; // enable custom titlebar
         SetTitleBar(TitleBar); // set TitleBar element as titlebar

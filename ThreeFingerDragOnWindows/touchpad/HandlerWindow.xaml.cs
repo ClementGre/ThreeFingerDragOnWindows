@@ -14,9 +14,9 @@ public sealed partial class HandlerWindow : Window {
     private readonly ContactsManager _contactsManager;
     private readonly ThreeFingerDrag _threeFingersDrag;
 
-    public bool TouchpadInitialized; // Became true when the touchpad check is done, but does not confirm that the touchpad has been registered, see TouchpadRegistered
+    public bool TouchpadInitialized; // Became true when the touchpad check is done, but does not confirm that the touchpad has been registered
     public bool TouchpadExists;
-    public bool TouchpadRegistered;
+    public bool InputReceiverInstalled;
 
     public HandlerWindow(App app){
         Logger.Log("Starting HandlerWindow...");
@@ -27,26 +27,8 @@ public sealed partial class HandlerWindow : Window {
         _threeFingersDrag = new ThreeFingerDrag();
 
         // Let the _handlerWindow to be defined in App.xaml.cs before initializing the source
-        var queue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         Utils.runOnMainThreadAfter(100, () => {
             _contactsManager.InitializeSource();
-            
-            Timer timer = new Timer();
-            timer.Interval = 1000; 
-            timer.AutoReset = true;
-            timer.Elapsed += (sender, args) => queue.TryEnqueue(() => {
-                if(!App.SettingsData.RegularTouchpadCheck){
-                    timer.Interval = 5000;
-                    return;
-                }
-                if(App.SettingsData.RegularTouchpadCheckInterval > 0){
-                    timer.Interval = App.SettingsData.RegularTouchpadCheckInterval * 1000;
-                }
-                if(TouchpadInitialized && (!TouchpadRegistered || App.SettingsData.RegularTouchpadCheckEvenAlreadyRegistered)){
-                    _contactsManager.InitializeSource();
-                }
-            });
-            timer.Start();
         });
         
     }
@@ -65,11 +47,11 @@ public sealed partial class HandlerWindow : Window {
 
     // Touchpad
     // Called when the touchpad is detected and the events handlers are registered (or not)
-    public void OnTouchpadInitialized(bool touchpadExists, bool touchpadRegistered){
+    public void OnTouchpadInitialized(bool touchpadExists, bool inputReceiverInstalled){
         TouchpadExists = touchpadExists;
-        TouchpadRegistered = touchpadRegistered;
+        InputReceiverInstalled = inputReceiverInstalled;
         if(!touchpadExists) Logger.Log("Touchpad is not detected.");
-        else if(!touchpadRegistered) Logger.Log("Touchpad is detected but not registered.");
+        else if(!inputReceiverInstalled) Logger.Log("Touchpad is detected but the input receiver couldn't be installed.");
         else Logger.Log("Touchpad is detected and registered.");
         
         TouchpadInitialized = true;

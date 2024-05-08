@@ -142,6 +142,17 @@
                 </wuc:SettingsExpander.Items>
 
             </wuc:SettingsExpander>
+            
+            <wuc:SettingsCard Description="Move the cursor based on an average of the last N inputs. Raise the value to smooth the cursor movement. Change this setting only if you are having issues as it will raise latency. Default to 1."
+                              Header="Average cursor movement" >
+                <NumberBox MinWidth="60"
+                           Value="{x:Bind CursorAveragingProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                           Minimum="1"
+                           Maximum="10"
+                           SmallChange="1"
+                           LargeChange="1"
+                           SpinButtonPlacementMode="Compact" />
+            </wuc:SettingsCard>
 
         </StackPanel>
     </ScrollView>
