@@ -16,7 +16,7 @@ namespace ThreeFingerDragOnWindows.settings;
 
 public sealed partial class SettingsWindow {
     private readonly App _app;
-    
+
     /*private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
     {
         var regex = new Regex("[^0-9]+");
@@ -33,7 +33,7 @@ public sealed partial class SettingsWindow {
 
         ExtendsContentIntoTitleBar = true; // enable custom titlebar
         SetTitleBar(TitleBar); // set TitleBar element as titlebar
-        
+
         NavigationView.SelectedItem = openOtherSettings ? OtherSettings : Touchpad;
     }
 
@@ -42,11 +42,11 @@ public sealed partial class SettingsWindow {
         if(e.SelectedItem.Equals(Touchpad)){
             sender.Header = "Touchpad";
             ContentFrame.Navigate(typeof(TouchpadSettings));
-            
+
         }if(e.SelectedItem.Equals(ThreeFingerDrag)){
-            sender.Header = "Three Fingers Drag";
+            sender.Header = "Three Finger Drag";
             ContentFrame.Navigate(typeof(ThreeFingerDragSettings));
-            
+
         } else if(e.SelectedItem.Equals(OtherSettings)){
             sender.Header = "Other Settings";
             ContentFrame.Navigate(typeof(OtherSettings));
@@ -68,10 +68,10 @@ public sealed partial class SettingsWindow {
     private void Window_Closed(object sender, WindowEventArgs e){
         Logger.Log("Hiding SettingsWindow, saving data...");
         App.SettingsData.save();
-        
+
         // Navigate to another page, so the "OnNavigatedFrom()" of OtherSettings gets called (for the timer).
         ContentFrame.Navigate(typeof(TouchpadSettings));
-        
+
         _app.OnClosePrefsWindow();
     }
 
@@ -80,7 +80,7 @@ public sealed partial class SettingsWindow {
     private long _lastEventSpeed;
     public void OnTouchpadContact(TouchpadContact[] contacts, bool isSingleContactMode){
         _inputCount++;
-    
+
         // Event speed is an average over 20 inputs calls (usually about 200 ms)
         if(_inputCount >= 20){
             _inputCount = 0;

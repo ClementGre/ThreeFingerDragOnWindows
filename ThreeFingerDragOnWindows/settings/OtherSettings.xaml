@@ -64,35 +64,37 @@
 
 
             <wuc:SettingsGroup Header="About">
-                <wuc:SettingsExpander Description="© 2023-2024. All rights reserved."
-                                      Header="ThreeFingerDragOnWindows">
-                    <wuc:SettingsExpander.HeaderIcon>
-                        <BitmapIcon ShowAsMonochrome="False"
-                                    UriSource="ms-appx:///Assets/icon-52.png" />
-                    </wuc:SettingsExpander.HeaderIcon>
+                <wuc:SettingsGroup.Items>
+                    <wuc:SettingsExpander Description="© 2023-2024. All rights reserved."
+                                          Header="ThreeFingerDragOnWindows">
+                        <wuc:SettingsExpander.HeaderIcon>
+                            <BitmapIcon ShowAsMonochrome="False"
+                                        UriSource="ms-appx:///Assets/icon-52.png" />
+                        </wuc:SettingsExpander.HeaderIcon>
 
-                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               IsTextSelectionEnabled="True"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Text="Version 2.0.4.0" />
+                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   IsTextSelectionEnabled="True"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Text="Version 2.0.4.0" />
 
-                    <wuc:SettingsExpander.Items>
-                        <wuc:SettingsCard HorizontalContentAlignment="Left"
-                                          ContentAlignment="Left">
-                            <StackPanel Margin="-12,0,0,0"
-                                        Orientation="Vertical">
-                                <HyperlinkButton Content="GitHub repository"
-                                                 NavigateUri="https://github.com/ClementGre/ThreeFingerDragOnWindows"
-                                                 Margin="0,0,0,5" />
-                                <HyperlinkButton Content="Donate with Paypal"
-                                                 NavigateUri="https://www.paypal.com/paypalme/themsou" />
-                            </StackPanel>
-                        </wuc:SettingsCard>
-                    </wuc:SettingsExpander.Items>
-                </wuc:SettingsExpander>
-                <HyperlinkButton Margin="0,8,0,0"
-                                 Content="Open GitHub issue"
-                                 NavigateUri="https://github.com/ClementGre/ThreeFingerDragOnWindows/issues/new" />
+                        <wuc:SettingsExpander.Items>
+                            <wuc:SettingsCard HorizontalContentAlignment="Left"
+                                              ContentAlignment="Left">
+                                <StackPanel Margin="-12,0,0,0"
+                                            Orientation="Vertical">
+                                    <HyperlinkButton Content="GitHub repository"
+                                                     NavigateUri="https://github.com/ClementGre/ThreeFingerDragOnWindows"
+                                                     Margin="0,0,0,5" />
+                                    <HyperlinkButton Content="Donate with Paypal"
+                                                     NavigateUri="https://www.paypal.com/paypalme/themsou" />
+                                </StackPanel>
+                            </wuc:SettingsCard>
+                        </wuc:SettingsExpander.Items>
+                    </wuc:SettingsExpander>
+                    <HyperlinkButton Margin="0,8,0,0"
+                                     Content="Open GitHub issue"
+                                     NavigateUri="https://github.com/ClementGre/ThreeFingerDragOnWindows/issues/new" />
+                </wuc:SettingsGroup.Items>
             </wuc:SettingsGroup>
 
 

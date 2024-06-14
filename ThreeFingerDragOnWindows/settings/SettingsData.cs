@@ -16,7 +16,7 @@ public class SettingsData{
     public static bool DidVersionChanged { get; set; } = false;
     public int SettingsVersion { get; set; } = 0;
 
-    // Three fingers drag Settings
+    // Three finger drag Settings
     public bool ThreeFingerDrag { get; set; } = true;
 
     public bool ThreeFingerDragAllowReleaseAndRestart { get; set; } = true;
@@ -46,11 +46,11 @@ public class SettingsData{
 
     public static SettingsData load(){
         Logger.Log("Loading settings...");
-        
+
         var mySerializer = new XmlSerializer(typeof(SettingsData));
         var myFileStream = new FileStream(getPath(true), FileMode.Open);
         SettingsData up;
-        
+
         try{
             up = (SettingsData)mySerializer.Deserialize(myFileStream);
             myFileStream.Close();
@@ -80,7 +80,7 @@ public class SettingsData{
                             Logger.Log("SettingsWindow not ready, skipping v2.0.3 upgrade dialog");
                             return;
                         }
-                    
+
                         ContentDialog dialog = new ContentDialog{
                             XamlRoot = App.SettingsWindow.Content.XamlRoot,
                             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
@@ -92,7 +92,7 @@ public class SettingsData{
                     });
                 }
             }
-            
+
         }
 
         if(up.SettingsVersion != CURRENT_SETTINGS_VERSION){
