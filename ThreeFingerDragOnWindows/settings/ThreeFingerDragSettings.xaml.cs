@@ -27,6 +27,11 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
         set{ App.SettingsData.ThreeFingerDrag = value; }
     }
 
+    public int ButtonTypeProperty {
+        get{ return (int) App.SettingsData.ThreeFingerDragButton; }
+        set{ App.SettingsData.ThreeFingerDragButton = (SettingsData.ThreeFingerDragButtonType) value; }
+    }
+
     public bool AllowReleaseAndRestartProperty {
         get{ return App.SettingsData.ThreeFingerDragAllowReleaseAndRestart; }
         set{ App.SettingsData.ThreeFingerDragAllowReleaseAndRestart = value; }

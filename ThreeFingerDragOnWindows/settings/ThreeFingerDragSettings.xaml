@@ -66,6 +66,18 @@
 
             </wuc:SettingsExpander>
 
+            <wuc:SettingsCard
+                Description="Keep the left button to be able to select text and drag objects."
+                HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE962;}"
+                Header="Mouse button to be hold while dragging">
+                <ComboBox x:Name="ButtonType" SelectedIndex="{x:Bind ButtonTypeProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="240">
+                    <x:String>None</x:String>
+                    <x:String>Left</x:String>
+                    <x:String>Right</x:String>
+                    <x:String>Middle</x:String>
+                </ComboBox>
+            </wuc:SettingsCard>
+
             <wuc:SettingsExpander
                 IsEnabled="{Binding ElementName=Enabled, Path=IsOn}"
                 Description="After releasing the three fingers, using only one or two fingers will instantly release the click. However, if you hang on, the click will be released only after a short delay. This feature allows you to reposition your fingers on the touchpad without releasing the click."

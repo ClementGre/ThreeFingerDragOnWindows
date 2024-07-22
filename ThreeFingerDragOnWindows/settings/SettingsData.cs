@@ -19,6 +19,14 @@ public class SettingsData{
     // Three finger drag Settings
     public bool ThreeFingerDrag { get; set; } = true;
 
+    public enum ThreeFingerDragButtonType {
+        NONE,
+        LEFT,
+        RIGHT,
+        MIDDLE,
+    }
+    public ThreeFingerDragButtonType ThreeFingerDragButton { get; set; } = ThreeFingerDragButtonType.LEFT;
+
     public bool ThreeFingerDragAllowReleaseAndRestart { get; set; } = true;
     public int ThreeFingerDragReleaseDelay { get; set; } = 500;
 

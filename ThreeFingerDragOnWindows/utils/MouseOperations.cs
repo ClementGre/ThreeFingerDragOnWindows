@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using ThreeFingerDragOnWindows.settings;
 
 namespace ThreeFingerDragOnWindows.utils;
 
@@ -10,6 +11,8 @@ public class MouseOperations {
     public const int MOUSEEVENTF_LEFTUP = 0x0004;
     public const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
     public const int MOUSEEVENTF_RIGHTUP = 0x0010;
+    public const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
+    public const int MOUSEEVENTF_MIDDLEUP = 0x0040;
 
     // moving the cursor does not work with floating point values
     // decimal parts are kept and then added to be taken in account
@@ -70,6 +73,34 @@ public class MouseOperations {
         var result = SendInput(1, input, Marshal.SizeOf(typeof(Input)));
 
         if(result == 0) Console.WriteLine("Failed to send mouse click. Error code: " + Marshal.GetLastWin32Error());
+    }
+
+    public static void ThreeFingersDragMouseDown(){
+        switch (App.SettingsData.ThreeFingerDragButton){
+            case SettingsData.ThreeFingerDragButtonType.LEFT:
+                MouseClick(MOUSEEVENTF_LEFTDOWN);
+                break;
+            case SettingsData.ThreeFingerDragButtonType.RIGHT:
+                MouseClick(MOUSEEVENTF_RIGHTDOWN);
+                break;
+            case SettingsData.ThreeFingerDragButtonType.MIDDLE:
+                MouseClick(MOUSEEVENTF_MIDDLEDOWN);
+                break;
+        }
+    }
+
+    public static void ThreeFingersDragMouseUp(){
+        switch (App.SettingsData.ThreeFingerDragButton){
+            case SettingsData.ThreeFingerDragButtonType.LEFT:
+                MouseClick(MOUSEEVENTF_LEFTUP);
+                break;
+            case SettingsData.ThreeFingerDragButtonType.RIGHT:
+                MouseClick(MOUSEEVENTF_RIGHTUP);
+                break;
+            case SettingsData.ThreeFingerDragButtonType.MIDDLE:
+                MouseClick(MOUSEEVENTF_MIDDLEUP);
+                break;
+        }
     }
 
 

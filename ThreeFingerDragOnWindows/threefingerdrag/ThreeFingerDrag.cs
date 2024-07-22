@@ -43,7 +43,7 @@ public class ThreeFingerDrag{
             // Start dragging
             _isDragging = true;
             Logger.Log("    START DRAG, Left click down");
-            MouseOperations.MouseClick(MouseOperations.MOUSEEVENTF_LEFTDOWN);
+            MouseOperations.ThreeFingersDragMouseDown();
         } else if(_isDragging &&
                   (shortDelayMovingFingersCount < 2 || (originalFingersCount != 3 && originalFingersCount >= 2))){
             // Stop dragging
@@ -90,7 +90,7 @@ public class ThreeFingerDrag{
 
     private void StopDrag(){
         _isDragging = false;
-        MouseOperations.MouseClick(MouseOperations.MOUSEEVENTF_LEFTUP);
+        MouseOperations.ThreeFingersDragMouseUp();
     }
 
     private int GetReleaseDelay(){
