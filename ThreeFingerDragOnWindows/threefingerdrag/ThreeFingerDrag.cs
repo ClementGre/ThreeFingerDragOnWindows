@@ -25,7 +25,6 @@ public class ThreeFingerDrag{
 
     public void OnTouchpadContact(TouchpadContact[] oldContacts, TouchpadContact[] contacts, long elapsed){
         bool hasFingersReleased = elapsed > RELEASE_FINGERS_THRESHOLD_MS;
-        Logger.Log("");
         Logger.Log("TFD: " + string.Join(", ", oldContacts.Select(c => c.ToString())) + " | " +
                    string.Join(", ", contacts.Select(c => c.ToString())) + " | " + elapsed);
         bool areContactsIdsCommons = FingerCounter.AreContactsIdsCommons(oldContacts, contacts);
@@ -78,11 +77,13 @@ public class ThreeFingerDrag{
                 _dragEndTimer.Start();
             }
         }
+        Logger.Log("");
     }
 
     private void OnTimerElapsed(object source, ElapsedEventArgs e){
         if(_isDragging){
             Logger.Log("    STOP DRAG FROM TIMER, Left click up");
+            Logger.Log("");
             StopDrag();
         }
     }

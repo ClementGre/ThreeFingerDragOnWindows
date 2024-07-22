@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using ThreeFingerDragEngine.utils;
@@ -151,64 +152,85 @@ internal static class TouchpadHelper{
                 return null;
 
             uint scanTime = 0;
-            uint contactCount = 0;
-            TouchpadContactCreator creator = new();
+            uint contactCount = 99;
+
+            List<TouchpadContactCreator> creators = new();
             List<TouchpadContact> contacts = new();
 
+            // Iterating though each value (scanTime, contactCount, contactId, x, y)
+            // Sometimes, iterates also through contacts by looping these values for each contact
+            String toLog = "Parsing RawInput: ";
             foreach(var valueCap in valueCaps.OrderBy(x => x.LinkCollection)){
-                if(HidP_GetUsageValue(
-                       HIDP_REPORT_TYPE.HidP_Input,
-                       valueCap.UsagePage,
-                       valueCap.LinkCollection,
-                       valueCap.Usage,
-                       out var value,
-                       preparsedDataPointer,
-                       rawHidRawDataPointer,
-                       (uint)rawHidRawData.Length) != HIDP_STATUS_SUCCESS)
-                    continue;
+                toLog += "| ";
+                // In case this valueCap contains multiple contacts at a time (rawInput.Hid.dwCount), iterates over each contact
+                for(int contactIndex = 0; contactIndex < rawInput.Hid.dwCount; contactIndex++){
+                    toLog += contactIndex + ": ";
+                    IntPtr rawHidRawDataPointerAdjusted = IntPtr.Add(rawHidRawDataPointer, (int) (rawInput.Hid.dwSizeHid * contactIndex));
 
-                // Usage Page and ID in Windows Precision Touchpad input reports
-                // https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/windows-precision-touchpad-required-hid-top-level-collections#windows-precision-touchpad-input-reports
-                switch(valueCap.LinkCollection){
-                    case 0:
-                        switch (valueCap.UsagePage, valueCap.Usage){
-                            case (0x0D, 0x56): // Scan Time
-                                scanTime = value;
-                                break;
+                    if(HidP_GetUsageValue(
+                            HIDP_REPORT_TYPE.HidP_Input,
+                            valueCap.UsagePage,
+                            valueCap.LinkCollection,
+                            valueCap.Usage,
+                            out var value,
+                            preparsedDataPointer,
+                            rawHidRawDataPointerAdjusted,
+                            (uint) rawHidRawData.Length) != HIDP_STATUS_SUCCESS)
+                        continue;
 
-                            case (0x0D, 0x54): // Contact Count
-                                contactCount = value;
-                                break;
-                        }
+                    // Usage Page and ID in Windows Precision Touchpad input reports
+                    // https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/windows-precision-touchpad-required-hid-top-level-collections#windows-precision-touchpad-input-reports
+                    switch (valueCap.LinkCollection){
+                        case 0:
+                            switch (valueCap.UsagePage, valueCap.Usage){
+                                case (0x0D, 0x56): // Scan Time
+                                    toLog += $"sT{value} ";
+                                    scanTime = value;
+                                    break;
 
-                        break;
+                                case (0x0D, 0x54): // Contact Count
+                                    toLog += $"cC{value} ";
+                                    contactCount = value;
+                                    break;
+                            }
 
-                    default:
-                        switch (valueCap.UsagePage, valueCap.Usage){
-                            case (0x0D, 0x51): // Contact ID
-                                creator.ContactId = (int)value;
-                                break;
+                            break;
 
-                            case (0x01, 0x30): // X
-                                creator.X = (int)value;
-                                break;
+                        default:
+                            while(creators.Count <= contactIndex){
+                                creators.Add(new TouchpadContactCreator());
+                            }
 
-                            case (0x01, 0x31): // Y
-                                creator.Y = (int)value;
-                                break;
-                        }
+                            switch (valueCap.UsagePage, valueCap.Usage){
+                                case (0x0D, 0x51): // Contact ID
+                                    toLog += $"ID{(int) value} ";
+                                    creators[contactIndex].ContactId = (int) value;
+                                    break;
 
-                        break;
+                                case (0x01, 0x30): // X
+                                    toLog += "X ";
+                                    creators[contactIndex].X = (int) value;
+                                    break;
+
+                                case (0x01, 0x31): // Y
+                                    toLog += "Y ";
+                                    creators[contactIndex].Y = (int) value;
+                                    break;
+                            }
+                            break;
+                    }
                 }
-
-                if(creator.TryCreate(out var contact)){
-                    contacts.Add(contact);
-                    if(contacts.Count >= contactCount)
-                        break;
-
-                    creator.Clear();
+                creators.ForEach(creator => {
+                    if(contacts.Count < contactCount && creator.TryCreate(out var contact)){
+                        contacts.Add(contact);
+                        creator.Clear();
+                    }
+                });
+                if(contacts.Count >= contactCount){
+                    break;
                 }
             }
+            Logger.Log(toLog);
 
             return contacts.ToArray();
         } finally{
