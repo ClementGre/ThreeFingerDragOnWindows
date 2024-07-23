@@ -16,17 +16,24 @@
         <RepositoryUrl>https://github.com/ClementGre/ThreeFingerDragOnWindows</RepositoryUrl>
         <PackageTags>touchpad;tool;automation;finger</PackageTags>
         <NeutralLanguage>en</NeutralLanguage>
-        <AssemblyVersion>2.0.4.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Title>ThreeFingerDragOnWindows</Title>
         <DisplayName>Three Finger Drag</DisplayName>
         <SignAssembly>False</SignAssembly>
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
         <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
-        <PackageCertificateThumbprint>6349A95D0136104C9F4661F4CF74E8F35FA2F9D2</PackageCertificateThumbprint>
-        <PackageCertificateKeyFile>ThreeFingerDragOnWindows.pfx</PackageCertificateKeyFile>
-        <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+<!--        <PackageCertificateKeyFile>ThreeFingerDragOnWindows.pfx</PackageCertificateKeyFile>-->
+<!--        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>-->
         <defineconstants>DISABLE_XAML_GENERATED_MAIN</defineconstants>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+        <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+        <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+        <GenerateTestArtifacts>True</GenerateTestArtifacts>
+        <AppxBundle>Never</AppxBundle>
+        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+        <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
     </PropertyGroup>
     <ItemGroup>
       <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-16.png" />
@@ -102,16 +109,16 @@
 
     <ItemGroup>
         <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.131" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240607001" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" />
         <PackageReference Include="TaskScheduler" Version="2.11.0" />
         <PackageReference Include="WinUICommunity.Components" Version="6.9.0" />
         <PackageReference Include="WinUICommunity.Core" Version="6.9.0" />
         <Manifest Include="$(ApplicationManifest)" />
         <PackageReference Include="WinUICommunity.LandingPages" Version="6.9.0" />
     </ItemGroup>
-    
-    <!-- 
+
+    <!--
       Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
       Tools extension to be activated for this project even if the Windows App SDK Nuget
       package has not yet been restored.
@@ -137,10 +144,10 @@
       <Resource Remove="src\settings\ThreeFingerDragSettings.xaml" />
       <Resource Remove="theme\Generic.xaml" />
     </ItemGroup>
-    
-    <!-- 
-      Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 
-      Explorer "Package and Publish" context menu entry to be enabled for this project even if 
+
+    <!--
+      Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
+      Explorer "Package and Publish" context menu entry to be enabled for this project even if
       the Windows App SDK Nuget package has not yet been restored.
     -->
     <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">

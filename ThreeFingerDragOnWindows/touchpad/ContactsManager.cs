@@ -27,7 +27,7 @@ public class ContactsManager{
     public void InitializeSource(){
         var touchpadExists = TouchpadHelper.Exists();
         var inputReceiverInstalled = TouchpadHelper.RegisterInput(_hwnd);
-        
+
         _source.OnTouchpadInitialized(touchpadExists, inputReceiverInstalled);
     }
 
@@ -80,12 +80,12 @@ public class ContactsManager{
         }
         _lastContacts.Add(contact);
     }
-    
+
     private void SendLastContacts(){
         // If contacts have all been released for a long time, cancel the last contact list
         if(Ctms() - _lastSendContacts < 50 && _lastContacts.Count > 0)
             _source.OnTouchpadContact(_lastContacts.ToArray());
-        
+
         _lastContacts.Clear();
         _lastSendContacts = Ctms();
     }

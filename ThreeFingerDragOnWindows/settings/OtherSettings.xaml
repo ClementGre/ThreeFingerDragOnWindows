@@ -39,7 +39,7 @@
 
 
             <wuc:SettingsCard Header="Run as administrator"
-                              Description="If the app is not running as an administrator, the dragging processes will not function when a window with administrator privileges is in focus."
+                              Description="If the app is not running as an administrator, the dragging process will not function when a window with administrator privileges is in focus."
                               HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},
                                                                     Glyph=&#xE7EF;}">
                 <ToggleSwitch x:Name="RunElevated" Toggled="RunElevated_Toggled"
@@ -54,12 +54,12 @@
             <wuc:SettingsCard Header="Record logs"
                               Description="To record logs, enable logging, reproduce the issue you are having, disable logging, save the file and add it to a GitHub issue. The log file contains only the last 10000 lines of logs."
                               HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE8E5;}">
-                
+
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
                     <ToggleSwitch x:Name="RecordLogs" IsOn="{x:Bind RecordLogsProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <Button x:Name="SaveLogsButton" Content="Save log file" Click="SaveLogsButton_Click" />
                 </StackPanel>
-                
+
             </wuc:SettingsCard>
 
 
@@ -75,7 +75,7 @@
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    IsTextSelectionEnabled="True"
                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                   Text="Version 2.0.4.0" />
+                                   Text="Version 2.0.5.0" />
 
                         <wuc:SettingsExpander.Items>
                             <wuc:SettingsCard HorizontalContentAlignment="Left"
