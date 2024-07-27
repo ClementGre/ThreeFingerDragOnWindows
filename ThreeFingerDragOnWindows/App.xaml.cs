@@ -22,13 +22,13 @@ public partial class App {
         Instance = this;
         DispatcherQueue = DispatcherQueue.GetForCurrentThread();
         SettingsData = SettingsData.load();
-        
+
         if(SettingsData.RunElevated && !Utils.IsAppRunningAsAdministrator()){
             if(RestartElevated()) return;
         }
         Logger.Log("Starting ThreeFingerDragOnWindows...");
         InitializeComponent();
-        
+
         bool openOtherSettings = false;
         Logger.Log("StartupAction: " + SettingsData.StartupAction);
         if(SettingsData.StartupAction != SettingsData.StartupActionType.NONE){
@@ -56,7 +56,7 @@ public partial class App {
             SettingsData.StartupAction = SettingsData.StartupActionType.NONE;
             SettingsData.save();
         }
-        
+
         if(SettingsData.DidVersionChanged || openOtherSettings){
             Logger.Log("First run detected, or StartupAction not NONE.");
             OpenSettingsWindow(openOtherSettings);
@@ -86,7 +86,7 @@ public partial class App {
     public static bool RestartElevated(SettingsData.StartupActionType startupActionType = SettingsData.StartupActionType.NONE){
         SettingsData.StartupAction = startupActionType;
         SettingsData.save();
-        
+
         var path = Utils.GetElevatorPath();
         Logger.Log("Running the Elevator app at " + path);
         ProcessStartInfo processInfo = new ProcessStartInfo{
@@ -98,7 +98,7 @@ public partial class App {
         try{
             Process.Start(processInfo);
         } catch(Win32Exception ex){
-            // Probably the user canceled the UAC window, 
+            // Probably the user canceled the UAC window,
             SettingsData.StartupAction = SettingsData.StartupActionType.NONE;
             SettingsData.save();
             Logger.Log(ex.ToString());
@@ -108,9 +108,9 @@ public partial class App {
         Instance.Quit();
         return true;
     }
-    
-    public void OnTouchpadContact(TouchpadContact[] contacts, bool isSingleContactMode){
-        SettingsWindow?.OnTouchpadContact(contacts, isSingleContactMode);
+
+    public void OnTouchpadContact(TouchpadContact[] contacts){
+        SettingsWindow?.OnTouchpadContact(contacts);
     }
     public void OnTouchpadInitialized(){
         SettingsWindow?.OnTouchpadInitialized();

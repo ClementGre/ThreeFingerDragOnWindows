@@ -5,14 +5,12 @@ using System.Linq;
 using ThreeFingerDragEngine.utils;
 using ThreeFingerDragOnWindows.utils;
 using WinRT.Interop;
+using WinUICommunity;
 
 namespace ThreeFingerDragOnWindows.touchpad;
 
 public class ContactsManager{
-    private readonly List<TouchpadContact> _lastContacts = new();
     private readonly HandlerWindow _source;
-
-    private long _lastSendContacts;
 
     private readonly IntPtr _hwnd;
     private IntPtr _oldWndProc;
@@ -35,8 +33,8 @@ public class ContactsManager{
     private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam){
         switch(message){
             case TouchpadHelper.WM_INPUT:
-                var contacts = TouchpadHelper.ParseInput(lParam);
-                ReceiveTouchpadContacts(contacts);
+                var (contacts, count) = TouchpadHelper.ParseInput(lParam);
+                ReceiveTouchpadContacts(contacts, count);
                 break;
             case TouchpadHelper.WM_INPUT_DEVICE_CHANGE:
                 _source.OnTouchpadInitialized(TouchpadHelper.Exists(), true);
@@ -48,46 +46,98 @@ public class ContactsManager{
 
 
     // Contacts managements
-    public bool isSingleContactMode = true;
+    private List<TouchpadContact> _lastContacts = new();
+    private uint _targetContactCount;
 
-    private void ReceiveTouchpadContacts(TouchpadContact[] contacts){
+    private void ReceiveTouchpadContacts(TouchpadContact[] contacts, uint count){
         if(contacts == null || contacts.Length == 0){
-            Logger.Log("Receiving empty contacts");
+            Logger.Log("Receiving empty contacts with cC=" + count);
             return;
         }
-        Logger.Log("Receiving contacts: " + string.Join(", ", contacts.Select(c => c.ToString())));
 
-        if(isSingleContactMode){
-            if(contacts.Length == 1){
-                RegisterTouchpadContact(contacts[0]);
-            } else{
-                isSingleContactMode = false;
-                SendLastContacts();
-            }
-        }
-        if(!isSingleContactMode){
+        // Regular contact list
+        if(count == contacts.Length){
+            Logger.Log("+ Receiving regular contact list: " +  string.Join(", ", contacts.Select(c => c.ToString())));
             _source.OnTouchpadContact(contacts);
+            _lastContacts.Clear();
+            return;
         }
+
+        // Partial contact list (always sent after an incomplete contact list)
+        if(count == 0){
+            Logger.Log("Receiving partial contact list: " + string.Join(", ", contacts.Select(c => c.ToString())));
+            _lastContacts.AddRange(contacts);
+            _lastContacts = RemoveDuplicates(_lastContacts);
+
+            if(_targetContactCount == 0){
+                Logger.Log("[WARNING] Target contact count not  received.");
+                return;
+            }
+
+            if(_lastContacts.Count > _targetContactCount){
+                Logger.Log("[WARNING] LastContact list has more contacts than expected: " + string.Join(", ", contacts.Select(c => c.ToString())));
+                _lastContacts = _lastContacts.Take((int) _targetContactCount).ToList();
+                _source.OnTouchpadContact(_lastContacts.ToArray());
+                _lastContacts.Clear();
+
+            }
+            if(_lastContacts.Count == _targetContactCount){
+                Logger.Log("+ LastContact list has correct length: " + string.Join(", ", contacts.Select(c => c.ToString())));
+                _source.OnTouchpadContact(_lastContacts.ToArray());
+                _lastContacts.Clear();
+            }
+            return;
+        }
+
+        // Old partial contact list has not been submitted yet : duplicating
+        if(_lastContacts.Count != 0){
+            Logger.Log("[WARNING] New incomplete contact list received while old lastContacts not empty: " + contacts.Length);
+
+            if(_lastContacts.Count < _targetContactCount){
+                var lastContact = _lastContacts.Last();
+                var maxId = _lastContacts.Max(c => c.ContactId);
+                for(int i = 1; i <= _targetContactCount - _lastContacts.Count; i++){
+                    _lastContacts.Add(new TouchpadContact(maxId + i, lastContact.X, lastContact.Y));
+                }
+                Logger.Log("+ Duplicated last contact to fulfil list: " + string.Join(", ", _lastContacts.Select(c => c.ToString())));
+            }else if(_lastContacts.Count > _targetContactCount){
+                Logger.Log("[WARNING] LastContact list has more contacts than expected: " + string.Join(", ", contacts.Select(c => c.ToString())));
+                _lastContacts = _lastContacts.Take((int) _targetContactCount).ToList();
+            }
+
+            Logger.Log("+ LastContact list has correct length: " + string.Join(", ", contacts.Select(c => c.ToString())));
+
+            _source.OnTouchpadContact(_lastContacts.ToArray());
+            _lastContacts.Clear();
+        }
+
+        // Regular contact list with more contacts than expected (unlikely to happen)
+        if(count <= contacts.Length){
+            Logger.Log("[WARNING] Received contact list with more contacts than expected: " + string.Join(", ", contacts.Select(c => c.ToString())));
+            contacts = contacts.Take((int) count).ToArray();
+            Logger.Log("+ Contact list has been clamped: " + string.Join(", ", contacts.Select(c => c.ToString())));
+            _source.OnTouchpadContact(contacts.ToArray());
+            _lastContacts.Clear();
+            return;
+        }
+
+        // Here, 0 < contacts.Length < count and lastContacts is empty: incomplete contact list
+        _targetContactCount = count;
+        _lastContacts = contacts.ToList();
+        Logger.Log("Receiving incomplete contact count, waiting for partial contacts: " + string.Join(", ", contacts.Select(c => c.ToString())));
     }
 
-    private void RegisterTouchpadContact(TouchpadContact contact){
-        foreach(var lastContact in _lastContacts){
-            if(lastContact.ContactId == contact.ContactId){
-                // A contact is registered twice: send the event with the list of all contacts
-                SendLastContacts();
-                break;
+    private List<TouchpadContact> RemoveDuplicates(List<TouchpadContact> contacts){
+        var uniqueContacts = new List<TouchpadContact>();
+        foreach(var contact in contacts){
+            if(!uniqueContacts.Any(c => c.ContactId == contact.ContactId)){
+                uniqueContacts.Add(contact);
             }
         }
-        _lastContacts.Add(contact);
-    }
-
-    private void SendLastContacts(){
-        // If contacts have all been released for a long time, cancel the last contact list
-        if(Ctms() - _lastSendContacts < 50 && _lastContacts.Count > 0)
-            _source.OnTouchpadContact(_lastContacts.ToArray());
-
-        _lastContacts.Clear();
-        _lastSendContacts = Ctms();
+        if(uniqueContacts.Count != contacts.Count){
+            Logger.Log("[WARNING] Duplicate contacts ID in list. Removing duplicates: " + string.Join(", ", uniqueContacts.Select(c => c.ToString())));
+        }
+        return uniqueContacts;
     }
 
     private long Ctms(){

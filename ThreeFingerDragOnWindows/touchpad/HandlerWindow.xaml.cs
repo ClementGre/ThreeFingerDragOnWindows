@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Timers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
@@ -30,7 +31,7 @@ public sealed partial class HandlerWindow : Window {
         Utils.runOnMainThreadAfter(100, () => {
             _contactsManager.InitializeSource();
         });
-        
+
     }
 
     // TaskbarIcon Actions
@@ -53,26 +54,26 @@ public sealed partial class HandlerWindow : Window {
         if(!touchpadExists) Logger.Log("Touchpad is not detected.");
         else if(!inputReceiverInstalled) Logger.Log("Touchpad is detected but the input receiver couldn't be installed.");
         else Logger.Log("Touchpad is detected and registered.");
-        
+
         TouchpadInitialized = true;
         _app.OnTouchpadInitialized();
     }
 
     // Called when a new set of contacts has been registered
-    
+
     private TouchpadContact[] _oldContacts = Array.Empty<TouchpadContact>();
     private long _lastContactCtms = Ctms();
-    
+
     public void OnTouchpadContact(TouchpadContact[] contacts){
         if(App.SettingsData.ThreeFingerDrag){
             _threeFingersDrag.OnTouchpadContact(_oldContacts, contacts, Ctms() - _lastContactCtms);
         }
-        
-        _app.OnTouchpadContact(contacts, _contactsManager.isSingleContactMode); // Transfer to App for displaying contacts in SettingsWindow
+
+        _app.OnTouchpadContact(contacts); // Transfer to App for displaying contacts in SettingsWindow
         _lastContactCtms = Ctms();
         _oldContacts = contacts;
     }
-    
+
     private static long Ctms(){
         return new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
     }

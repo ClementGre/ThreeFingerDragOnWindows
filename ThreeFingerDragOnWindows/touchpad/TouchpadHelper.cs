@@ -71,7 +71,7 @@ internal static class TouchpadHelper {
         return RegisterRawInputDevices(new[]{ device }, 1, (uint) Marshal.SizeOf<RAWINPUTDEVICE>());
     }
 
-    public static TouchpadContact[] ParseInput(IntPtr lParam){
+    public static (TouchpadContact[], uint) ParseInput(IntPtr lParam){
         // Get RAWINPUT.
         uint rawInputSize = 0;
         var rawInputHeaderSize = (uint) Marshal.SizeOf<RAWINPUTHEADER>();
@@ -82,7 +82,7 @@ internal static class TouchpadHelper {
                IntPtr.Zero,
                ref rawInputSize,
                rawInputHeaderSize) != 0)
-            return null;
+            return (null, 0);
 
         RAWINPUT rawInput;
         byte[] rawHidRawData;
@@ -97,7 +97,7 @@ internal static class TouchpadHelper {
                    rawInputPointer,
                    ref rawInputSize,
                    rawInputHeaderSize) != rawInputSize)
-                return null;
+                return (null, 0);
 
             rawInput = Marshal.PtrToStructure<RAWINPUT>(rawInputPointer);
 
@@ -124,7 +124,7 @@ internal static class TouchpadHelper {
                    RIDI_PREPARSEDDATA,
                    IntPtr.Zero,
                    ref preparsedDataSize) != 0)
-                return null;
+                return (null, 0);
 
             preparsedDataPointer = Marshal.AllocHGlobal((int) preparsedDataSize);
 
@@ -133,12 +133,12 @@ internal static class TouchpadHelper {
                    RIDI_PREPARSEDDATA,
                    preparsedDataPointer,
                    ref preparsedDataSize) != preparsedDataSize)
-                return null;
+                return (null, 0);
 
             if(HidP_GetCaps(
                    preparsedDataPointer,
                    out var caps) != HIDP_STATUS_SUCCESS)
-                return null;
+                return (null, 0);
 
             var valueCapsLength = caps.NumberInputValueCaps;
             var valueCaps = new HIDP_VALUE_CAPS[valueCapsLength];
@@ -148,7 +148,7 @@ internal static class TouchpadHelper {
                    valueCaps,
                    ref valueCapsLength,
                    preparsedDataPointer) != HIDP_STATUS_SUCCESS)
-                return null;
+                return (null, 0);
 
             uint scanTime = 0;
             uint contactCount = 99;
@@ -192,6 +192,9 @@ internal static class TouchpadHelper {
                                     toLog += $"cC{value} ";
                                     contactCount = value;
                                     break;
+                                default:
+                                    toLog += $"0U{valueCap.UsagePage}/{valueCap.Usage} ";
+                                    break;
                             }
 
                             break;
@@ -216,6 +219,9 @@ internal static class TouchpadHelper {
                                     toLog += "Y ";
                                     creators[contactIndex].Y = (int) value;
                                     break;
+                                default:
+                                    toLog += $"U{valueCap.UsagePage}/{valueCap.Usage} ";
+                                    break;
                             }
 
                             break;
@@ -223,19 +229,19 @@ internal static class TouchpadHelper {
                 }
 
                 creators.ForEach(creator => {
-                    if(contacts.Count < contactCount && creator.TryCreate(out var contact)){
+                    if((contactCount == 0 || contacts.Count < contactCount) && creator.TryCreate(out var contact)){
                         contacts.Add(contact);
                         creator.Clear();
                     }
                 });
-                if(contacts.Count >= contactCount){
+                if(contactCount != 0 && contacts.Count >= contactCount){
                     break;
                 }
             }
 
             Logger.Log(toLog);
 
-            return contacts.ToArray();
+            return (contacts.ToArray(), contactCount);
         } finally{
             Marshal.FreeHGlobal(rawHidRawDataPointer);
             Marshal.FreeHGlobal(preparsedDataPointer);
