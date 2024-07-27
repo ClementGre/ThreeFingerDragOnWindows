@@ -42,13 +42,13 @@ public class ThreeFingerDrag{
            originalFingersCount == 3 && !_isDragging){
             // Start dragging
             _isDragging = true;
-            Logger.Log("    START DRAG, Left click down");
+            Logger.Log("    START DRAG, click down");
             MouseOperations.ThreeFingersDragMouseDown();
         } else if(_isDragging &&
                   (shortDelayMovingFingersCount < 2 || (originalFingersCount != 3 && originalFingersCount >= 2))){
             // Stop dragging
             // Condition over originalFingersCount to catch cases where the drag has continued with only two or four fingers
-            Logger.Log("    STOP DRAG, Left click up");
+            Logger.Log("    STOP DRAG, click up");
             StopDrag();
         } else if(fingersCount >= 2 && originalFingersCount == 3 && areContactsIdsCommons && _isDragging){
             // Dragging

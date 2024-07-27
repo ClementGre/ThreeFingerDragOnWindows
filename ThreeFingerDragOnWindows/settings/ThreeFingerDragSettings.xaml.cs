@@ -75,4 +75,33 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
             }
         }
     }
+
+    public int StartDragThresholdProperty {
+        get{ return App.SettingsData.ThreeFingerDragStartThreshold; }
+        set{
+            if(App.SettingsData.ThreeFingerDragStartThreshold != value){
+                App.SettingsData.ThreeFingerDragStartThreshold = value;
+                OnPropertyChanged(nameof(StartDragThresholdProperty));
+
+                if(value < App.SettingsData.ThreeFingerDragStopThreshold){
+                    App.SettingsData.ThreeFingerDragStopThreshold = value;
+                    OnPropertyChanged(nameof(StopDragThresholdProperty));
+                }
+            }
+        }
+    }
+    public int StopDragThresholdProperty {
+        get{ return App.SettingsData.ThreeFingerDragStopThreshold; }
+        set{
+            if(App.SettingsData.ThreeFingerDragStopThreshold != value){
+                App.SettingsData.ThreeFingerDragStopThreshold = value;
+                OnPropertyChanged(nameof(StopDragThresholdProperty));
+
+                if(value > App.SettingsData.ThreeFingerDragStartThreshold){
+                    App.SettingsData.ThreeFingerDragStartThreshold = value;
+                    OnPropertyChanged(nameof(StartDragThresholdProperty));
+                }
+            }
+        }
+    }
 }

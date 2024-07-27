@@ -11,7 +11,7 @@ using WinUICommunity;
 namespace ThreeFingerDragOnWindows.settings;
 
 public class SettingsData{
-    private static int CURRENT_SETTINGS_VERSION = 3;
+    private static int CURRENT_SETTINGS_VERSION = 4;
 
     // Other
     public static bool DidVersionChanged { get; set; } = false;
@@ -35,6 +35,9 @@ public class SettingsData{
     public float ThreeFingerDragCursorSpeed { get; set; } = 30;
     public float ThreeFingerDragCursorAcceleration { get; set; } = 10;
     public int ThreeFingerDragCursorAveraging { get; set; } = 1;
+
+    public int ThreeFingerDragStartThreshold { get; set; } = 100;
+    public int ThreeFingerDragStopThreshold { get; set; } = 10;
 
     // Other settings
 
