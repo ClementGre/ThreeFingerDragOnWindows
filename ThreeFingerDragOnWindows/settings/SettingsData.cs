@@ -6,6 +6,7 @@ using Windows.Storage;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ThreeFingerDragOnWindows.utils;
+using WinUICommunity;
 
 namespace ThreeFingerDragOnWindows.settings;
 
@@ -96,7 +97,7 @@ public class SettingsData{
                             Content = "The v2.0.3 fixed a bug in the app startup task with elevated privileges. Please disable and re-enable the \"Run at startup\" option in the Other Settings tab to fix this bug.",
                             CloseButtonText = "Ok"
                         };
-                        dialog.ShowAsync();
+                        dialog.ShowAsyncDraggable();
                     });
                 }
             }

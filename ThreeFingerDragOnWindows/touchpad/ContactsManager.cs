@@ -49,14 +49,14 @@ public class ContactsManager{
     private List<TouchpadContact> _lastContacts = new();
     private uint _targetContactCount;
 
-    private void ReceiveTouchpadContacts(TouchpadContact[] contacts, uint count){
-        if(contacts == null || contacts.Length == 0){
+    private void ReceiveTouchpadContacts(List<TouchpadContact> contacts, uint count){
+        if(contacts == null || contacts.Count == 0){
             Logger.Log("Receiving empty contacts with cC=" + count);
             return;
         }
 
         // Regular contact list
-        if(count == contacts.Length){
+        if(count == contacts.Count){
             Logger.Log("+ Receiving regular contact list: " +  string.Join(", ", contacts.Select(c => c.ToString())));
             _source.OnTouchpadContact(contacts);
             _lastContacts.Clear();
@@ -70,20 +70,20 @@ public class ContactsManager{
             _lastContacts = RemoveDuplicates(_lastContacts);
 
             if(_targetContactCount == 0){
-                Logger.Log("[WARNING] Target contact count not  received.");
+                Logger.Log("[WARNING] Target contact count not received yet through an invalid contact list.");
                 return;
             }
 
             if(_lastContacts.Count > _targetContactCount){
-                Logger.Log("[WARNING] LastContact list has more contacts than expected: " + string.Join(", ", contacts.Select(c => c.ToString())));
+                Logger.Log("[WARNING] LastContact list has more contacts than expected: " + string.Join(", ", _lastContacts.Select(c => c.ToString())));
                 _lastContacts = _lastContacts.Take((int) _targetContactCount).ToList();
-                _source.OnTouchpadContact(_lastContacts.ToArray());
+                _source.OnTouchpadContact(_lastContacts);
                 _lastContacts.Clear();
 
             }
             if(_lastContacts.Count == _targetContactCount){
-                Logger.Log("+ LastContact list has correct length: " + string.Join(", ", contacts.Select(c => c.ToString())));
-                _source.OnTouchpadContact(_lastContacts.ToArray());
+                Logger.Log("+ LastContact list has correct length: " + string.Join(", ", _lastContacts.Select(c => c.ToString())));
+                _source.OnTouchpadContact(_lastContacts);
                 _lastContacts.Clear();
             }
             return;
@@ -91,7 +91,7 @@ public class ContactsManager{
 
         // Old partial contact list has not been submitted yet : duplicating
         if(_lastContacts.Count != 0){
-            Logger.Log("[WARNING] New incomplete contact list received while old lastContacts not empty: " + contacts.Length);
+            Logger.Log("[WARNING] New incomplete contact list received while old lastContacts not empty: " + contacts.Count);
 
             if(_lastContacts.Count < _targetContactCount){
                 var lastContact = _lastContacts.Last();
@@ -101,29 +101,29 @@ public class ContactsManager{
                 }
                 Logger.Log("+ Duplicated last contact to fulfil list: " + string.Join(", ", _lastContacts.Select(c => c.ToString())));
             }else if(_lastContacts.Count > _targetContactCount){
-                Logger.Log("[WARNING] LastContact list has more contacts than expected: " + string.Join(", ", contacts.Select(c => c.ToString())));
+                Logger.Log("[WARNING] LastContact list has more contacts than expected: " + string.Join(", ", _lastContacts.Select(c => c.ToString())));
                 _lastContacts = _lastContacts.Take((int) _targetContactCount).ToList();
             }
 
-            Logger.Log("+ LastContact list has correct length: " + string.Join(", ", contacts.Select(c => c.ToString())));
+            Logger.Log("+ LastContact list has correct length: " + string.Join(", ", _lastContacts.Select(c => c.ToString())));
 
-            _source.OnTouchpadContact(_lastContacts.ToArray());
+            _source.OnTouchpadContact(_lastContacts);
             _lastContacts.Clear();
         }
 
         // Regular contact list with more contacts than expected (unlikely to happen)
-        if(count <= contacts.Length){
+        if(count <= contacts.Count){
             Logger.Log("[WARNING] Received contact list with more contacts than expected: " + string.Join(", ", contacts.Select(c => c.ToString())));
-            contacts = contacts.Take((int) count).ToArray();
+            contacts = contacts.Take((int) count).ToList();
             Logger.Log("+ Contact list has been clamped: " + string.Join(", ", contacts.Select(c => c.ToString())));
-            _source.OnTouchpadContact(contacts.ToArray());
+            _source.OnTouchpadContact(contacts);
             _lastContacts.Clear();
             return;
         }
 
         // Here, 0 < contacts.Length < count and lastContacts is empty: incomplete contact list
         _targetContactCount = count;
-        _lastContacts = contacts.ToList();
+        _lastContacts = contacts;
         Logger.Log("Receiving incomplete contact count, waiting for partial contacts: " + string.Join(", ", contacts.Select(c => c.ToString())));
     }
 
@@ -138,9 +138,5 @@ public class ContactsManager{
             Logger.Log("[WARNING] Duplicate contacts ID in list. Removing duplicates: " + string.Join(", ", uniqueContacts.Select(c => c.ToString())));
         }
         return uniqueContacts;
-    }
-
-    private long Ctms(){
-        return new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
     }
 }

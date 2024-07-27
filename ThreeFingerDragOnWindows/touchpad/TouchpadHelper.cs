@@ -71,7 +71,7 @@ internal static class TouchpadHelper {
         return RegisterRawInputDevices(new[]{ device }, 1, (uint) Marshal.SizeOf<RAWINPUTDEVICE>());
     }
 
-    public static (TouchpadContact[], uint) ParseInput(IntPtr lParam){
+    public static (List<TouchpadContact>, uint) ParseInput(IntPtr lParam){
         // Get RAWINPUT.
         uint rawInputSize = 0;
         var rawInputHeaderSize = (uint) Marshal.SizeOf<RAWINPUTHEADER>();
@@ -241,7 +241,7 @@ internal static class TouchpadHelper {
 
             Logger.Log(toLog);
 
-            return (contacts.ToArray(), contactCount);
+            return (contacts, contactCount);
         } finally{
             Marshal.FreeHGlobal(rawHidRawDataPointer);
             Marshal.FreeHGlobal(preparsedDataPointer);

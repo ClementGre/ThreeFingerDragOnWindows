@@ -7,7 +7,7 @@ using ThreeFingerDragOnWindows.utils;
 namespace ThreeFingerDragOnWindows.threefingerdrag;
 
 public class ThreeFingerDrag{
-    public const int RELEASE_FINGERS_THRESHOLD_MS = 30; // Windows Precision Touchpad sends contacts about every 10ms
+    public const int RELEASE_FINGERS_THRESHOLD_MS = 40; // Windows Precision Touchpad sends contacts about every 10ms
 
     private readonly DistanceManager _distanceManager = new();
     private readonly FingerCounter _fingerCounter = new();

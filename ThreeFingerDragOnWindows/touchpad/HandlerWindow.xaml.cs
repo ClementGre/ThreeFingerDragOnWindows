@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
@@ -64,14 +65,14 @@ public sealed partial class HandlerWindow : Window {
     private TouchpadContact[] _oldContacts = Array.Empty<TouchpadContact>();
     private long _lastContactCtms = Ctms();
 
-    public void OnTouchpadContact(TouchpadContact[] contacts){
+    public void OnTouchpadContact(List<TouchpadContact> contacts){
         if(App.SettingsData.ThreeFingerDrag){
-            _threeFingersDrag.OnTouchpadContact(_oldContacts, contacts, Ctms() - _lastContactCtms);
+            _threeFingersDrag.OnTouchpadContact(_oldContacts, contacts.ToArray(), Ctms() - _lastContactCtms);
         }
 
-        _app.OnTouchpadContact(contacts); // Transfer to App for displaying contacts in SettingsWindow
+        _app.OnTouchpadContact(contacts.ToArray()); // Transfer to App for displaying contacts in SettingsWindow
         _lastContactCtms = Ctms();
-        _oldContacts = contacts;
+        _oldContacts = contacts.ToArray();
     }
 
     private static long Ctms(){
