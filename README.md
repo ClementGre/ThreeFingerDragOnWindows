@@ -5,9 +5,9 @@
 
 ## Overview
 
-The goal of ThreeFingerDragOnWindows is to bring the macOS-style three-finger dragging functionality to Windows Precision touchpads.
+ThreeFingerDragOnWindows aims to bring the macOS-style three-finger dragging functionality to Windows Precision touchpads.
 
-This allows you to drag windows and select text (by emulating a cursor drag holding down the left mouse button) with a simple touchpad gesture.
+With a simple touchpad gesture, this app allows you to drag windows and select text (by emulating a cursor drag by holding down the left mouse button).
 
 ## Preview
 <p align="center">
@@ -22,10 +22,10 @@ If the installation fails, your computer might need to have the Windows App SDK 
 
 ## How to use
 
-Make sure to disable the "Tap twice and drag to multi-select" behaviour and all of the defaults 3-finger swipe behaviour
-via ``Touchpad settings`` in windows preferences for the drag to work without interferences.
+Make sure to disable the "Tap twice and drag to multi-select" behaviour and all of the default 3-finger swipe behaviour
+via ``Touchpad settings`` in Windows preferences for the drag to work without interferences.
 
-To open the configuration pane, click the ThreeFingerDragOnWindows tray icon on the Windows task bar.
+To open the configuration pane, click the ThreeFingerDragOnWindows tray icon on the Windows taskbar.
 
 ## Build and Execute
 
@@ -33,9 +33,14 @@ The app can be built and run in Microsoft Visual Studio or Jetbrains Rider.
 
 ## Libraries used
 
-The app is WinUI 3 app, that uses the [Microsoft.UI.Xaml](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/) library.
+The app is a WinUI 3 app, that uses the [Microsoft.UI.Xaml](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/) library.
 
 Other libraries used:
 - [emoacht/RawInput.Touchpad](https://github.com/emoacht/RawInput.Touchpad) Allows to get the raw input of the touchpad (included in the source code as TouchpadHelper.cs).
 - [HavenDV/H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) API for Windows taskbar tray icon in a WinUI app.
 - [dahall/TaskScheduler](https://github.com/dahall/TaskScheduler) API for Windows TaskScheduler (used for the skipUAC).
+
+
+<a href="https://apps.microsoft.com/detail/9msx91wqcm2v?mode=direct">
+	<img src="https://get.microsoft.com/images/fr%20dark.svg" width="200"/>
+</a>
