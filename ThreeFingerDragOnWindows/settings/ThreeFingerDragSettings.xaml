@@ -201,17 +201,52 @@
                 </StackPanel>
             </wuc:SettingsCard>
 
-            <wuc:SettingsCard
-                Description="Move the cursor based on an average of the last N inputs. Raise the value to smooth the cursor movement. Change this setting only if you are having issues as it will raise latency. Default to 1."
-                Header="Average cursor movement">
-                <NumberBox MinWidth="60"
-                           Value="{x:Bind CursorAveragingProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                           Minimum="1"
-                           Maximum="10"
-                           SmallChange="1"
-                           LargeChange="1"
-                           SpinButtonPlacementMode="Compact" />
-            </wuc:SettingsCard>
+            <Expander
+                IsExpanded="False"
+                ExpandDirection="Down"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
+                Header="Troubleshooting">
+
+                <StackPanel Margin="0,0,0,0"
+                            ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
+                            Spacing="5">
+
+                    <wuc:SettingsCard
+                        Description="If the fingers move more than this distance at once, the record will be discarded. Can be used to prevent cursor jumps due to jumpy touchpad reports. Set to 0 to disable the limit. Default to 0."
+                        Header="Limit the maximum allowed distance the finger can be moved at once">
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
+                            <Slider MinWidth="150"
+                                    StepFrequency="1"
+                                    Maximum="200"
+                                    Minimum="0"
+                                    Value="{x:Bind MaxFingerMoveDistanceProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <NumberBox MinWidth="80"
+                                       Value="{x:Bind MaxFingerMoveDistanceProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                       Minimum="0"
+                                       Maximum="10000"
+                                       SmallChange="5"
+                                       LargeChange="10"
+                                       SpinButtonPlacementMode="Compact" />
+                        </StackPanel>
+                    </wuc:SettingsCard>
+
+                    <wuc:SettingsCard
+                        Description="Move the cursor based on an average of the last N inputs. Raise the value to smooth the cursor movement. Change this setting only if you are having issues as it will raise latency. Default to 1."
+                        Header="Average cursor movement">
+                        <NumberBox MinWidth="60"
+                                   Value="{x:Bind CursorAveragingProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                   Minimum="1"
+                                   Maximum="10"
+                                   SmallChange="1"
+                                   LargeChange="1"
+                                   SpinButtonPlacementMode="Compact" />
+                    </wuc:SettingsCard>
+
+                </StackPanel>
+            </Expander>
 
         </StackPanel>
     </ScrollView>

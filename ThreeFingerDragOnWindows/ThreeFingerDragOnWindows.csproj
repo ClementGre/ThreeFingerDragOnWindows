@@ -1,156 +1,154 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
-        <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-        <RootNamespace>ThreeFingerDragOnWindows</RootNamespace>
-        <ApplicationManifest>app.manifest</ApplicationManifest>
-        <Platforms>x86;x64;ARM64</Platforms>
-        <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-        <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
-        <UseWinUI>true</UseWinUI>
-        <EnableMsixTooling>true</EnableMsixTooling>
-        <Description>Enables macOS-style three-finger dragging functionality on Windows Precision touchpads.</Description>
-        <PackageIcon>logo-44.targetsize-256.png</PackageIcon>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <RepositoryUrl>https://github.com/ClementGre/ThreeFingerDragOnWindows</RepositoryUrl>
-        <PackageTags>touchpad;tool;automation;finger</PackageTags>
-        <NeutralLanguage>en</NeutralLanguage>
-        <AssemblyVersion>2.0.6.0</AssemblyVersion>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Title>ThreeFingerDragOnWindows</Title>
-        <DisplayName>Three Finger Drag</DisplayName>
-        <SignAssembly>False</SignAssembly>
-        <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
-        <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
-<!--        <PackageCertificateKeyFile>ThreeFingerDragOnWindows.pfx</PackageCertificateKeyFile>-->
-<!--        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>-->
-        <defineconstants>DISABLE_XAML_GENERATED_MAIN</defineconstants>
-        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-        <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-        <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
-        <GenerateTestArtifacts>True</GenerateTestArtifacts>
-        <AppxBundle>Never</AppxBundle>
-        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-        <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-    </PropertyGroup>
-    <ItemGroup>
-      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-16.png" />
-      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-24.png" />
-      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-256.png" />
-      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-32.png" />
-      <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-48.png" />
-      <Content Remove="Assets\logo-44.altform-unplated_targetsize-16.png" />
-      <Content Remove="Assets\logo-44.altform-unplated_targetsize-24.png" />
-      <Content Remove="Assets\logo-44.altform-unplated_targetsize-256.png" />
-      <Content Remove="Assets\logo-44.altform-unplated_targetsize-32.png" />
-      <Content Remove="Assets\logo-44.altform-unplated_targetsize-48.png" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Remove="Assets\BadgeLogo.scale-100.png" />
-      <None Remove="Assets\BadgeLogo.scale-125.png" />
-      <None Remove="Assets\BadgeLogo.scale-150.png" />
-      <None Remove="Assets\BadgeLogo.scale-200.png" />
-      <None Remove="Assets\BadgeLogo.scale-400.png" />
-      <None Remove="Assets\LargeTile.scale-100.png" />
-      <None Remove="Assets\LargeTile.scale-125.png" />
-      <None Remove="Assets\LargeTile.scale-150.png" />
-      <None Remove="Assets\LargeTile.scale-200.png" />
-      <None Remove="Assets\LargeTile.scale-400.png" />
-      <None Remove="Assets\logo-150.scale-100.png" />
-      <None Remove="Assets\logo-150.scale-125.png" />
-      <None Remove="Assets\logo-150.scale-150.png" />
-      <None Remove="Assets\logo-150.scale-200.png" />
-      <None Remove="Assets\logo-150.scale-400.png" />
-      <None Remove="Assets\logo-44.scale-100.png" />
-      <None Remove="Assets\logo-44.scale-125.png" />
-      <None Remove="Assets\logo-44.scale-150.png" />
-      <None Remove="Assets\logo-44.scale-200.png" />
-      <None Remove="Assets\logo-44.scale-400.png" />
-      <None Remove="Assets\logo-44.targetsize-16.png" />
-      <None Remove="Assets\logo-44.targetsize-16_altform-lightunplated.png" />
-      <None Remove="Assets\logo-44.targetsize-24.png" />
-      <None Remove="Assets\logo-44.targetsize-24_altform-lightunplated.png" />
-      <None Remove="Assets\logo-44.targetsize-24_altform-unplated.png" />
-      <None Remove="Assets\logo-44.targetsize-256_altform-lightunplated.png" />
-      <None Remove="Assets\logo-44.targetsize-256_altform-unplated.png" />
-      <None Remove="Assets\logo-44.targetsize-32.png" />
-      <None Remove="Assets\logo-44.targetsize-32_altform-lightunplated.png" />
-      <None Remove="Assets\logo-44.targetsize-32_altform-unplated.png" />
-      <None Remove="Assets\logo-44.targetsize-48.png" />
-      <None Remove="Assets\logo-44.targetsize-48_altform-lightunplated.png" />
-      <None Remove="Assets\logo-44.targetsize-48_altform-unplated.png" />
-      <None Remove="Assets\logo-512.scale-100.png" />
-      <None Remove="Assets\logo-512.scale-125.png" />
-      <None Remove="Assets\logo-512.scale-150.png" />
-      <None Remove="Assets\logo-512.scale-200.png" />
-      <None Remove="Assets\logo-512.scale-400.png" />
-      <None Remove="Assets\SmallTile.scale-100.png" />
-      <None Remove="Assets\SmallTile.scale-125.png" />
-      <None Remove="Assets\SmallTile.scale-150.png" />
-      <None Remove="Assets\SmallTile.scale-200.png" />
-      <None Remove="Assets\SmallTile.scale-400.png" />
-      <None Remove="Assets\SplashScreen.scale-100.png" />
-      <None Remove="Assets\SplashScreen.scale-125.png" />
-      <None Remove="Assets\SplashScreen.scale-150.png" />
-      <None Remove="Assets\SplashScreen.scale-200.png" />
-      <None Remove="Assets\SplashScreen.scale-400.png" />
-      <None Remove="Assets\WideTile.scale-100.png" />
-      <None Remove="Assets\WideTile.scale-125.png" />
-      <None Remove="Assets\WideTile.scale-150.png" />
-      <None Remove="Assets\WideTile.scale-200.png" />
-      <None Remove="Assets\WideTile.scale-400.png" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="Assets\icon.ico" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.131" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" />
-        <PackageReference Include="TaskScheduler" Version="2.11.0" />
-        <PackageReference Include="WinUICommunity.Components" Version="6.9.0" />
-        <PackageReference Include="WinUICommunity.Core" Version="6.9.0" />
-        <Manifest Include="$(ApplicationManifest)" />
-        <PackageReference Include="WinUICommunity.LandingPages" Version="6.9.0" />
-    </ItemGroup>
-
-    <!--
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.22000</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>ThreeFingerDragOnWindows</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+    <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <Description>Enables macOS-style three-finger dragging functionality on Windows Precision touchpads.</Description>
+    <PackageIcon>logo-44.targetsize-256.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/ClementGre/ThreeFingerDragOnWindows</RepositoryUrl>
+    <PackageTags>touchpad;tool;automation;finger</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <AssemblyVersion>2.0.6.0</AssemblyVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Title>ThreeFingerDragOnWindows</Title>
+    <DisplayName>Three Finger Drag</DisplayName>
+    <SignAssembly>False</SignAssembly>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+    <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <!--        <PackageCertificateKeyFile>ThreeFingerDragOnWindows.pfx</PackageCertificateKeyFile>-->
+    <!--        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>-->
+    <defineconstants>DISABLE_XAML_GENERATED_MAIN</defineconstants>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Always</AppxBundle>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-16.png" />
+    <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-24.png" />
+    <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-256.png" />
+    <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-32.png" />
+    <Content Remove="Assets\logo-44.altform-lightunplated_targetsize-48.png" />
+    <Content Remove="Assets\logo-44.altform-unplated_targetsize-16.png" />
+    <Content Remove="Assets\logo-44.altform-unplated_targetsize-24.png" />
+    <Content Remove="Assets\logo-44.altform-unplated_targetsize-256.png" />
+    <Content Remove="Assets\logo-44.altform-unplated_targetsize-32.png" />
+    <Content Remove="Assets\logo-44.altform-unplated_targetsize-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\BadgeLogo.scale-100.png" />
+    <None Remove="Assets\BadgeLogo.scale-125.png" />
+    <None Remove="Assets\BadgeLogo.scale-150.png" />
+    <None Remove="Assets\BadgeLogo.scale-200.png" />
+    <None Remove="Assets\BadgeLogo.scale-400.png" />
+    <None Remove="Assets\LargeTile.scale-100.png" />
+    <None Remove="Assets\LargeTile.scale-125.png" />
+    <None Remove="Assets\LargeTile.scale-150.png" />
+    <None Remove="Assets\LargeTile.scale-200.png" />
+    <None Remove="Assets\LargeTile.scale-400.png" />
+    <None Remove="Assets\logo-150.scale-100.png" />
+    <None Remove="Assets\logo-150.scale-125.png" />
+    <None Remove="Assets\logo-150.scale-150.png" />
+    <None Remove="Assets\logo-150.scale-200.png" />
+    <None Remove="Assets\logo-150.scale-400.png" />
+    <None Remove="Assets\logo-44.scale-100.png" />
+    <None Remove="Assets\logo-44.scale-125.png" />
+    <None Remove="Assets\logo-44.scale-150.png" />
+    <None Remove="Assets\logo-44.scale-200.png" />
+    <None Remove="Assets\logo-44.scale-400.png" />
+    <None Remove="Assets\logo-44.targetsize-16.png" />
+    <None Remove="Assets\logo-44.targetsize-16_altform-lightunplated.png" />
+    <None Remove="Assets\logo-44.targetsize-24.png" />
+    <None Remove="Assets\logo-44.targetsize-24_altform-lightunplated.png" />
+    <None Remove="Assets\logo-44.targetsize-24_altform-unplated.png" />
+    <None Remove="Assets\logo-44.targetsize-256_altform-lightunplated.png" />
+    <None Remove="Assets\logo-44.targetsize-256_altform-unplated.png" />
+    <None Remove="Assets\logo-44.targetsize-32.png" />
+    <None Remove="Assets\logo-44.targetsize-32_altform-lightunplated.png" />
+    <None Remove="Assets\logo-44.targetsize-32_altform-unplated.png" />
+    <None Remove="Assets\logo-44.targetsize-48.png" />
+    <None Remove="Assets\logo-44.targetsize-48_altform-lightunplated.png" />
+    <None Remove="Assets\logo-44.targetsize-48_altform-unplated.png" />
+    <None Remove="Assets\logo-512.scale-100.png" />
+    <None Remove="Assets\logo-512.scale-125.png" />
+    <None Remove="Assets\logo-512.scale-150.png" />
+    <None Remove="Assets\logo-512.scale-200.png" />
+    <None Remove="Assets\logo-512.scale-400.png" />
+    <None Remove="Assets\SmallTile.scale-100.png" />
+    <None Remove="Assets\SmallTile.scale-125.png" />
+    <None Remove="Assets\SmallTile.scale-150.png" />
+    <None Remove="Assets\SmallTile.scale-200.png" />
+    <None Remove="Assets\SmallTile.scale-400.png" />
+    <None Remove="Assets\SplashScreen.scale-100.png" />
+    <None Remove="Assets\SplashScreen.scale-125.png" />
+    <None Remove="Assets\SplashScreen.scale-150.png" />
+    <None Remove="Assets\SplashScreen.scale-200.png" />
+    <None Remove="Assets\SplashScreen.scale-400.png" />
+    <None Remove="Assets\WideTile.scale-100.png" />
+    <None Remove="Assets\WideTile.scale-125.png" />
+    <None Remove="Assets\WideTile.scale-150.png" />
+    <None Remove="Assets\WideTile.scale-200.png" />
+    <None Remove="Assets\WideTile.scale-400.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.2" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251106002" />
+    <PackageReference Include="TaskScheduler" Version="2.11.0" />
+    <PackageReference Include="WinUICommunity.Components" Version="6.9.0" />
+    <PackageReference Include="WinUICommunity.Core" Version="6.9.0" />
+    <Manifest Include="$(ApplicationManifest)" />
+    <PackageReference Include="WinUICommunity.LandingPages" Version="6.9.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <!--
       Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
       Tools extension to be activated for this project even if the Windows App SDK Nuget
       package has not yet been restored.
     -->
-    <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-        <ProjectCapability Include="Msix" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\ThreeFingerDragElevator\ThreeFingerDragElevator.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Update="Assets\logo-44.targetsize-256.png">
-        <Pack>True</Pack>
-        <PackagePath>\</PackagePath>
-      </None>
-      <None Update="README.md">
-        <Pack>True</Pack>
-        <PackagePath>\</PackagePath>
-      </None>
-    </ItemGroup>
-    <ItemGroup>
-      <Resource Remove="settings\SettingsWindow.xaml" />
-      <Resource Remove="src\settings\ThreeFingerDragSettings.xaml" />
-      <Resource Remove="theme\Generic.xaml" />
-    </ItemGroup>
-
-    <!--
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThreeFingerDragElevator\ThreeFingerDragElevator.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\logo-44.targetsize-256.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Remove="settings\SettingsWindow.xaml" />
+    <Resource Remove="src\settings\ThreeFingerDragSettings.xaml" />
+    <Resource Remove="theme\Generic.xaml" />
+  </ItemGroup>
+  <!--
       Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
       Explorer "Package and Publish" context menu entry to be enabled for this project even if
       the Windows App SDK Nuget package has not yet been restored.
     -->
-    <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-        <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+  </PropertyGroup>
 </Project>

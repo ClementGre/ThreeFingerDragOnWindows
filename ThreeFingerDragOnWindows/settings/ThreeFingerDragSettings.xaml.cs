@@ -104,4 +104,13 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
             }
         }
     }
+    public int MaxFingerMoveDistanceProperty {
+        get{ return App.SettingsData.ThreeFingerDragMaxFingerMoveDistance; }
+        set{
+            if(App.SettingsData.ThreeFingerDragMaxFingerMoveDistance != value){
+                App.SettingsData.ThreeFingerDragMaxFingerMoveDistance = value;
+                OnPropertyChanged(nameof(MaxFingerMoveDistanceProperty));
+            }
+        }
+    }
 }

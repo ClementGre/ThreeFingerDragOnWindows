@@ -35,6 +35,7 @@ public class SettingsData{
     public float ThreeFingerDragCursorSpeed { get; set; } = 30;
     public float ThreeFingerDragCursorAcceleration { get; set; } = 10;
     public int ThreeFingerDragCursorAveraging { get; set; } = 1;
+    public int ThreeFingerDragMaxFingerMoveDistance{ get; set; } = 0;
 
     public int ThreeFingerDragStartThreshold { get; set; } = 100;
     public int ThreeFingerDragStopThreshold { get; set; } = 10;
