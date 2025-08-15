@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    Title="ThreeFingerDragOnWindows"
     Closed="Window_Closed">
 
 
@@ -21,8 +22,8 @@
             <Border Height="44" Margin="9,0,0,0">
                 <Image Source="/Assets/icon-52.png" Height="26" />
             </Border>
-            
-            
+
+
             <Border Height="44" Margin="12,0,0,0">
                 <TextBlock
                     Text="ThreeFingerDragOnWindows"
@@ -55,7 +56,7 @@
             <NavigationView.PaneCustomContent>
                 <StackPanel Height="22" />
             </NavigationView.PaneCustomContent>
-            
+
             <NavigationView.Resources>
                 <Thickness x:Key="NavigationViewHeaderMargin">20,20,0,20</Thickness>
             </NavigationView.Resources>

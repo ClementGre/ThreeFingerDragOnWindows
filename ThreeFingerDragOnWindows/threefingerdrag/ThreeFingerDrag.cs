@@ -53,21 +53,24 @@ public class ThreeFingerDrag{
         } else if(fingersCount >= 2 && originalFingersCount == 3 && areContactsIdsCommons && _isDragging){
             // Dragging
             if(App.SettingsData.ThreeFingerDragCursorMove){
-                Logger.Log("    MOVING, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
-
-                if(!longestDistDelta.IsNull()){
+                if(App.SettingsData.ThreeFingerDragMaxFingerMoveDistance != 0 && longestDist2D > App.SettingsData.ThreeFingerDragMaxFingerMoveDistance){
+                    Logger.Log("    DISCARDING MOVE, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
+                } else if(!longestDistDelta.IsNull()){
                     Point delta = DistanceManager.ApplySpeedAndAcc(longestDistDelta, (int)elapsed);
+                    Logger.Log("    MOVING (avg), (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
                     if(App.SettingsData.ThreeFingerDragCursorAveraging > 1){
                         _averagingX += delta.x;
                         _averagingY += delta.y;
                         _averagingCount++;
                         if(_averagingCount >= App.SettingsData.ThreeFingerDragCursorAveraging){
+                            Logger.Log("    MOVING (avg effectively), (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
                             MouseOperations.ShiftCursorPosition(_averagingX, _averagingY);
                             _averagingX = 0;
                             _averagingY = 0;
                             _averagingCount = 0;
                         }
                     } else{
+                        Logger.Log("    MOVING, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
                         MouseOperations.ShiftCursorPosition(delta.x, delta.y);
                     }
                 }
