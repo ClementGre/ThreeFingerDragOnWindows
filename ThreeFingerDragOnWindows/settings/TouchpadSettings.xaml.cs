@@ -1,4 +1,8 @@
-﻿namespace ThreeFingerDragOnWindows.settings;
+﻿using System;
+using System.Linq;
+using ThreeFingerDragOnWindows.utils;
+
+namespace ThreeFingerDragOnWindows.settings;
 
 public sealed partial class TouchpadSettings {
 
@@ -22,8 +26,9 @@ public sealed partial class TouchpadSettings {
         TouchpadStatus.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
         
         if(App.Instance.HandlerWindow.TouchpadExists){
-            if(App.Instance.HandlerWindow.InputReceiverInstalled){
-                TouchpadStatus.Title = "Touchpad exists and is registered!";
+            if(App.Instance.HandlerWindow.InputReceiverInstalled) {
+                string deviceInfosString = String.Join("\n", TouchpadHelper.GetAllDeivceInfos().Select(deviceInfo => deviceInfo.ToString()));
+                TouchpadStatus.Title = "Touchpad exists and is registered! \n" + deviceInfosString;
                 TouchpadStatus.Severity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Success;
                 ContactsDebug.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
             } else{

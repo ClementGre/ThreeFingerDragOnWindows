@@ -24,6 +24,7 @@ public class ThreeFingerDrag{
     private int _averagingCount = 0;
 
     public void OnTouchpadContact(IntPtr currentDevice, TouchpadContact[] oldContacts, TouchpadContact[] contacts, long elapsed){
+        var deviceInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
         bool hasFingersReleased = elapsed > RELEASE_FINGERS_THRESHOLD_MS;
         Logger.Log("TFD: " + string.Join(", ", oldContacts.Select(c => c.ToString())) + " | " +
                    string.Join(", ", contacts.Select(c => c.ToString())) + " | " + elapsed);
@@ -52,7 +53,7 @@ public class ThreeFingerDrag{
             StopDrag();
         } else if(fingersCount >= 2 && originalFingersCount == 3 && areContactsIdsCommons && _isDragging){
             // Dragging
-            if(App.SettingsData.ThreeFingerDragCursorMove){
+            if(App.SettingsData.ThreeFingerDeviceDragCursorConfigs.ContainsKey(deviceInfo.deviceId)){
                 if(App.SettingsData.ThreeFingerDragMaxFingerMoveDistance != 0 && longestDist2D > App.SettingsData.ThreeFingerDragMaxFingerMoveDistance){
                     Logger.Log("    DISCARDING MOVE, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
                 } else if(!longestDistDelta.IsNull()){

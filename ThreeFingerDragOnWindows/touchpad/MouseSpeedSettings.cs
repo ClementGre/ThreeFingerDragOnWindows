@@ -2,41 +2,80 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using ThreeFingerDragOnWindows.settings;
 
 namespace ThreeFingerDragOnWindows.touchpad;
 
-public class MouseSpeedSettings
+public class MouseSpeedSettings : INotifyPropertyChanged
 {
+    private bool _cursorMoveProperty;
+    private float _cursorSpeedProperty;
+    private float _cursorAccelerationProperty;
     public TouchpadDeviceInfo TouchpadDevice { get; set; }
-    public string Header { get;  } = "Mouse Speed";
-    public string Description { get; }
-    public double MinValue { get; } = 0;
-    public double MaxValue { get; } = 200;
-    public double StepFrequency { get; } = 1;
-
-    private float _currentValue;
-
-    public MouseSpeedSettings(TouchpadDeviceInfo device)
+    public string Header { get; }
+    
+    public MouseSpeedSettings(SettingsData.ThreeFingerDragConfig dragConfig, TouchpadDeviceInfo device)
     {
         TouchpadDevice = device;
-        Description = TouchpadDevice.ToString();
+        Header = "Enable three finger mouse move (" + TouchpadDevice + ")";
+
+        CursorMoveProperty = dragConfig.ThreeFingerDragCursorMove;
+        CursorSpeedProperty = dragConfig.ThreeFingerDragCursorSpeed;
+        CursorAccelerationProperty = dragConfig.ThreeFingerDragCursorAcceleration;
+    }
+    
+    private void UpdateDragConfig()
+    {
+        App.SettingsData.ThreeFingerDeviceDragCursorConfigs[TouchpadDevice.deviceId] = new SettingsData.ThreeFingerDragConfig(_cursorMoveProperty, _cursorSpeedProperty, _cursorAccelerationProperty);
     }
 
-    public float CurrentValue
+    public bool CursorMoveProperty
     {
-        get => App.SettingsData.ThreeFingerDeviceDragCursorSpeed.GetValueOrDefault(TouchpadDevice.deviceId, 30);
+        get => _cursorMoveProperty;
         set
         {
-            if (!(Math.Abs(_currentValue - value) > 0.1)) return;
-            _currentValue = value;
-            App.SettingsData.ThreeFingerDeviceDragCursorSpeed[TouchpadDevice.deviceId] = value;
-            OnPropertyChanged();
+            if (_cursorMoveProperty != value)
+            {
+                _cursorMoveProperty = value;
+                
+                OnPropertyChanged(nameof(CursorMoveProperty));
+            }
+            
         }
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public float CursorSpeedProperty
     {
+        get => _cursorSpeedProperty;
+        set
+        {
+            if (_cursorSpeedProperty != value)
+            {
+                _cursorSpeedProperty = value;
+                OnPropertyChanged(nameof(CursorSpeedProperty));
+            }
+        }
+    }
+
+    public float CursorAccelerationProperty
+    {
+        get => _cursorAccelerationProperty;
+        set
+        {
+            if (_cursorAccelerationProperty != value)
+            {
+                _cursorAccelerationProperty = value; 
+                OnPropertyChanged(nameof(CursorAccelerationProperty));
+            }
+            
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    
+    private void OnPropertyChanged(string propertyName){
+        UpdateDragConfig();
+        
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
