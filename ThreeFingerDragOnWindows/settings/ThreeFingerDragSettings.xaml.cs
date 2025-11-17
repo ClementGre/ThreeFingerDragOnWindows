@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Microsoft.UI.Xaml;
+using ThreeFingerDragOnWindows.touchpad;
+using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.settings;
 
@@ -47,13 +50,17 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
         set{ App.SettingsData.ThreeFingerDragCursorMove = value; }
     }
 
-    public float CursorSpeedProperty {
-        get{ return App.SettingsData.ThreeFingerDragCursorSpeed; }
-        set{
-            if(App.SettingsData.ThreeFingerDragCursorSpeed != value){
-                App.SettingsData.ThreeFingerDragCursorSpeed = value;
-                OnPropertyChanged(nameof(CursorSpeedProperty));
+    public ObservableCollection<MouseSpeedSettings> MouseSpeedSettingItems
+    {
+        get
+        {
+            ObservableCollection<MouseSpeedSettings> settings = new ObservableCollection<MouseSpeedSettings>(new Collection<MouseSpeedSettings>());
+            List<TouchpadDeviceInfo> allDeviceInfos = TouchpadHelper.GetAllDeivceInfos();
+            foreach (TouchpadDeviceInfo device in allDeviceInfos)
+            {
+                settings.Add(new MouseSpeedSettings(device));
             }
+            return settings;
         }
     }
 

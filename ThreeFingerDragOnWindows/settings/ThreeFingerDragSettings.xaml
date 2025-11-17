@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wuc="using:WinUICommunity"
+    xmlns:local="using:ThreeFingerDragOnWindows.touchpad"
     mc:Ignorable="d">
 
 
@@ -114,26 +115,33 @@
                               IsOn="{x:Bind CursorMoveProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <wuc:SettingsExpander.Items>
                     <!-- content is an alignment of a numberbox and a slider  in a horizontal box -->
-                    <wuc:SettingsCard Header="Mouse speed"
-                                      Description="Default to 30"
-                                      IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
+                    <ItemsControl ItemsSource="{x:Bind MouseSpeedSettingItems}" Style="{x:Null}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="local:MouseSpeedSettings">
+                                <wuc:SettingsCard Header="{x:Bind Header}"
+                                                  Description="{x:Bind Description}"
+                                                  IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
+                                        <!-- Slider -->
+                                        <Slider MinWidth="200"
+                                                StepFrequency="{x:Bind StepFrequency}"
+                                                Minimum="{x:Bind MinValue}"
+                                                Maximum="{x:Bind MaxValue}"
+                                                Value="{x:Bind CurrentValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
-                            <Slider MinWidth="200"
-                                    StepFrequency="1"
-                                    Maximum="200"
-                                    Minimum="1"
-                                    Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <NumberBox MinWidth="80"
-                                       Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       Maximum="100000"
-                                       Minimum="0"
-                                       SmallChange="5"
-                                       LargeChange="10"
-                                       SpinButtonPlacementMode="Compact" />
-                        </StackPanel>
-                    </wuc:SettingsCard>
+                                        <!-- NumberBox -->
+                                        <NumberBox MinWidth="80"
+                                                   Value="{x:Bind CurrentValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                   Minimum="{x:Bind MinValue}"
+                                                   Maximum="{x:Bind MaxValue}"
+                                                   SmallChange="{x:Bind StepFrequency}"
+                                                   LargeChange="{x:Bind StepFrequency}"
+                                                   SpinButtonPlacementMode="Compact" />
+                                    </StackPanel>
+                                </wuc:SettingsCard>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                     <wuc:SettingsCard Description="Default to 10, 0 to disable."
                                       Header="Mouse acceleration"
                                       IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">

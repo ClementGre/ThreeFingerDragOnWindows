@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
 using ThreeFingerDragEngine.utils;
+using ThreeFingerDragOnWindows.touchpad;
 
 namespace ThreeFingerDragOnWindows.utils;
 
@@ -12,11 +15,76 @@ internal static class TouchpadHelper {
     public const int WM_INPUT_DEVICE_CHANGE = 0x00FE;
     public const int RIM_INPUT = 0;
     public const int RIM_INPUTSINK = 1;
+    
+    private static Dictionary<IntPtr, TouchpadDeviceInfo> availableDeviceInfos = new Dictionary<IntPtr, TouchpadDeviceInfo>(2);
 
-    public static bool Exists(){
+    private static TouchpadDeviceInfo GetDeviceInfoFromHid(IntPtr hwnd)
+    {
+        TouchpadDeviceInfo touchpadDevice = new TouchpadDeviceInfo();
+        touchpadDevice.hid = hwnd;
+        
+        uint nameSize = 0;
+        if (GetRawInputDeviceInfo(hwnd, RIDI_DEVICENAME, IntPtr.Zero, ref nameSize) == unchecked((uint)-1))
+        {
+            touchpadDevice.deviceId = "default";
+            return touchpadDevice;
+        }
+        
+        var ptr = Marshal.AllocHGlobal((int)nameSize);
+        try
+        {
+            if (GetRawInputDeviceInfo(hwnd, RIDI_DEVICENAME, ptr, ref nameSize) != unchecked((uint)-1))
+            {
+                touchpadDevice.deviceId = ComputeMD5(Marshal.PtrToStringAnsi(ptr));
+            }
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(ptr);
+        }
+
+        return touchpadDevice;
+    }
+    
+    public static bool Exists(IntPtr hwnd)
+    {
+        uint deviceInfoSize = 0;
+
+        if (GetRawInputDeviceInfo(
+                hwnd,
+                RIDI_DEVICEINFO,
+                IntPtr.Zero,
+                ref deviceInfoSize) != 0)
+            return false;
+
+        var deviceInfo = new RID_DEVICE_INFO { cbSize = deviceInfoSize };
+
+        if (GetRawInputDeviceInfo(
+                hwnd,
+                RIDI_DEVICEINFO,
+                ref deviceInfo,
+                ref deviceInfoSize) == unchecked((uint)-1))
+            return false;
+
+        if (deviceInfo.hid.usUsagePage == 0x000D &&
+            deviceInfo.hid.usUsage == 0x0005)
+        {
+            if (!availableDeviceInfos.ContainsKey(hwnd))
+            {
+                availableDeviceInfos[hwnd] = GetDeviceInfoFromHid(hwnd);
+                availableDeviceInfos[hwnd].vendorId = deviceInfo.hid.dwVendorId.ToString();
+                availableDeviceInfos[hwnd].productId = deviceInfo.hid.dwProductId.ToString();
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    public static bool Exists() {
         uint deviceListCount = 0;
         var rawInputDeviceListSize = (uint) Marshal.SizeOf<RAWINPUTDEVICELIST>();
-
+        
+        
         if(GetRawInputDeviceList(
                null,
                ref deviceListCount,
@@ -31,31 +99,49 @@ internal static class TouchpadHelper {
                rawInputDeviceListSize) != deviceListCount)
             return false;
 
-        foreach(var device in devices.Where(x => x.dwType == RIM_TYPEHID)){
-            uint deviceInfoSize = 0;
-
-            if(GetRawInputDeviceInfo(
-                   device.hDevice,
-                   RIDI_DEVICEINFO,
-                   IntPtr.Zero,
-                   ref deviceInfoSize) != 0)
-                continue;
-
-            var deviceInfo = new RID_DEVICE_INFO{ cbSize = deviceInfoSize };
-
-            if(GetRawInputDeviceInfo(
-                   device.hDevice,
-                   RIDI_DEVICEINFO,
-                   ref deviceInfo,
-                   ref deviceInfoSize) == unchecked((uint) -1))
-                continue;
-
-            if(deviceInfo.hid.usUsagePage == 0x000D &&
-               deviceInfo.hid.usUsage == 0x0005)
+        foreach (var device in devices.Where(x => x.dwType == RIM_TYPEHID))
+        {
+            if (Exists(device.hDevice))
+            {
                 return true;
+            }
         }
-
         return false;
+    }
+    
+    public static string ComputeMD5(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return null;
+
+        using (MD5 md5 = MD5.Create())
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+            // 转换为十六进制字符串
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in hashBytes)
+            {
+                sb.Append(b.ToString("x2")); // 小写十六进制，如 "a1b2c3"
+                // 或使用 sb.Append(b.ToString("X2")); // 大写，如 "A1B2C3"
+            }
+            return sb.ToString();
+        }
+    }
+
+    public static TouchpadDeviceInfo GetDeivceInfo(IntPtr currentDevice)
+    {
+        if (availableDeviceInfos.ContainsKey(currentDevice))
+        {
+            return availableDeviceInfos[currentDevice];
+        }
+        return null;
+    }
+
+    public static List<TouchpadDeviceInfo> GetAllDeivceInfos()
+    {
+        return availableDeviceInfos.Values.ToList();
     }
 
     public static bool RegisterInput(IntPtr hwndTarget){
@@ -71,18 +157,19 @@ internal static class TouchpadHelper {
         return RegisterRawInputDevices(new[]{ device }, 1, (uint) Marshal.SizeOf<RAWINPUTDEVICE>());
     }
 
-    public static (List<TouchpadContact>, uint) ParseInput(IntPtr lParam){
+    public static (IntPtr, List<TouchpadContact>, uint) ParseInput(IntPtr lParam){
         // Get RAWINPUT.
         uint rawInputSize = 0;
         var rawInputHeaderSize = (uint) Marshal.SizeOf<RAWINPUTHEADER>();
-
+        
+        IntPtr currentDevice = IntPtr.Zero;
         if(GetRawInputData(
                lParam,
                RID_INPUT,
                IntPtr.Zero,
                ref rawInputSize,
                rawInputHeaderSize) != 0)
-            return (null, 0);
+            return (currentDevice, null, 0);
 
         RAWINPUT rawInput;
         byte[] rawHidRawData;
@@ -97,10 +184,12 @@ internal static class TouchpadHelper {
                    rawInputPointer,
                    ref rawInputSize,
                    rawInputHeaderSize) != rawInputSize)
-                return (null, 0);
+                return (currentDevice, null, 0);
 
             rawInput = Marshal.PtrToStructure<RAWINPUT>(rawInputPointer);
 
+            currentDevice = rawInput.Header.hDevice;
+            
             var rawInputData = new byte[rawInputSize];
             Marshal.Copy(rawInputPointer, rawInputData, 0, rawInputData.Length);
 
@@ -124,8 +213,9 @@ internal static class TouchpadHelper {
                    RIDI_PREPARSEDDATA,
                    IntPtr.Zero,
                    ref preparsedDataSize) != 0)
-                return (null, 0);
-
+                return (currentDevice, null, 0);
+            
+            
             preparsedDataPointer = Marshal.AllocHGlobal((int) preparsedDataSize);
 
             if(GetRawInputDeviceInfo(
@@ -133,12 +223,12 @@ internal static class TouchpadHelper {
                    RIDI_PREPARSEDDATA,
                    preparsedDataPointer,
                    ref preparsedDataSize) != preparsedDataSize)
-                return (null, 0);
+                return (currentDevice,null, 0);
 
             if(HidP_GetCaps(
                    preparsedDataPointer,
                    out var caps) != HIDP_STATUS_SUCCESS)
-                return (null, 0);
+                return (currentDevice,null, 0);
 
             var valueCapsLength = caps.NumberInputValueCaps;
             var valueCaps = new HIDP_VALUE_CAPS[valueCapsLength];
@@ -148,7 +238,7 @@ internal static class TouchpadHelper {
                    valueCaps,
                    ref valueCapsLength,
                    preparsedDataPointer) != HIDP_STATUS_SUCCESS)
-                return (null, 0);
+                return (currentDevice,null, 0);
 
             uint scanTime = 0;
             uint contactCount = 99;
@@ -241,7 +331,7 @@ internal static class TouchpadHelper {
 
             Logger.Log(toLog);
 
-            return (contacts, contactCount);
+            return (currentDevice, contacts, contactCount);
         } finally{
             Marshal.FreeHGlobal(rawHidRawDataPointer);
             Marshal.FreeHGlobal(preparsedDataPointer);
@@ -330,16 +420,17 @@ internal static class TouchpadHelper {
 
     private const uint RIDI_PREPARSEDDATA = 0x20000005;
     private const uint RIDI_DEVICEINFO = 0x2000000b;
+    private const uint RIDI_DEVICENAME = 0x20000007;
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct RID_DEVICE_INFO {
+    internal struct RID_DEVICE_INFO {
         public uint cbSize; // This is determined to accommodate RID_DEVICE_INFO_KEYBOARD.
         public readonly uint dwType;
         public readonly RID_DEVICE_INFO_HID hid;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct RID_DEVICE_INFO_HID {
+    internal struct RID_DEVICE_INFO_HID {
         public readonly uint dwVendorId;
         public readonly uint dwProductId;
         public readonly uint dwVersionNumber;

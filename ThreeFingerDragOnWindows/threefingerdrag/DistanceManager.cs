@@ -81,10 +81,11 @@ public class DistanceManager {
     }
 
 
-    public static Point ApplySpeedAndAcc(Point delta, int elapsed){
+    public static Point ApplySpeedAndAcc(IntPtr currentDevice, Point delta, int elapsed){
 
         // Apply Speed
-        delta.Multiply(App.SettingsData.ThreeFingerDragCursorSpeed / 120);
+        var deviceInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
+        delta.Multiply(App.SettingsData.ThreeFingerDeviceDragCursorSpeed.GetValueOrDefault(deviceInfo.deviceId, 30) / 120);
 
         // Calculate the mouse velocity : sort of a relative speed between 0 and 4, 1 being the average speed.
         var mouseVelocity = Math.Min(delta.Length() / elapsed, 4);
@@ -107,8 +108,9 @@ public class DistanceManager {
         return delta;
     }
 
-    public static float ApplySpeed(float distance){
-        distance *= App.SettingsData.ThreeFingerDragCursorSpeed / 60;
+    public static float ApplySpeed(IntPtr currentDevice, float distance){
+        var devicInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
+        distance *= App.SettingsData.ThreeFingerDeviceDragCursorSpeed.GetValueOrDefault(devicInfo.deviceId, 30) / 60;
         return distance;
     }
 

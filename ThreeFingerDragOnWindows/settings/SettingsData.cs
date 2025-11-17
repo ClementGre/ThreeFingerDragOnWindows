@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using Windows.Storage;
 using Microsoft.UI.Xaml;
@@ -33,12 +35,39 @@ public class SettingsData{
 
     public bool ThreeFingerDragCursorMove { get; set; } = true;
     public float ThreeFingerDragCursorSpeed { get; set; } = 30;
+    [XmlIgnore]
+    public Dictionary<string, float> ThreeFingerDeviceDragCursorSpeed { get; set; } = new Dictionary<string, float>
+    {
+        { "default", 30 }
+    };
     public float ThreeFingerDragCursorAcceleration { get; set; } = 10;
     public int ThreeFingerDragCursorAveraging { get; set; } = 1;
     public int ThreeFingerDragMaxFingerMoveDistance{ get; set; } = 0;
 
     public int ThreeFingerDragStartThreshold { get; set; } = 100;
     public int ThreeFingerDragStopThreshold { get; set; } = 10;
+    
+    [XmlElement("ThreeFingerDeviceDragCursorSpeedItem")]
+    public List<KeyValueEntry> ThreeFingerDeviceDragCursorSpeedXml
+    {
+        get => ThreeFingerDeviceDragCursorSpeed.Select(kvp => new KeyValueEntry { Key = kvp.Key, Value = kvp.Value }).ToList();
+        set
+        {
+            ThreeFingerDeviceDragCursorSpeed.Clear();
+            foreach (var item in value)
+                ThreeFingerDeviceDragCursorSpeed[item.Key] = item.Value;
+        }
+    }
+
+    // 辅助类，用于 XML 序列化
+    public class KeyValueEntry
+    {
+        [XmlAttribute("key")]
+        public string Key { get; set; } = "";
+
+        [XmlAttribute("value")]
+        public float Value { get; set; }
+    }
 
     // Other settings
 
@@ -127,6 +156,8 @@ public class SettingsData{
     private static string getPath(bool createIfEmpty){
         var dirPath = ApplicationData.Current.LocalFolder.Path;
         var filePath = Path.Combine(dirPath, "preferences.xml");
+        
+        Logger.Log("filepath: " + filePath);
 
         if(!Directory.Exists(dirPath) || !File.Exists(filePath)){
             Logger.Log("First run: creating settings file");
