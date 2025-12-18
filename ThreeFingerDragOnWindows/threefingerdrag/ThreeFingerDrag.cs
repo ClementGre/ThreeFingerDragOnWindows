@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using ThreeFingerDragEngine.utils;
+using ThreeFingerDragOnWindows.settings;
 using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.threefingerdrag;
@@ -53,7 +55,8 @@ public class ThreeFingerDrag{
             StopDrag();
         } else if(fingersCount >= 2 && originalFingersCount == 3 && areContactsIdsCommons && _isDragging){
             // Dragging
-            if(App.SettingsData.ThreeFingerDeviceDragCursorConfigs.ContainsKey(deviceInfo.deviceId)){
+            if(App.SettingsData.ThreeFingerDeviceDragCursorConfigs.ContainsKey(deviceInfo.deviceId)
+                && App.SettingsData.ThreeFingerDeviceDragCursorConfigs.GetValueOrDefault(deviceInfo.deviceId, new SettingsData.ThreeFingerDragConfig()).ThreeFingerDragCursorMove){
                 if(App.SettingsData.ThreeFingerDragMaxFingerMoveDistance != 0 && longestDist2D > App.SettingsData.ThreeFingerDragMaxFingerMoveDistance){
                     Logger.Log("    DISCARDING MOVE, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
                 } else if(!longestDistDelta.IsNull()){

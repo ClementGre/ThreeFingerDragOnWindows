@@ -98,9 +98,11 @@ public class DistanceManager {
             // Apply acceleration : function that transform the mouseVelocity into a pointerVelocity : 0.7+zs\left(2.6a\left(x-1+\frac{3-\ln\left(\frac{z}{0.3}-1\right)}{2.6a}\right)-3\right)
             // See https://www.desmos.com/calculator/khtj85jopn
             float a = App.SettingsData.ThreeFingerDeviceDragCursorConfigs.GetValueOrDefault(deviceInfo.deviceId, new SettingsData.ThreeFingerDragConfig()).ThreeFingerDragCursorAcceleration / 10f; // Acceleration is multiplied by 10 in settings.
-            pointerVelocity = (float) (0.7 + 0.8 * Sigmoid(2.6 * a * (mouseVelocity - 1 + (3 - Math.Log2(0.8/0.3 - 1)) / (2.6 * a)) - 3));
-            // No need to clamp, the function gives values between 0.7 and 1.5.
-            Logger.Log("    pointerVelocity: " + pointerVelocity + " (mouseVelocity: " + mouseVelocity + ")");
+            if (a != 0) {
+                pointerVelocity = (float)(0.7 + 0.8 * Sigmoid(2.6 * a * (mouseVelocity - 1 + (3 - Math.Log2(0.8 / 0.3 - 1)) / (2.6 * a)) - 3));
+                // No need to clamp, the function gives values between 0.7 and 1.5.
+                Logger.Log("    pointerVelocity: " + pointerVelocity + " (mouseVelocity: " + mouseVelocity + ")");
+            }
         }
 
         // Apply acceleration
