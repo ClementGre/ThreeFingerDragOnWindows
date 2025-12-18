@@ -1,17 +1,29 @@
 ﻿using System;
+
+using System.Collections.Generic;
+
 using System.Diagnostics;
+
 using System.IO;
-using System.Xml.Serialization;
+
+using System.Text.Json;
+
+using System.Threading.Tasks;
+
 using Windows.Storage;
+
 using Microsoft.UI.Xaml;
+
 using Microsoft.UI.Xaml.Controls;
+
 using ThreeFingerDragOnWindows.utils;
+
 using WinUICommunity;
 
 namespace ThreeFingerDragOnWindows.settings;
 
 public class SettingsData{
-    private static int CURRENT_SETTINGS_VERSION = 4;
+    private static int CURRENT_SETTINGS_VERSION = 5;
 
     // Other
     public static bool DidVersionChanged { get; set; } = false;
@@ -31,15 +43,33 @@ public class SettingsData{
     public bool ThreeFingerDragAllowReleaseAndRestart { get; set; } = true;
     public int ThreeFingerDragReleaseDelay { get; set; } = 500;
 
-    public bool ThreeFingerDragCursorMove { get; set; } = true;
-    public float ThreeFingerDragCursorSpeed { get; set; } = 30;
-    public float ThreeFingerDragCursorAcceleration { get; set; } = 10;
+    
+    public class ThreeFingerDragConfig
+    {
+        public ThreeFingerDragConfig()
+        {
+            
+        }
+        public ThreeFingerDragConfig(bool cursorMoveProperty, float cursorSpeedProperty, float cursorAccelerationProperty)
+        {
+            ThreeFingerDragCursorMove = cursorMoveProperty;
+            ThreeFingerDragCursorSpeed = cursorSpeedProperty;
+            ThreeFingerDragCursorAcceleration = cursorAccelerationProperty;
+        }
+
+        public bool ThreeFingerDragCursorMove { get; set; } = true;
+        public float ThreeFingerDragCursorSpeed { get; set; } = 30;
+        public float ThreeFingerDragCursorAcceleration { get; set; } = 10;
+    }
+
+    public Dictionary<string, ThreeFingerDragConfig> ThreeFingerDeviceDragCursorConfigs { get; set; }
+    
     public int ThreeFingerDragCursorAveraging { get; set; } = 1;
     public int ThreeFingerDragMaxFingerMoveDistance{ get; set; } = 0;
 
     public int ThreeFingerDragStartThreshold { get; set; } = 100;
     public int ThreeFingerDragStopThreshold { get; set; } = 10;
-
+   
     // Other settings
 
     public enum StartupActionType{
@@ -60,24 +90,27 @@ public class SettingsData{
     public static SettingsData load(){
         Logger.Log("Loading settings...");
 
-        var mySerializer = new XmlSerializer(typeof(SettingsData));
-        var myFileStream = new FileStream(getPath(true), FileMode.Open);
+        var filePath = getPath(true);
         SettingsData up;
 
         try{
-            up = (SettingsData)mySerializer.Deserialize(myFileStream);
-            myFileStream.Close();
+            var jsonString =  File.ReadAllText(filePath);
+            up = JsonSerializer.Deserialize<SettingsData>(jsonString);
             Logger.Log($"Settings loaded, version = {up.SettingsVersion}");
         } catch(Exception e){
             Console.WriteLine(e);
-            myFileStream.Close();
             up = new SettingsData();
+            up.save();
+        }
+
+        if (up.ThreeFingerDeviceDragCursorConfigs == null)
+        {
+            up.ThreeFingerDeviceDragCursorConfigs = new Dictionary<string, ThreeFingerDragConfig>(2);
             up.save();
         }
 
         if(up.SettingsVersion < 1){
             Logger.Log("Updating settings to version 1");
-            up.ThreeFingerDragCursorAcceleration *= 10;
             up.save();
         }
         if(up.SettingsVersion < 2){
@@ -117,24 +150,46 @@ public class SettingsData{
     }
 
     public void save(){
+
         SettingsVersion = CURRENT_SETTINGS_VERSION;
-        var mySerializer = new XmlSerializer(typeof(SettingsData));
-        var myWriter = new StreamWriter(getPath(false));
-        mySerializer.Serialize(myWriter, this);
-        myWriter.Close();
+
+        var options = new JsonSerializerOptions { WriteIndented = true };
+
+        var jsonString = JsonSerializer.Serialize(this, options);
+
+        var filePath = getPath(false);
+
+        File.WriteAllText(filePath, jsonString);
+
     }
 
     private static string getPath(bool createIfEmpty){
+
         var dirPath = ApplicationData.Current.LocalFolder.Path;
-        var filePath = Path.Combine(dirPath, "preferences.xml");
+
+        var filePath = Path.Combine(dirPath, "preferences.json");
+
+        
+
+        Logger.Log("filepath: " + filePath);
+
+
 
         if(!Directory.Exists(dirPath) || !File.Exists(filePath)){
+
             Logger.Log("First run: creating settings file");
+
             Directory.CreateDirectory(dirPath);
+
             DidVersionChanged = true;
-            if(createIfEmpty) new SettingsData().save();
+
+            if(createIfEmpty) new SettingsData().save();  // Wait for the async save to complete
+
         }
 
+
+
         return filePath;
+
     }
 }

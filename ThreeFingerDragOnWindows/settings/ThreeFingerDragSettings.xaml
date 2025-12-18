@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wuc="using:WinUICommunity"
+    xmlns:local="using:ThreeFingerDragOnWindows.touchpad"
     mc:Ignorable="d">
 
 
@@ -104,58 +105,67 @@
 
             </wuc:SettingsExpander>
 
-            <wuc:SettingsExpander
-                IsEnabled="{Binding ElementName=Enabled, Path=IsOn}"
-                Description="By default, three-finger movement on the touchpad doesn't affect the mouse pointer. ThreeFingerDragOnWindows autonomously handles cursor movement. This might result in some variations compared to single-finger control. You can customize this behavior here or disable it if you found another way to move the cursor with three fingers."
-                Header="Enable three finger mouse move"
-                HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE7C2;}"
-                IsExpanded="True">
-                <ToggleSwitch x:Name="CursorMove"
-                              IsOn="{x:Bind CursorMoveProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <wuc:SettingsExpander.Items>
-                    <!-- content is an alignment of a numberbox and a slider  in a horizontal box -->
-                    <wuc:SettingsCard Header="Mouse speed"
-                                      Description="Default to 30"
-                                      IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
+            <ItemsControl ItemsSource="{x:Bind MouseSpeedSettingItems}" Style="{x:Null}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="local:MouseSpeedSettings">
+                        <wuc:SettingsExpander
+                            IsEnabled="{Binding ElementName=Enabled, Path=IsOn}"
+                            Description="By default, three-finger movement on the touchpad doesn't affect the mouse pointer. ThreeFingerDragOnWindows autonomously handles cursor movement. This might result in some variations compared to single-finger control. You can customize this behavior here or disable it if you found another way to move the cursor with three fingers."
+                            Header="{x:Bind Header}"
+                            HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE7C2;}"
+                            IsExpanded="True">
+                            <ToggleSwitch x:Name="CursorMove"
+                                          IsOn="{x:Bind CursorMoveProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <wuc:SettingsExpander.Items>
+                                <!-- content is an alignment of a numberbox and a slider  in a horizontal box -->
+                                <wuc:SettingsCard Header="Mouse Speed"
+                                                  Description="Default to 30"
+                                                  IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
+                                        <!-- Slider -->
+                                        <Slider MinWidth="200"
+                                                StepFrequency="1"
+                                                Maximum="200"
+                                                Minimum="1"
+                                                Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
-                            <Slider MinWidth="200"
-                                    StepFrequency="1"
-                                    Maximum="200"
-                                    Minimum="1"
-                                    Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <!-- NumberBox -->
+                                        <NumberBox MinWidth="80"
+                                                   Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                   Maximum="100000"
+                                                   Minimum="0"
+                                                   SmallChange="5"
+                                                   LargeChange="10"
+                                                   SpinButtonPlacementMode="Compact" />
+                                    </StackPanel>
+                                </wuc:SettingsCard>
+                                       
+                                <wuc:SettingsCard Description="Default to 10, 0 to disable."
+                                                  Header="Mouse acceleration"
+                                                  IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
+                                        <Slider MinWidth="200"
+                                                StepFrequency="1"
+                                                Maximum="30"
+                                                Minimum="0"
+                                                Value="{x:Bind CursorAccelerationProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <NumberBox MinWidth="80"
-                                       Value="{x:Bind CursorSpeedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       Maximum="100000"
-                                       Minimum="0"
-                                       SmallChange="5"
-                                       LargeChange="10"
-                                       SpinButtonPlacementMode="Compact" />
-                        </StackPanel>
-                    </wuc:SettingsCard>
-                    <wuc:SettingsCard Description="Default to 10, 0 to disable."
-                                      Header="Mouse acceleration"
-                                      IsEnabled="{Binding ElementName=CursorMove, Path=IsOn}">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
-                            <Slider MinWidth="200"
-                                    StepFrequency="1"
-                                    Maximum="30"
-                                    Minimum="0"
-                                    Value="{x:Bind CursorAccelerationProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <NumberBox MinWidth="80"
+                                                   Value="{x:Bind CursorAccelerationProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                   Minimum="0"
+                                                   Maximum="1000"
+                                                   SmallChange="5"
+                                                   LargeChange="10"
+                                                   SpinButtonPlacementMode="Compact" />
+                                    </StackPanel>
+                                </wuc:SettingsCard>
+                            </wuc:SettingsExpander.Items>
 
-                            <NumberBox MinWidth="80"
-                                       Value="{x:Bind CursorAccelerationProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       Minimum="0"
-                                       Maximum="1000"
-                                       SmallChange="5"
-                                       LargeChange="10"
-                                       SpinButtonPlacementMode="Compact" />
-                        </StackPanel>
-                    </wuc:SettingsCard>
-                </wuc:SettingsExpander.Items>
-
-            </wuc:SettingsExpander>
+                        </wuc:SettingsExpander>
+                        
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <wuc:SettingsCard
                 HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE768;}"

@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using Microsoft.UI.Xaml;
+using ThreeFingerDragOnWindows.touchpad;
+using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.settings;
 
@@ -41,30 +46,29 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
         get{ return App.SettingsData.ThreeFingerDragReleaseDelay; }
         set{ App.SettingsData.ThreeFingerDragReleaseDelay = value; }
     }
-
-    public bool CursorMoveProperty {
-        get{ return App.SettingsData.ThreeFingerDragCursorMove; }
-        set{ App.SettingsData.ThreeFingerDragCursorMove = value; }
-    }
-
-    public float CursorSpeedProperty {
-        get{ return App.SettingsData.ThreeFingerDragCursorSpeed; }
-        set{
-            if(App.SettingsData.ThreeFingerDragCursorSpeed != value){
-                App.SettingsData.ThreeFingerDragCursorSpeed = value;
-                OnPropertyChanged(nameof(CursorSpeedProperty));
+    
+    public ObservableCollection<MouseSpeedSettings> MouseSpeedSettingItems
+    {
+        get
+        {
+            ObservableCollection<MouseSpeedSettings> settings = new ObservableCollection<MouseSpeedSettings>(new Collection<MouseSpeedSettings>());
+            List<TouchpadDeviceInfo> allDeviceInfos = TouchpadHelper.GetAllDeivceInfos();
+            foreach (TouchpadDeviceInfo device in allDeviceInfos)
+            {
+                var mouseSetting = new MouseSpeedSettings(
+                    App.SettingsData.ThreeFingerDeviceDragCursorConfigs.GetValueOrDefault(device.deviceId,
+                        new SettingsData.ThreeFingerDragConfig()), device);
+                settings.Add(mouseSetting);
             }
+
+            settings.CollectionChanged += OnCollectionChanged;
+            return settings;
         }
     }
-
-    public float CursorAccelerationProperty {
-        get{ return App.SettingsData.ThreeFingerDragCursorAcceleration; }
-        set{
-            if(App.SettingsData.ThreeFingerDragCursorAcceleration != value){
-                App.SettingsData.ThreeFingerDragCursorAcceleration = value;
-                OnPropertyChanged(nameof(CursorAccelerationProperty));
-            }
-        }
+    
+    private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(MouseSpeedSettingItems));
     }
 
     public int CursorAveragingProperty {

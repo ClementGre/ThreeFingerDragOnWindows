@@ -65,12 +65,12 @@ public sealed partial class HandlerWindow : Window {
     private TouchpadContact[] _oldContacts = Array.Empty<TouchpadContact>();
     private long _lastContactCtms = Ctms();
 
-    public void OnTouchpadContact(List<TouchpadContact> contacts){
+    public void OnTouchpadContact(IntPtr currentDevice, List<TouchpadContact> contacts){
         if(App.SettingsData.ThreeFingerDrag){
-            _threeFingersDrag.OnTouchpadContact(_oldContacts, contacts.ToArray(), Ctms() - _lastContactCtms);
+            _threeFingersDrag.OnTouchpadContact(currentDevice, _oldContacts, contacts.ToArray(), Ctms() - _lastContactCtms);
         }
 
-        _app.OnTouchpadContact(contacts.ToArray()); // Transfer to App for displaying contacts in SettingsWindow
+        _app.OnTouchpadContact(currentDevice, contacts.ToArray()); // Transfer to App for displaying contacts in SettingsWindow
         _lastContactCtms = Ctms();
         _oldContacts = contacts.ToArray();
     }

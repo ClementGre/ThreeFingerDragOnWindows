@@ -78,7 +78,7 @@ public sealed partial class SettingsWindow {
     private int _inputCount;
     private long _lastContact;
     private long _lastEventSpeed;
-    public void OnTouchpadContact(TouchpadContact[] contacts){
+    public void OnTouchpadContact(IntPtr currentDevice, TouchpadContact[] contacts){
         _inputCount++;
 
         // Event speed is an average over 20 inputs calls (usually about 200 ms)
@@ -89,7 +89,7 @@ public sealed partial class SettingsWindow {
         }
         Page currentPage = ContentFrame.Content as Page;
         if(currentPage is TouchpadSettings touchpadSettings){
-            touchpadSettings.UpdateContactsText(string.Join('\n', contacts.Select(c => c.ToString())) + "\nEvent speed: " + _lastEventSpeed + "ms");
+            touchpadSettings.UpdateContactsText("TouchpadDevice: " + TouchpadHelper.GetDeivceInfo(currentDevice).ToString() + "\n" + string.Join('\n', contacts.Select(c => c.ToString())) + "\nEvent speed: " + _lastEventSpeed + "ms");
         }
     }
     public void OnTouchpadInitialized(){
