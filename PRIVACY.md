@@ -24,6 +24,6 @@ The app can run as administrator, but would not perform any action that could no
 We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. The latest version of the Privacy Policy will be posted on this page with the "Last Updated" date.
 
 ## Contact Information
-If you have any questions, concerns, or requests regarding this Privacy Policy or the "ThreeFingerDragOnWindows" app, you can contact us via email at clement.grennerat@free.fr.
+If you have any questions, concerns, or requests regarding this Privacy Policy or the "ThreeFingerDragOnWindows" app, you can contact us via email at clement.grennerat@clgr.io.
 
 Thank you for using the "ThreeFingerDragOnWindows" app. Your privacy and security are important to us.

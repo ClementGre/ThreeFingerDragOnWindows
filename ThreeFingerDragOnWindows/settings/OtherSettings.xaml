@@ -65,7 +65,7 @@
 
             <wuc:SettingsGroup Header="About">
                 <wuc:SettingsGroup.Items>
-                    <wuc:SettingsExpander Description="© 2023-2024. All rights reserved."
+                    <wuc:SettingsExpander Description="© 2023-2025. All rights reserved."
                                           Header="ThreeFingerDragOnWindows">
                         <wuc:SettingsExpander.HeaderIcon>
                             <BitmapIcon ShowAsMonochrome="False"
@@ -75,7 +75,7 @@
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    IsTextSelectionEnabled="True"
                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                   Text="Version 2.0.6.0" />
+                                   Text="Version 2.0.7.0" />
 
                         <wuc:SettingsExpander.Items>
                             <wuc:SettingsCard HorizontalContentAlignment="Left"
