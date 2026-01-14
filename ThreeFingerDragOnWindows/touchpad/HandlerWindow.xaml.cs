@@ -66,7 +66,7 @@ public sealed partial class HandlerWindow : Window {
     private long _lastContactCtms = Ctms();
 
     public void OnTouchpadContact(List<TouchpadContact> contacts){
-        if(App.SettingsData.ThreeFingerDrag){
+        if(App.SettingsData.ActiveProfile.ThreeFingerDrag){
             _threeFingersDrag.OnTouchpadContact(_oldContacts, contacts.ToArray(), Ctms() - _lastContactCtms);
         }
 

@@ -23,9 +23,9 @@ public class FingerCounter {
     /// <param name="hasFingersReleased">Whether if fingers has been released and replaced on the touchpad</param>
     /// <returns>
     /// fingersCount : real number of fingers on the touchpad, or 0 if contacts changed
-    /// shortDelayMovingFingersCount : number of fingers that are on the touchpad and that have led to a moving distance higher than App.SettingsData.ThreeFingerDragStopThreshold
+    /// shortDelayMovingFingersCount : number of fingers that are on the touchpad and that have led to a moving distance higher than App.SettingsData.ActiveProfile.ThreeFingerDragStopThreshold
     ///     Used to determine what is the real number of fingers on the touchpad when contacts changed
-    /// longDelayMovingFingersCount : number of fingers that are on the touchpad and that have led to a moving distance higher than App.SettingsData.ThreeFingerDragStartThreshold
+    /// longDelayMovingFingersCount : number of fingers that are on the touchpad and that have led to a moving distance higher than App.SettingsData.ActiveProfile.ThreeFingerDragStartThreshold
     ///     Used to determine if the user has really started to drag
     /// originalFingersCount : number of original fingers on the touchpad after the short delay.
     ///     This is updated only when contacts list length is &lt;= 1 or when contacts have been released for more than RELEASE_FINGERS_THRESHOLD_MS ms.
@@ -48,12 +48,12 @@ public class FingerCounter {
             _longDelayFingersMove += longestDist2D;
         }
 
-        if(_shortDelayFingersMove >= App.SettingsData.ThreeFingerDragStopThreshold){
+        if(_shortDelayFingersMove >= App.SettingsData.ActiveProfile.ThreeFingerDragStopThreshold){
             _shortDelayFingersCount = newContacts.Length;
             _shortDelayFingersMove = 0;
 
         }
-        if(_longDelayFingersMove > App.SettingsData.ThreeFingerDragStartThreshold){
+        if(_longDelayFingersMove > App.SettingsData.ActiveProfile.ThreeFingerDragStartThreshold){
             _longDelayFingersCount = newContacts.Length;
             _longDelayFingersMove = 0;
             if(_originalFingersCount <= 1){

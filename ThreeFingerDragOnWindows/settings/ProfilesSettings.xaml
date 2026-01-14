@@ -1,0 +1,226 @@
+<Page
+    x:Class="ThreeFingerDragOnWindows.settings.ProfilesSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wuc="using:WinUICommunity"
+    mc:Ignorable="d">
+
+    <ScrollView Margin="0"
+                HorizontalAlignment="Stretch"
+                VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20,0,20,20"
+                    ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
+                    Spacing="5">
+
+            <!-- Profile List - Expanded by default -->
+            <wuc:SettingsExpander Header="All Profiles"
+                                  Description="Manage your profiles. Select one to edit its settings below."
+                                  IsExpanded="True"
+                                  HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE7EE;}">
+                
+                <wuc:SettingsExpander.Items>
+					<wuc:SettingsCard ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+						<ListView x:Name="ProfilesListView"
+                                      SelectionMode="Single"
+                                      SelectionChanged="ProfilesListView_SelectionChanged"
+                                      RightTapped="ProfilesListView_RightTapped"
+                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                      BorderThickness="1"
+                                      CornerRadius="8"
+                                      MaxHeight="300"
+                                      HorizontalAlignment="Stretch"
+                                      Margin="0, 0, 0 ,0">
+							<ListView.ItemTemplate>
+								<DataTemplate>
+									<Grid Padding="16,12" HorizontalAlignment="Stretch">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="*"/>
+										</Grid.ColumnDefinitions>
+
+										<TextBlock Text="{Binding Name}"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Left"
+                                                       Grid.Column="0"/>
+
+										<StackPanel Grid.Column="1" 
+                                                        Orientation="Horizontal"
+                                                        Spacing="8">
+											<FontIcon Glyph="&#xE8B7;" 
+                                                          FontSize="14"
+                                                          Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                          Visibility="{Binding IsActive}"
+                                                          ToolTipService.ToolTip="Active Profile"/>
+
+											<FontIcon Glyph="&#xE945;" 
+                                                          FontSize="14"
+                                                          Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                                          Visibility="{Binding HasSmartSwitching}"
+                                                          ToolTipService.ToolTip="Smart Switching Enabled"/>
+										</StackPanel>
+									</Grid>
+								</DataTemplate>
+							</ListView.ItemTemplate>
+
+							<ListView.ContextFlyout>
+								<MenuFlyout>
+									<MenuFlyoutItem Text="Activate" 
+                                                        Icon="Accept"
+                                                        Click="ActivateProfile_Click"/>
+									<MenuFlyoutSeparator/>
+									<MenuFlyoutItem Text="Duplicate" 
+                                                        Icon="Copy"
+                                                        Click="DuplicateProfile_Click"/>
+									<MenuFlyoutItem Text="Delete" 
+                                                        Icon="Delete"
+                                                        Click="DeleteProfile_Click"/>
+								</MenuFlyout>
+							</ListView.ContextFlyout>
+						</ListView>
+					</wuc:SettingsCard>
+                    
+                    <wuc:SettingsCard ContentAlignment="Left">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Click="NewProfile_Click">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE710;"/>
+                                    <TextBlock Text="New"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <Button Click="DuplicateProfile_Click" x:Name="DuplicateButton">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE8C8;"/>
+                                    <TextBlock Text="Duplicate"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <Button Click="DeleteProfile_Click" x:Name="DeleteButton">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE74D;"/>
+                                    <TextBlock Text="Delete"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </wuc:SettingsCard>
+                </wuc:SettingsExpander.Items>
+            </wuc:SettingsExpander>
+
+            <!-- Profile Settings (shown when a profile is selected) -->
+            <StackPanel x:Name="SmartSwitchingSection" 
+                        Spacing="5"
+                        Visibility="Collapsed">
+                
+                <!-- Profile Name -->
+                <wuc:SettingsCard Header="Profile Name"
+                                  Description="The display name for this profile"
+                                  HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE8AC;}">
+                    <TextBox x:Name="ProfileNameTextBox"
+                             MinWidth="250"
+                             LostFocus="ProfileNameTextBox_LostFocus"/>
+                </wuc:SettingsCard>
+                
+                <!-- Smart Profile Switching -->
+                <wuc:SettingsExpander x:Name="SmartSwitchingExpander"
+                                      Header="Smart Profile Switching"
+                                      Description="Automatically switch to this profile when specific programs are active"
+                                      HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE945;}">
+                    <ToggleSwitch x:Name="SmartSwitchingToggle"
+                                  OnContent="Enabled"
+                                  OffContent="Disabled"
+                                  Toggled="SmartSwitchingToggle_Toggled"/>
+                    
+                    <wuc:SettingsExpander.Items>
+                        <wuc:SettingsCard x:Name="SmartSwitchingOptions"
+                                          Header="Detection Mode"
+                                          Description="How the app detects when you switch programs">
+                            <StackPanel Spacing="10">
+                                <ComboBox x:Name="DetectionModeComboBox" 
+                                          MinWidth="300"
+                                          SelectionChanged="DetectionMode_SelectionChanged">
+                                    <ComboBoxItem Content="Windows Hook (Instant, zero overhead)" Tag="WindowsHook"/>
+                                    <ComboBoxItem Content="Interval-Based (Fallback)" Tag="IntervalBased"/>
+                                </ComboBox>
+                                
+                                <StackPanel x:Name="IntervalSettingsPanel" 
+                                            Orientation="Horizontal" 
+                                            Spacing="10"
+                                            Visibility="Collapsed">
+                                    <TextBlock Text="Check every:" VerticalAlignment="Center"/>
+                                    <NumberBox x:Name="IntervalNumberBox"
+                                               Value="2000"
+                                               Minimum="500"
+                                               Maximum="10000"
+                                               SpinButtonPlacementMode="Inline"
+                                               SmallChange="100"
+                                               LargeChange="1000"
+                                               ValueChanged="IntervalNumberBox_ValueChanged"
+                                               Width="150"/>
+                                    <TextBlock Text="ms" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </wuc:SettingsCard>
+                        
+                        <wuc:SettingsCard Header="Associated Programs"
+                                          Description="Add programs that should trigger this profile">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Button Click="AddProgram_Click">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xE8E5;" FontSize="14"/>
+                                        <TextBlock Text="Add Program..."/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Click="AddFromRunning_Click">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xE7C4;" FontSize="14"/>
+                                        <TextBlock Text="From Running"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </wuc:SettingsCard>
+                        
+                        <wuc:SettingsCard ContentAlignment="Vertical">
+                            <ListView x:Name="AssociatedProgramsListView"
+                                      MinHeight="100"
+                                      MaxHeight="300"
+                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                      BorderThickness="1"
+                                      CornerRadius="8"
+                                      Margin="-16, 0,-16,0">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="12,8" ColumnSpacing="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <FontIcon Glyph="&#xE7C1;" 
+                                                      FontSize="16"
+                                                      Grid.Column="0"/>
+                                            
+                                            <TextBlock Text="{Binding}"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Grid.Column="1"/>
+                                            
+                                            <Button Content="&#xE74D;"
+                                                    FontFamily="Segoe MDL2 Assets"
+                                                    Click="RemoveProgram_Click"
+                                                    Tag="{Binding}"
+                                                    Background="Transparent"
+                                                    Grid.Column="2"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </wuc:SettingsCard>
+                    </wuc:SettingsExpander.Items>
+                </wuc:SettingsExpander>
+            </StackPanel>
+        </StackPanel>
+    </ScrollView>
+</Page>

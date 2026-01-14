@@ -1,60 +1,171 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using Windows.Storage;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using ThreeFingerDragOnWindows.settings.profiles;
 using ThreeFingerDragOnWindows.utils;
 using WinUICommunity;
 
 namespace ThreeFingerDragOnWindows.settings;
 
 public class SettingsData{
-    private static int CURRENT_SETTINGS_VERSION = 4;
+private static int CURRENT_SETTINGS_VERSION = 5;
 
-    // Other
-    public static bool DidVersionChanged { get; set; } = false;
-    public int SettingsVersion { get; set; } = 0;
+// Other
+public static bool DidVersionChanged { get; set; } = false;
+public int SettingsVersion { get; set; } = 0;
 
-    // Three finger drag Settings
-    public bool ThreeFingerDrag { get; set; } = true;
+// Profile management
+public class ProfileInfo {
+    public string Name { get; set; } = "Default";
+    public string FilePath { get; set; } = "";
+}
 
-    public enum ThreeFingerDragButtonType {
-        NONE,
-        LEFT,
-        RIGHT,
-        MIDDLE,
+public List<ProfileInfo> Profiles { get; set; } = new List<ProfileInfo>();
+public string ActiveProfilePath { get; set; } = "";
+
+[XmlIgnore]
+private ThreeFingerDragProfile _activeProfile;
+
+[XmlIgnore]
+public ThreeFingerDragProfile ActiveProfile {
+    get {
+        if(_activeProfile == null){
+            LoadActiveProfile();
+        }
+        return _activeProfile;
     }
-    public ThreeFingerDragButtonType ThreeFingerDragButton { get; set; } = ThreeFingerDragButtonType.LEFT;
+}
 
-    public bool ThreeFingerDragAllowReleaseAndRestart { get; set; } = true;
-    public int ThreeFingerDragReleaseDelay { get; set; } = 500;
-
-    public bool ThreeFingerDragCursorMove { get; set; } = true;
-    public float ThreeFingerDragCursorSpeed { get; set; } = 30;
-    public float ThreeFingerDragCursorAcceleration { get; set; } = 10;
-    public int ThreeFingerDragCursorAveraging { get; set; } = 1;
-    public int ThreeFingerDragMaxFingerMoveDistance{ get; set; } = 0;
-
-    public int ThreeFingerDragStartThreshold { get; set; } = 100;
-    public int ThreeFingerDragStopThreshold { get; set; } = 10;
-
-    // Other settings
-
-    public enum StartupActionType{
-        NONE,
-        ENABLE_ELEVATED_RUN_WITH_STARTUP,
-        DISABLE_ELEVATED_RUN_WITH_STARTUP,
-        ENABLE_ELEVATED_STARTUP,
-        DISABLE_ELEVATED_STARTUP,
+    private void LoadActiveProfile(){
+        if(string.IsNullOrEmpty(ActiveProfilePath)){
+            // Create default profile with filename matching profile name
+            var defaultProfilePath = GetProfileFilePath("Default");
+            _activeProfile = ThreeFingerDragProfile.Load(defaultProfilePath);
+            _activeProfile.ProfileName = "Default";
+            _activeProfile.Save(defaultProfilePath);
+                
+            ActiveProfilePath = defaultProfilePath;
+            if(!Profiles.Any(p => p.FilePath == defaultProfilePath)){
+                Profiles.Add(new ProfileInfo { Name = "Default", FilePath = defaultProfilePath });
+            }
+            save();
+        } else {
+            _activeProfile = ThreeFingerDragProfile.Load(ActiveProfilePath);
+        }
     }
 
-    public StartupActionType StartupAction { get; set; } = StartupActionType.NONE;
+    public void SaveActiveProfile(){
+        if(_activeProfile != null && !string.IsNullOrEmpty(ActiveProfilePath)){
+            _activeProfile.Save(ActiveProfilePath);
+        }
+    }
 
-    public bool RunElevated { get; set; } = false;
+    /// <summary>
+    /// Switches to a different profile
+    /// </summary>
+    public void SwitchToProfile(string profilePath){
+        // Save current profile before switching
+        SaveActiveProfile();
+        
+        // Load new profile
+        ActiveProfilePath = profilePath;
+        _activeProfile = ThreeFingerDragProfile.Load(profilePath);
+        
+        // Save settings to persist active profile path
+        save();
+        
+        Logger.Log($"Switched to profile: {_activeProfile.ProfileName}");
+    }
 
-    public bool RecordLogs { get; set; } = false;
+    /// <summary>
+    /// Renames the active profile and updates the filename to match
+    /// </summary>
+    public void RenameActiveProfile(string newName){
+        if(_activeProfile == null || string.IsNullOrEmpty(ActiveProfilePath)){
+            return;
+        }
+
+        var oldPath = ActiveProfilePath;
+        var newPath = GetProfileFilePath(newName);
+
+        // Update the profile name
+        _activeProfile.ProfileName = newName;
+
+        // If the path would be different, rename the file
+        if(oldPath != newPath){
+            // Save to new location
+            _activeProfile.Save(newPath);
+            
+            // Delete old file
+            if(File.Exists(oldPath)){
+                try{
+                    File.Delete(oldPath);
+                    Logger.Log($"Renamed profile file from {oldPath} to {newPath}");
+                } catch(Exception e){
+                    Logger.Log($"Error deleting old profile file: {e.Message}");
+                }
+            }
+
+            // Update the path
+            ActiveProfilePath = newPath;
+
+            // Update in profiles list
+            var profileInfo = Profiles.FirstOrDefault(p => p.FilePath == oldPath);
+            if(profileInfo != null){
+                profileInfo.Name = newName;
+                profileInfo.FilePath = newPath;
+            }
+
+            save();
+        } else {
+            // Just save the profile with the new name
+            _activeProfile.Save(ActiveProfilePath);
+        }
+    }
+
+    public static string GetProfileFilePath(string profileName){
+        var sanitizedName = ThreeFingerDragProfile.SanitizeProfileName(profileName);
+        return Path.Combine(GetProfilesDirectory(), $"{sanitizedName}.xml");
+    }
+
+    private static string GetProfilesDirectory(){
+        var dirPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "profiles");
+        if(!Directory.Exists(dirPath)){
+            Directory.CreateDirectory(dirPath);
+        }
+        return dirPath;
+    }
+
+// Other settings
+
+public enum StartupActionType{
+    NONE,
+    ENABLE_ELEVATED_RUN_WITH_STARTUP,
+    DISABLE_ELEVATED_RUN_WITH_STARTUP,
+    ENABLE_ELEVATED_STARTUP,
+    DISABLE_ELEVATED_STARTUP,
+}
+
+public StartupActionType StartupAction { get; set; } = StartupActionType.NONE;
+
+public bool RunElevated { get; set; } = false;
+
+public bool RecordLogs { get; set; } = false;
+
+// Smart Profile Switcher settings
+public enum ProfileSwitchingDetectionMode{
+    WindowsHook,
+    IntervalBased
+}
+
+public ProfileSwitchingDetectionMode DetectionMode { get; set; } = ProfileSwitchingDetectionMode.WindowsHook;
+public int DetectionInterval { get; set; } = 2000; // milliseconds
 
 
     public static SettingsData load(){
@@ -77,7 +188,7 @@ public class SettingsData{
 
         if(up.SettingsVersion < 1){
             Logger.Log("Updating settings to version 1");
-            up.ThreeFingerDragCursorAcceleration *= 10;
+            // Migration handled in version 5
             up.save();
         }
         if(up.SettingsVersion < 2){
@@ -108,10 +219,18 @@ public class SettingsData{
 
         }
 
+        if(up.SettingsVersion < 5){
+            Logger.Log("Updating settings to version 5 - migrating to profiles");
+            // This is handled by LoadActiveProfile which creates default profile
+        }
+
         if(up.SettingsVersion != CURRENT_SETTINGS_VERSION){
             DidVersionChanged = true;
             up.save();
         }
+
+        // Load the active profile
+        up.LoadActiveProfile();
 
         return up;
     }
