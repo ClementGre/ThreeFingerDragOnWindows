@@ -27,6 +27,11 @@ via ``Touchpad settings`` in Windows preferences for the drag to work without in
 
 To open the configuration pane, click the ThreeFingerDragOnWindows tray icon on the Windows taskbar.
 
+## Project Status
+
+The main goal of this project has been achieved, and the app is stable and usable. However, there are still a lot of potential improvements and features that could be added in the future, and a lot of platform-specific issues that could be investigated and fixed.
+I (Clément Grennerat) am not anymore using Windows as my main OS, but I will continue to maintain the project and am open to contributions from the community!
+
 ## Build and Execute
 
 The app can be built and run in Microsoft Visual Studio or Jetbrains Rider.

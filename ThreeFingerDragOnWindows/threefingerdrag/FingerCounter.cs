@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using ThreeFingerDragEngine.utils;
 using ThreeFingerDragOnWindows.utils;
 
@@ -31,7 +32,7 @@ public class FingerCounter {
     ///     This is updated only when contacts list length is &lt;= 1 or when contacts have been released for more than RELEASE_FINGERS_THRESHOLD_MS ms.
     ///     Used to determine if the user has originally started to scroll, drag, or desktop swipe. When moving with a single finger, this variable is reset.
     /// </returns>
-    public (int, int, int, int) CountMovingFingers(TouchpadContact[] newContacts, bool areContactsIdsCommons, float longestDist2D, bool hasFingersReleased){
+    public (int, int, int, int) CountMovingFingers(IntPtr currentDevice, TouchpadContact[] newContacts, bool areContactsIdsCommons, float longestDist2D, bool hasFingersReleased){
 
         if(!areContactsIdsCommons && (newContacts.Length <= 1 || hasFingersReleased)){
             _originalFingersCount = 0;
@@ -42,7 +43,7 @@ public class FingerCounter {
             return (0, _shortDelayFingersCount, _longDelayFingersCount, _originalFingersCount);
         }
 
-        longestDist2D = DistanceManager.ApplySpeed(longestDist2D);
+        longestDist2D = DistanceManager.ApplySpeed(currentDevice, longestDist2D);
         if(longestDist2D >= 1){ // Do not take in account shorter distances
             _shortDelayFingersMove += longestDist2D;
             _longDelayFingersMove += longestDist2D;

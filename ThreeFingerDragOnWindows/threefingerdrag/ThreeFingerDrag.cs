@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using ThreeFingerDragEngine.utils;
+using ThreeFingerDragOnWindows.settings;
+using ThreeFingerDragOnWindows.touchpad;
 using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.threefingerdrag;
@@ -23,7 +26,9 @@ public class ThreeFingerDrag{
     private float _averagingY = 0;
     private int _averagingCount = 0;
 
-    public void OnTouchpadContact(TouchpadContact[] oldContacts, TouchpadContact[] contacts, long elapsed){
+    public void OnTouchpadContact(IntPtr currentDevice, TouchpadContact[] oldContacts, TouchpadContact[] contacts, long elapsed){
+        var deviceInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
+        var deviceConfig = App.SettingsData.GetDeviceDragConfig(deviceInfo.deviceId);
         bool hasFingersReleased = elapsed > RELEASE_FINGERS_THRESHOLD_MS;
         Logger.Log("TFD: " + string.Join(", ", oldContacts.Select(c => c.ToString())) + " | " +
                    string.Join(", ", contacts.Select(c => c.ToString())) + " | " + elapsed);
@@ -33,7 +38,7 @@ public class ThreeFingerDrag{
             _distanceManager.GetLongestDist2D(oldContacts, contacts, hasFingersReleased);
         (int fingersCount, int shortDelayMovingFingersCount, int longDelayMovingFingersCount,
                 int originalFingersCount) =
-            _fingerCounter.CountMovingFingers(contacts, areContactsIdsCommons, longestDist2D, hasFingersReleased);
+            _fingerCounter.CountMovingFingers(currentDevice, contacts, areContactsIdsCommons, longestDist2D, hasFingersReleased);
 
         Logger.Log("    fingers: " + fingersCount + ", original: " + originalFingersCount + ", moving: " +
                    shortDelayMovingFingersCount + "/" + longDelayMovingFingersCount + ", dist: " + longestDist2D);
@@ -52,11 +57,11 @@ public class ThreeFingerDrag{
             StopDrag();
         } else if(fingersCount >= 2 && originalFingersCount == 3 && areContactsIdsCommons && _isDragging){
             // Dragging
-            if(App.SettingsData.ActiveProfile.ThreeFingerDragCursorMove){
+            if(deviceConfig.ThreeFingerDragCursorMove){
                 if(App.SettingsData.ActiveProfile.ThreeFingerDragMaxFingerMoveDistance != 0 && longestDist2D > App.SettingsData.ActiveProfile.ThreeFingerDragMaxFingerMoveDistance){
                     Logger.Log("    DISCARDING MOVE, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
                 } else if(!longestDistDelta.IsNull()){
-                    Point delta = DistanceManager.ApplySpeedAndAcc(longestDistDelta, (int)elapsed);
+                    Point delta = DistanceManager.ApplySpeedAndAcc(currentDevice, longestDistDelta, (int)elapsed);
                     Logger.Log("    MOVING (avg), (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
                     if(App.SettingsData.ActiveProfile.ThreeFingerDragCursorAveraging > 1){
                         _averagingX += delta.x;

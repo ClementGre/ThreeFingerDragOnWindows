@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using Microsoft.UI.Xaml;
 using ThreeFingerDragOnWindows.settings.profiles;
+using ThreeFingerDragOnWindows.touchpad;
+using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.settings;
 
@@ -74,6 +79,24 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
         }
     }
 
+    public ObservableCollection<MouseSpeedSettings> MouseSpeedSettingItems
+    {
+        get
+        {
+            var settings = new ObservableCollection<MouseSpeedSettings>();
+            var allDeviceInfos = TouchpadHelper.GetAllDeivceInfos();
+
+            foreach (var device in allDeviceInfos)
+            {
+                var config = App.SettingsData.GetDeviceDragConfig(device.deviceId);
+                settings.Add(new MouseSpeedSettings(config, device));
+            }
+
+            settings.CollectionChanged += OnCollectionChanged;
+            return settings;
+        }
+    }
+
     public float CursorAccelerationProperty {
         get{ return App.SettingsData.ActiveProfile.ThreeFingerDragCursorAcceleration; }
         set{
@@ -83,6 +106,11 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
                 OnPropertyChanged(nameof(CursorAccelerationProperty));
             }
         }
+    }
+
+    private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(MouseSpeedSettingItems));
     }
 
     public int CursorAveragingProperty {

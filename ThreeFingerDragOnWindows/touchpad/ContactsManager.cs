@@ -33,11 +33,11 @@ public class ContactsManager{
     private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam){
         switch(message){
             case TouchpadHelper.WM_INPUT:
-                var (contacts, count) = TouchpadHelper.ParseInput(lParam);
-                ReceiveTouchpadContacts(contacts, count);
+                var (currentDevice, contacts, count) = TouchpadHelper.ParseInput(lParam);
+                ReceiveTouchpadContacts(currentDevice, contacts, count);
                 break;
             case TouchpadHelper.WM_INPUT_DEVICE_CHANGE:
-                _source.OnTouchpadInitialized(TouchpadHelper.Exists(), true);
+                _source.OnTouchpadInitialized(TouchpadHelper.Exists(lParam), true);
                 break;
         }
 
@@ -49,7 +49,7 @@ public class ContactsManager{
     private List<TouchpadContact> _lastContacts = new();
     private uint _targetContactCount;
 
-    private void ReceiveTouchpadContacts(List<TouchpadContact> contacts, uint count){
+    private void ReceiveTouchpadContacts(IntPtr currentDevice, List<TouchpadContact> contacts, uint count){
         if(contacts == null || contacts.Count == 0){
             Logger.Log("Receiving empty contacts with cC=" + count);
             return;
@@ -58,7 +58,7 @@ public class ContactsManager{
         // Regular contact list
         if(count == contacts.Count){
             Logger.Log("+ Receiving regular contact list: " +  string.Join(", ", contacts.Select(c => c.ToString())));
-            _source.OnTouchpadContact(contacts);
+            _source.OnTouchpadContact(currentDevice, contacts);
             _lastContacts.Clear();
             return;
         }
@@ -77,13 +77,13 @@ public class ContactsManager{
             if(_lastContacts.Count > _targetContactCount){
                 Logger.Log("[WARNING] LastContact list has more contacts than expected: " + string.Join(", ", _lastContacts.Select(c => c.ToString())));
                 _lastContacts = _lastContacts.Take((int) _targetContactCount).ToList();
-                _source.OnTouchpadContact(_lastContacts);
+                _source.OnTouchpadContact(currentDevice, _lastContacts);
                 _lastContacts.Clear();
 
             }
             if(_lastContacts.Count == _targetContactCount){
                 Logger.Log("+ LastContact list has correct length: " + string.Join(", ", _lastContacts.Select(c => c.ToString())));
-                _source.OnTouchpadContact(_lastContacts);
+                _source.OnTouchpadContact(currentDevice, _lastContacts);
                 _lastContacts.Clear();
             }
             return;
@@ -107,7 +107,7 @@ public class ContactsManager{
 
             Logger.Log("+ LastContact list has correct length: " + string.Join(", ", _lastContacts.Select(c => c.ToString())));
 
-            _source.OnTouchpadContact(_lastContacts);
+            _source.OnTouchpadContact(currentDevice, _lastContacts);
             _lastContacts.Clear();
         }
 
@@ -116,7 +116,7 @@ public class ContactsManager{
             Logger.Log("[WARNING] Received contact list with more contacts than expected: " + string.Join(", ", contacts.Select(c => c.ToString())));
             contacts = contacts.Take((int) count).ToList();
             Logger.Log("+ Contact list has been clamped: " + string.Join(", ", contacts.Select(c => c.ToString())));
-            _source.OnTouchpadContact(contacts);
+            _source.OnTouchpadContact(currentDevice, contacts);
             _lastContacts.Clear();
             return;
         }

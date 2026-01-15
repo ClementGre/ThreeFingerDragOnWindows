@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using Microsoft.UI.Dispatching;
@@ -115,8 +116,8 @@ public HandlerWindow HandlerWindow;
         return true;
     }
 
-    public void OnTouchpadContact(TouchpadContact[] contacts){
-        SettingsWindow?.OnTouchpadContact(contacts);
+    public void OnTouchpadContact(IntPtr currentDevice, TouchpadContact[] contacts){
+        SettingsWindow?.OnTouchpadContact(currentDevice, contacts);
     }
     public void OnTouchpadInitialized(){
         SettingsWindow?.OnTouchpadInitialized();
