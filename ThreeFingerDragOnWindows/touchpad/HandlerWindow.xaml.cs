@@ -6,6 +6,7 @@ using System.Timers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
 using ThreeFingerDragEngine.utils;
+using ThreeFingerDragOnWindows.settings;
 using ThreeFingerDragOnWindows.threefingerdrag;
 using ThreeFingerDragOnWindows.utils;
 
@@ -57,7 +58,23 @@ public sealed partial class HandlerWindow : Window {
         else Logger.Log("Touchpad is detected and registered.");
 
         TouchpadInitialized = true;
+        
+        // Initialize SmartProfileSwitcher with device info
+        if(touchpadExists && inputReceiverInstalled){
+            var devices = TouchpadHelper.GetAllDeivceInfos();
+            if(devices.Count > 0){
+                var device = devices[0];
+                Logger.Log($"[HandlerWindow] Setting initial device: {device.deviceId}");
+                App.SmartProfileSwitcher?.SetCurrentDevice(device.deviceId);
+            }
+        }
+        
         _app.OnTouchpadInitialized();
+        
+        // Notify SettingsWindow about device change
+        if(App.SettingsWindow is SettingsWindow settingsWindow){
+            settingsWindow.OnDeviceChanged();
+        }
     }
 
     // Called when a new set of contacts has been registered
@@ -69,6 +86,10 @@ public sealed partial class HandlerWindow : Window {
         if(App.SettingsData.ActiveProfile.ThreeFingerDrag){
             _threeFingersDrag.OnTouchpadContact(currentDevice, _oldContacts, contacts.ToArray(), Ctms() - _lastContactCtms);
         }
+
+        // Update smart profile switcher with current device
+        var deviceInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
+        App.SmartProfileSwitcher?.SetCurrentDevice(deviceInfo.deviceId);
 
         _app.OnTouchpadContact(currentDevice, contacts.ToArray()); // Transfer to App for displaying contacts in SettingsWindow
         _lastContactCtms = Ctms();

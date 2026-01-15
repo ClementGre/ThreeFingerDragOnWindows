@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using ThreeFingerDragOnWindows.settings.profiles;
+using ThreeFingerDragOnWindows.touchpad;
 using ThreeFingerDragOnWindows.utils;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -79,12 +80,49 @@ public sealed partial class ProfilesSettings : Page
 	private ProfileViewModel _selectedProfile;
 	private ProfileViewModel _rightClickedProfile;
 	private ProfileViewModel _previousSelection;
+	private string _currentDeviceId = "";
+	private string _currentDeviceName = "No device detected";
 
 	public ProfilesSettings()
 	{
 		InitializeComponent();
 		LoadProfiles();
 		LoadDetectionSettings();
+		UpdateCurrentDevice();
+	}
+
+	private void UpdateCurrentDevice()
+	{
+		var devices = TouchpadHelper.GetAllDeivceInfos();
+		var device = devices.FirstOrDefault();
+		if (device != null)
+		{
+			_currentDeviceId = device.deviceId;
+			_currentDeviceName = $"{device.productId}:{device.vendorId}";
+		}
+		else
+		{
+			_currentDeviceId = "default";
+			_currentDeviceName = "No device detected";
+		}
+		
+		CurrentDeviceTextBlock.Text = _currentDeviceName;
+		Logger.Log($"[ProfilesSettings] Current device: {_currentDeviceName} ({_currentDeviceId})");
+	}
+	
+	/// <summary>
+	/// Refresh device info when devices change
+	/// </summary>
+	public void RefreshDeviceInfo()
+	{
+		Logger.Log("[ProfilesSettings] RefreshDeviceInfo called");
+		UpdateCurrentDevice();
+		
+		// Reload the current profile settings for the new device
+		if (_selectedProfile != null)
+		{
+			LoadProfileSettings(_selectedProfile);
+		}
 	}
 
 	private void LoadProfiles()
@@ -105,12 +143,16 @@ public sealed partial class ProfilesSettings : Page
 			try
 			{
 				var profile = ThreeFingerDragProfile.Load(file);
+				
+				// Check if ANY device has smart switching enabled for this profile
+				bool hasAnySmartSwitching = profile.DeviceSmartSwitchingConfigs?.Any(c => c.SmartSwitchingEnabled) ?? false;
+				
 				_profiles.Add(new ProfileViewModel
 				{
 					Name = profile.ProfileName,
 					FilePath = file,
 					IsActive = file == activeProfilePath ? Visibility.Visible : Visibility.Collapsed,
-					HasSmartSwitching = profile.SmartSwitchingEnabled ? Visibility.Visible : Visibility.Collapsed
+					HasSmartSwitching = hasAnySmartSwitching ? Visibility.Visible : Visibility.Collapsed
 				});
 			}
 			catch (Exception ex)
@@ -162,18 +204,30 @@ public sealed partial class ProfilesSettings : Page
 			var profile = ThreeFingerDragProfile.Load(profileVm.FilePath);
 
 			ProfileNameTextBox.Text = profile.ProfileName;
-			SmartSwitchingToggle.IsOn = profile.SmartSwitchingEnabled;
-			SmartSwitchingOptions.Visibility = profile.SmartSwitchingEnabled ? Visibility.Visible : Visibility.Collapsed;
+			
+			// Use current device
+			var deviceConfig = profile.GetDeviceSmartSwitchingConfig(_currentDeviceId);
+			
+			SmartSwitchingToggle.IsOn = deviceConfig.SmartSwitchingEnabled;
+			SmartSwitchingOptions.Visibility = deviceConfig.SmartSwitchingEnabled ? Visibility.Visible : Visibility.Collapsed;
 
 			// Auto-expand Smart Switching section if enabled
-			SmartSwitchingExpander.IsExpanded = profile.SmartSwitchingEnabled;
+			SmartSwitchingExpander.IsExpanded = deviceConfig.SmartSwitchingEnabled;
 
-			AssociatedProgramsListView.ItemsSource = new ObservableCollection<string>(profile.AssociatedPrograms);
+			AssociatedProgramsListView.ItemsSource = new ObservableCollection<string>(deviceConfig.AssociatedPrograms);
+			
+			Logger.Log($"[ProfilesSettings] Loaded profile '{profile.ProfileName}' for device {_currentDeviceName}");
+			Logger.Log($"[ProfilesSettings]   Smart switching: {deviceConfig.SmartSwitchingEnabled}, Programs: {deviceConfig.AssociatedPrograms.Count}");
 		}
 		catch (Exception ex)
 		{
 			Logger.Log($"Error loading profile settings: {ex.Message}");
 		}
+	}
+	
+	private string GetCurrentDeviceId()
+	{
+		return _currentDeviceId;
 	}
 
 	private void ProfileNameTextBox_LostFocus(object sender, RoutedEventArgs e)
@@ -390,8 +444,13 @@ public sealed partial class ProfilesSettings : Page
 			var duplicatedProfile = new ThreeFingerDragProfile
 			{
 				ProfileName = newProfileName,
-				SmartSwitchingEnabled = currentProfile.SmartSwitchingEnabled,
-				AssociatedPrograms = new List<string>(currentProfile.AssociatedPrograms),
+				// Copy all device smart switching configs
+				DeviceSmartSwitchingConfigs = currentProfile.DeviceSmartSwitchingConfigs?.Select(c => new ThreeFingerDragProfile.DeviceSmartSwitchingConfig
+				{
+					DeviceId = c.DeviceId,
+					SmartSwitchingEnabled = c.SmartSwitchingEnabled,
+					AssociatedPrograms = new List<string>(c.AssociatedPrograms)
+				}).ToList() ?? new List<ThreeFingerDragProfile.DeviceSmartSwitchingConfig>(),
 				ThreeFingerDrag = currentProfile.ThreeFingerDrag,
 				ThreeFingerDragButton = currentProfile.ThreeFingerDragButton,
 				ThreeFingerDragAllowReleaseAndRestart = currentProfile.ThreeFingerDragAllowReleaseAndRestart,
@@ -482,13 +541,18 @@ public sealed partial class ProfilesSettings : Page
 		try
 		{
 			var profile = ThreeFingerDragProfile.Load(_selectedProfile.FilePath);
-			profile.SmartSwitchingEnabled = SmartSwitchingToggle.IsOn;
+			var currentDevice = GetCurrentDeviceId();
+			var deviceConfig = profile.GetDeviceSmartSwitchingConfig(currentDevice);
+			
+			deviceConfig.SmartSwitchingEnabled = SmartSwitchingToggle.IsOn;
 			profile.Save(_selectedProfile.FilePath);
 
-			_selectedProfile.HasSmartSwitching = SmartSwitchingToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+			// Update visibility indicator
+			bool hasAnySmartSwitching = profile.DeviceSmartSwitchingConfigs?.Any(c => c.SmartSwitchingEnabled) ?? false;
+			_selectedProfile.HasSmartSwitching = hasAnySmartSwitching ? Visibility.Visible : Visibility.Collapsed;
 			SmartSwitchingOptions.Visibility = SmartSwitchingToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
 
-			Logger.Log($"Smart switching {(SmartSwitchingToggle.IsOn ? "enabled" : "disabled")} for {_selectedProfile.Name}");
+			Logger.Log($"Smart switching {(SmartSwitchingToggle.IsOn ? "enabled" : "disabled")} for {_selectedProfile.Name} on device {currentDevice}");
 		}
 		catch (Exception ex)
 		{
@@ -565,16 +629,18 @@ public sealed partial class ProfilesSettings : Page
 		try
 		{
 			var profile = ThreeFingerDragProfile.Load(_selectedProfile.FilePath);
+			var currentDevice = GetCurrentDeviceId();
+			var deviceConfig = profile.GetDeviceSmartSwitchingConfig(currentDevice);
 
-			if (!profile.AssociatedPrograms.Contains(exePath))
+			if (!deviceConfig.AssociatedPrograms.Contains(exePath))
 			{
-				profile.AssociatedPrograms.Add(exePath);
+				deviceConfig.AssociatedPrograms.Add(exePath);
 				profile.Save(_selectedProfile.FilePath);
 
 				// Refresh UI
 				LoadProfileSettings(_selectedProfile);
 
-				Logger.Log($"Added program {exePath} to profile {_selectedProfile.Name}");
+				Logger.Log($"Added program {exePath} to profile {_selectedProfile.Name} for device {currentDevice}");
 			}
 		}
 		catch (Exception ex)
@@ -593,13 +659,16 @@ public sealed partial class ProfilesSettings : Page
 		try
 		{
 			var profile = ThreeFingerDragProfile.Load(_selectedProfile.FilePath);
-			profile.AssociatedPrograms.Remove(exePath);
+			var currentDevice = GetCurrentDeviceId();
+			var deviceConfig = profile.GetDeviceSmartSwitchingConfig(currentDevice);
+			
+			deviceConfig.AssociatedPrograms.Remove(exePath);
 			profile.Save(_selectedProfile.FilePath);
 
 			// Refresh UI
 			LoadProfileSettings(_selectedProfile);
 
-			Logger.Log($"Removed program {exePath} from profile {_selectedProfile.Name}");
+			Logger.Log($"Removed program {exePath} from profile {_selectedProfile.Name} for device {currentDevice}");
 		}
 		catch (Exception ex)
 		{

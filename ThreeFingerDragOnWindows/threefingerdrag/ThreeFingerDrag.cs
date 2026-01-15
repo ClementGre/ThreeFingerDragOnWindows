@@ -4,7 +4,6 @@ using System.Linq;
 using System.Timers;
 using ThreeFingerDragEngine.utils;
 using ThreeFingerDragOnWindows.settings;
-using ThreeFingerDragOnWindows.touchpad;
 using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.threefingerdrag;
@@ -27,8 +26,6 @@ public class ThreeFingerDrag{
     private int _averagingCount = 0;
 
     public void OnTouchpadContact(IntPtr currentDevice, TouchpadContact[] oldContacts, TouchpadContact[] contacts, long elapsed){
-        var deviceInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
-        var deviceConfig = App.SettingsData.GetDeviceDragConfig(deviceInfo.deviceId);
         bool hasFingersReleased = elapsed > RELEASE_FINGERS_THRESHOLD_MS;
         Logger.Log("TFD: " + string.Join(", ", oldContacts.Select(c => c.ToString())) + " | " +
                    string.Join(", ", contacts.Select(c => c.ToString())) + " | " + elapsed);
@@ -56,8 +53,8 @@ public class ThreeFingerDrag{
             Logger.Log("    STOP DRAG, click up");
             StopDrag();
         } else if(fingersCount >= 2 && originalFingersCount == 3 && areContactsIdsCommons && _isDragging){
-            // Dragging
-            if(deviceConfig.ThreeFingerDragCursorMove){
+            // Dragging - use profile settings
+            if(App.SettingsData.ActiveProfile.ThreeFingerDragCursorMove){
                 if(App.SettingsData.ActiveProfile.ThreeFingerDragMaxFingerMoveDistance != 0 && longestDist2D > App.SettingsData.ActiveProfile.ThreeFingerDragMaxFingerMoveDistance){
                     Logger.Log("    DISCARDING MOVE, (x, y) = (" + longestDistDelta.x + ", " + longestDistDelta.y + ")");
                 } else if(!longestDistDelta.IsNull()){

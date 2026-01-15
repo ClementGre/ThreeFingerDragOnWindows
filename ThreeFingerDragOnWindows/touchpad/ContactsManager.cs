@@ -37,7 +37,12 @@ public class ContactsManager{
                 ReceiveTouchpadContacts(currentDevice, contacts, count);
                 break;
             case TouchpadHelper.WM_INPUT_DEVICE_CHANGE:
-                _source.OnTouchpadInitialized(TouchpadHelper.Exists(lParam), true);
+                Logger.Log($"[ContactsManager] Device change detected, wParam: {wParam}, lParam: {lParam}");
+                // Refresh the device list to handle reconnections (e.g., Bluetooth to wired mode switch)
+                TouchpadHelper.RefreshDevices();
+                // Check if ANY touchpad exists after refresh, not just the specific device from the event
+                // (lParam might be the disconnecting device, not the newly connected one)
+                _source.OnTouchpadInitialized(TouchpadHelper.Exists(), true);
                 break;
         }
 

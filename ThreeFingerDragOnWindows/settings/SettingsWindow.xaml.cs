@@ -346,6 +346,20 @@ public sealed partial class SettingsWindow {
             ContentFrame.Navigate(typeof(OtherSettings));
         }
     }
+    
+    /// <summary>
+    /// Called when touchpad devices change (connect/disconnect)
+    /// </summary>
+    public void OnDeviceChanged(){
+        Logger.Log("[SettingsWindow] Device changed, refreshing current page");
+        
+        // Refresh the current page if it's ProfilesSettings or TouchpadSettings
+        if(ContentFrame.Content is ProfilesSettings profilesSettings){
+            profilesSettings.RefreshDeviceInfo();
+        } else if(ContentFrame.Content is TouchpadSettings touchpadSettings){
+            touchpadSettings.OnTouchpadInitialized();
+        }
+    }
 
     ////////// Close & quit //////////
 

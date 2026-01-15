@@ -12,9 +12,29 @@ public class ThreeFingerDragProfile{
 // Profile metadata
 public string ProfileName { get; set; } = "Default";
     
-// Smart Profile Switching
-public bool SmartSwitchingEnabled { get; set; } = false;
-public List<string> AssociatedPrograms { get; set; } = new List<string>();
+// Smart Profile Switching - per device
+public class DeviceSmartSwitchingConfig
+{
+    public string DeviceId { get; set; } = "";
+    public bool SmartSwitchingEnabled { get; set; } = false;
+    public List<string> AssociatedPrograms { get; set; } = new List<string>();
+}
+
+public List<DeviceSmartSwitchingConfig> DeviceSmartSwitchingConfigs { get; set; } = new List<DeviceSmartSwitchingConfig>();
+
+/// <summary>
+/// Get or create smart switching config for a specific device
+/// </summary>
+public DeviceSmartSwitchingConfig GetDeviceSmartSwitchingConfig(string deviceId)
+{
+    var config = DeviceSmartSwitchingConfigs.FirstOrDefault(c => c.DeviceId == deviceId);
+    if (config == null)
+    {
+        config = new DeviceSmartSwitchingConfig { DeviceId = deviceId };
+        DeviceSmartSwitchingConfigs.Add(config);
+    }
+    return config;
+}
     
 // Three finger drag Settings
 public bool ThreeFingerDrag { get; set; } = true;

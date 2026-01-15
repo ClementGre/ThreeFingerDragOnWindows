@@ -188,40 +188,6 @@ public class SettingsData
         return dirPath;
     }
 
-    public class ThreeFingerDragConfig
-    {
-        public ThreeFingerDragConfig()
-        {
-        }
-
-        public ThreeFingerDragConfig(bool cursorMoveProperty, float cursorSpeedProperty, float cursorAccelerationProperty)
-        {
-            ThreeFingerDragCursorMove = cursorMoveProperty;
-            ThreeFingerDragCursorSpeed = cursorSpeedProperty;
-            ThreeFingerDragCursorAcceleration = cursorAccelerationProperty;
-        }
-
-        public bool ThreeFingerDragCursorMove { get; set; } = true;
-        public float ThreeFingerDragCursorSpeed { get; set; } = 30;
-        public float ThreeFingerDragCursorAcceleration { get; set; } = 10;
-    }
-
-    public Dictionary<string, ThreeFingerDragConfig> ThreeFingerDeviceDragCursorConfigs { get; set; } = new();
-
-    public ThreeFingerDragConfig GetDeviceDragConfig(string deviceId)
-    {
-        if (ThreeFingerDeviceDragCursorConfigs != null && ThreeFingerDeviceDragCursorConfigs.TryGetValue(deviceId, out var config))
-        {
-            return config;
-        }
-
-        return new ThreeFingerDragConfig(
-            ActiveProfile.ThreeFingerDragCursorMove,
-            ActiveProfile.ThreeFingerDragCursorSpeed,
-            ActiveProfile.ThreeFingerDragCursorAcceleration
-        );
-    }
-
     public enum StartupActionType
     {
         NONE,
@@ -267,11 +233,6 @@ public class SettingsData
         }
 
         up.Profiles ??= new List<ProfileInfo>();
-        if (up.ThreeFingerDeviceDragCursorConfigs == null)
-        {
-            up.ThreeFingerDeviceDragCursorConfigs = new Dictionary<string, ThreeFingerDragConfig>(2);
-            up.save();
-        }
 
         if (up.SettingsVersion < 1)
         {

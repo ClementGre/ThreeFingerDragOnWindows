@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Timers;
 using ThreeFingerDragOnWindows.settings.profiles;
+using ThreeFingerDragOnWindows.touchpad;
 using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.settings;
@@ -37,6 +38,23 @@ private IntPtr _hookHandle;
 private string _lastProcessPath = "";
 private bool _isEnabled = false;
 private int _checkCount = 0;
+private string _currentDeviceId = "";
+
+public void SetCurrentDevice(string deviceId)
+{
+    if (_currentDeviceId != deviceId)
+    {
+        Logger.Log($"[SmartSwitcher] ►►► DEVICE CHANGED: '{_currentDeviceId}' -> '{deviceId}'");
+        _currentDeviceId = deviceId;
+        
+        // Re-check foreground window with new device
+        if (_isEnabled)
+        {
+            _lastProcessPath = ""; // Force re-check
+            CheckForegroundWindow();
+        }
+    }
+}
 
     public SmartProfileSwitcher(){
         _checkTimer = new Timer();
@@ -170,6 +188,26 @@ private int _checkCount = 0;
     }
 
     private void CheckAndSwitchProfile(string processPath){
+        Logger.Log($"[SmartSwitcher] === CheckAndSwitchProfile called ===");
+        Logger.Log($"[SmartSwitcher]   Process: {processPath}");
+        Logger.Log($"[SmartSwitcher]   Current device: '{_currentDeviceId}'");
+        
+        if (string.IsNullOrEmpty(_currentDeviceId))
+        {
+            // Try to auto-detect device
+            var devices = TouchpadHelper.GetAllDeivceInfos();
+            if (devices.Count > 0)
+            {
+                _currentDeviceId = devices[0].deviceId;
+                Logger.Log($"[SmartSwitcher] ✓ Auto-detected device: {_currentDeviceId}");
+            }
+            else
+            {
+                Logger.Log("[SmartSwitcher] ⚠️ No current device set and no devices detected, skipping profile check");
+                return;
+            }
+        }
+
         var profilesDir = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "profiles");
         if(!Directory.Exists(profilesDir)){
             Logger.Log("[SmartSwitcher] ERROR: Profiles directory not found!");
@@ -179,7 +217,7 @@ private int _checkCount = 0;
         var profileFiles = Directory.GetFiles(profilesDir, "*.xml");
         var currentProfilePath = App.SettingsData.ActiveProfilePath;
         
-        Logger.Log($"[SmartSwitcher] Checking {profileFiles.Length} profiles...");
+        Logger.Log($"[SmartSwitcher] Checking {profileFiles.Length} profiles for device: {_currentDeviceId}...");
         Logger.Log($"[SmartSwitcher] Current active: {Path.GetFileName(currentProfilePath)}");
 
         int profilesWithSmart = 0;
@@ -187,20 +225,23 @@ private int _checkCount = 0;
         ThreeFingerDragProfile matchedProfile = null;
         string matchedProfileFile = null;
 
-        // First pass: find matching profile
+        // First pass: find matching profile for this device
         foreach(var profileFile in profileFiles){
             try{
                 var profile = ThreeFingerDragProfile.Load(profileFile);
                 var isActive = profileFile == currentProfilePath;
                 
-                Logger.Log($"[SmartSwitcher] Profile: '{profile.ProfileName}' {(isActive ? "(ACTIVE)" : "")}");
-                Logger.Log($"[SmartSwitcher]   Smart switching: {(profile.SmartSwitchingEnabled ? "YES" : "NO")}");
+                // Get device-specific smart switching config
+                var deviceConfig = profile.GetDeviceSmartSwitchingConfig(_currentDeviceId);
                 
-                if(profile.SmartSwitchingEnabled){
+                Logger.Log($"[SmartSwitcher] Profile: '{profile.ProfileName}' {(isActive ? "(ACTIVE)" : "")}");
+                Logger.Log($"[SmartSwitcher]   Device smart switching: {(deviceConfig.SmartSwitchingEnabled ? "YES" : "NO")}");
+                
+                if(deviceConfig.SmartSwitchingEnabled){
                     profilesWithSmart++;
-                    Logger.Log($"[SmartSwitcher]   Associated programs ({profile.AssociatedPrograms.Count}):");
+                    Logger.Log($"[SmartSwitcher]   Associated programs for device ({deviceConfig.AssociatedPrograms.Count}):");
                     
-                    foreach(var prog in profile.AssociatedPrograms){
+                    foreach(var prog in deviceConfig.AssociatedPrograms){
                         totalPrograms++;
                         var matches = string.Equals(prog, processPath, StringComparison.OrdinalIgnoreCase);
                         Logger.Log($"[SmartSwitcher]     {(matches ? "✓ MATCH" : "-")} {prog}");
@@ -208,7 +249,7 @@ private int _checkCount = 0;
                         if(matches && !isActive){
                             matchedProfile = profile;
                             matchedProfileFile = profileFile;
-                            Logger.Log($"[SmartSwitcher]   >>> Found match in '{profile.ProfileName}'!");
+                            Logger.Log($"[SmartSwitcher]   >>> Found match in '{profile.ProfileName}' for device!");
                         }
                     }
                 }
@@ -219,7 +260,7 @@ private int _checkCount = 0;
         
         // If we found a match, switch to it
         if(matchedProfile != null && matchedProfileFile != null){
-            Logger.Log($"[SmartSwitcher] ►►► SWITCHING to '{matchedProfile.ProfileName}'!");
+            Logger.Log($"[SmartSwitcher] ►►► SWITCHING to '{matchedProfile.ProfileName}' for device {_currentDeviceId}!");
             App.SettingsData.SwitchToProfile(matchedProfileFile);
             
             // Refresh settings window if open
@@ -229,8 +270,8 @@ private int _checkCount = 0;
                 }
             });
         } else {
-            Logger.Log($"[SmartSwitcher] Summary: {profilesWithSmart} profiles with smart switching, {totalPrograms} total programs");
-            Logger.Log($"[SmartSwitcher] No matching profile found for current process");
+            Logger.Log($"[SmartSwitcher] Summary: {profilesWithSmart} profiles with smart switching for device, {totalPrograms} total programs");
+            Logger.Log($"[SmartSwitcher] No matching profile found for current process on device {_currentDeviceId}");
         }
     }
 }
