@@ -37,6 +37,7 @@
 									<Grid Padding="16,12" HorizontalAlignment="Stretch">
 										<Grid.ColumnDefinitions>
 											<ColumnDefinition Width="*"/>
+											<ColumnDefinition Width="Auto"/>
 										</Grid.ColumnDefinitions>
 
 										<TextBlock Text="{Binding Name}"
