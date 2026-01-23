@@ -11,28 +11,87 @@
 
     <RelativePanel>
 
-        <StackPanel
+        <Grid
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             x:Name="TitleBar"
             Height="44"
-            Orientation="Horizontal"
             Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
+            
+            <!-- Main draggable title bar -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- App icon -->
+                <Border Height="44" Margin="9,0,0,0">
+                    <Image Source="/Assets/icon-52.png" Height="26" />
+                </Border>
 
-            <Border Height="44" Margin="9,0,0,0">
-                <Image Source="/Assets/icon-52.png" Height="26" />
-            </Border>
-
-
-            <Border Height="44" Margin="12,0,0,0">
-                <TextBlock
-                    Text="ThreeFingerDragOnWindows"
-                    FontSize="14"
-                    FontWeight="Medium"
-                    TextWrapping="NoWrap"
-                    VerticalAlignment="Center" />
-            </Border>
-        </StackPanel>
+                <!-- App title -->
+                <Border Height="44" Margin="12,0,0,0">
+                    <TextBlock
+                        Text="ThreeFingerDragOnWindows"
+                        FontSize="14"
+                        FontWeight="Medium"
+                        TextWrapping="NoWrap"
+                        VerticalAlignment="Center" />
+                </Border>
+                
+                <!-- Separator -->
+                <Border Width="1" 
+                        Height="24" 
+                        Background="{ThemeResource DividerStrokeColorDefaultBrush}"
+                        Margin="16,0,16,0"
+                        VerticalAlignment="Center"/>
+                
+                <!-- Profile Management (non-draggable overlay) -->
+                <StackPanel Orientation="Horizontal" 
+                            Spacing="8" 
+                            VerticalAlignment="Center"
+                            Background="Transparent">
+                    
+                    <TextBlock Text="Profile:" 
+                               VerticalAlignment="Center"
+                               Margin="0,0,4,0"
+                               FontSize="12"
+                               IsHitTestVisible="False"/>
+                    
+                    <ComboBox x:Name="ProfileComboBox"
+                              MinWidth="150"
+                              Height="32"
+                              VerticalAlignment="Center"
+                              SelectionChanged="ProfileComboBox_SelectionChanged"/>
+                    
+                    <Button x:Name="CreateProfileButton"
+                            ToolTipService.ToolTip="Create new profile"
+                            Click="CreateProfileButton_Click"
+                            Width="32"
+                            Height="32"
+                            Padding="0"
+                            VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE710;" FontSize="14"/>
+                    </Button>
+                    
+                    <Button x:Name="RenameProfileButton"
+                            ToolTipService.ToolTip="Rename current profile"
+                            Click="RenameProfileButton_Click"
+                            Width="32"
+                            Height="32"
+                            Padding="0"
+                            VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE8AC;" FontSize="14"/>
+                    </Button>
+                    
+                    <Button x:Name="DuplicateProfileButton"
+                            ToolTipService.ToolTip="Duplicate current profile"
+                            Click="DuplicateProfileButton_Click"
+                            Width="32"
+                            Height="32"
+                            Padding="0"
+                            VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE8C8;" FontSize="14"/>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
 
         <NavigationView x:Name="NavigationView"
                         IsSettingsVisible="False"
@@ -63,14 +122,19 @@
 
 
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Touchpad" Tag="Touchpad" x:Name="Touchpad">
+                <NavigationViewItem Content="Profiles" Tag="Profiles" x:Name="Profiles">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEFA5;" />
+                        <FontIcon Glyph="&#xE7EE;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Three Finger Drag" Tag="ThreeFingerDrag" x:Name="ThreeFingerDrag">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE759;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Touchpad" Tag="Touchpad" x:Name="Touchpad">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEFA5;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Other Settings" Tag="Other Settings" x:Name="OtherSettings">

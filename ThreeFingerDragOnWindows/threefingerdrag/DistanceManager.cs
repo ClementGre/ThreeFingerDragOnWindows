@@ -84,9 +84,8 @@ public class DistanceManager {
 
     public static Point ApplySpeedAndAcc(IntPtr currentDevice, Point delta, int elapsed){
 
-        // Apply Speed
-        var deviceInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
-        delta.Multiply(App.SettingsData.ThreeFingerDeviceDragCursorConfigs.GetValueOrDefault(deviceInfo.deviceId, new SettingsData.ThreeFingerDragConfig()).ThreeFingerDragCursorSpeed / 120);
+        // Apply Speed from active profile
+        delta.Multiply(App.SettingsData.ActiveProfile.ThreeFingerDragCursorSpeed / 120);
 
         // Calculate the mouse velocity : sort of a relative speed between 0 and 4, 1 being the average speed.
         var mouseVelocity = Math.Min(delta.Length() / elapsed, 4);
@@ -94,15 +93,13 @@ public class DistanceManager {
 
 
         float pointerVelocity = 1;
-        if(App.SettingsData.ThreeFingerDeviceDragCursorConfigs.ContainsKey(deviceInfo.deviceId)){
+        if(App.SettingsData.ActiveProfile.ThreeFingerDragCursorAcceleration != 0){
             // Apply acceleration : function that transform the mouseVelocity into a pointerVelocity : 0.7+zs\left(2.6a\left(x-1+\frac{3-\ln\left(\frac{z}{0.3}-1\right)}{2.6a}\right)-3\right)
             // See https://www.desmos.com/calculator/khtj85jopn
-            float a = App.SettingsData.ThreeFingerDeviceDragCursorConfigs.GetValueOrDefault(deviceInfo.deviceId, new SettingsData.ThreeFingerDragConfig()).ThreeFingerDragCursorAcceleration / 10f; // Acceleration is multiplied by 10 in settings.
-            if (a != 0) {
-                pointerVelocity = (float)(0.7 + 0.8 * Sigmoid(2.6 * a * (mouseVelocity - 1 + (3 - Math.Log2(0.8 / 0.3 - 1)) / (2.6 * a)) - 3));
-                // No need to clamp, the function gives values between 0.7 and 1.5.
-                Logger.Log("    pointerVelocity: " + pointerVelocity + " (mouseVelocity: " + mouseVelocity + ")");
-            }
+            float a = App.SettingsData.ActiveProfile.ThreeFingerDragCursorAcceleration / 10f; // Acceleration is multiplied by 10 in settings.
+            pointerVelocity = (float)(0.7 + 0.8 * Sigmoid(2.6 * a * (mouseVelocity - 1 + (3 - Math.Log2(0.8 / 0.3 - 1)) / (2.6 * a)) - 3));
+            // No need to clamp, the function gives values between 0.7 and 1.5.
+            Logger.Log("    pointerVelocity: " + pointerVelocity + " (mouseVelocity: " + mouseVelocity + ")");
         }
 
         // Apply acceleration
@@ -112,8 +109,7 @@ public class DistanceManager {
     }
 
     public static float ApplySpeed(IntPtr currentDevice, float distance){
-        var deviceInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
-        distance *= App.SettingsData.ThreeFingerDeviceDragCursorConfigs.GetValueOrDefault(deviceInfo.deviceId, new SettingsData.ThreeFingerDragConfig()).ThreeFingerDragCursorSpeed / 60;
+        distance *= App.SettingsData.ActiveProfile.ThreeFingerDragCursorSpeed / 60;
         return distance;
     }
 
