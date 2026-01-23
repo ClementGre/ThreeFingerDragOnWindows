@@ -141,17 +141,15 @@ public class SettingsData
             // Save to new location
             _activeProfile.Save(newPath);
 
-            if (File.Exists(oldPath))
+            // Delete old file - File.Delete doesn't throw if file doesn't exist
+            try
             {
-                try
-                {
-                    File.Delete(oldPath);
-                    Logger.Log($"Renamed profile file from {oldPath} to {newPath}");
-                }
-                catch (Exception e)
-                {
-                    Logger.Log($"Error deleting old profile file: {e.Message}");
-                }
+                File.Delete(oldPath);
+                Logger.Log($"Renamed profile file from {oldPath} to {newPath}");
+            }
+            catch (Exception e)
+            {
+                Logger.Log($"Error deleting old profile file: {e.Message}");
             }
 
             ActiveProfilePath = newPath;

@@ -17,8 +17,8 @@ internal static class TouchpadHelper {
     public const int RIM_INPUTSINK = 1;
     
     private static Dictionary<IntPtr, TouchpadDeviceInfo> availableDeviceInfos = new Dictionary<IntPtr, TouchpadDeviceInfo>(2);
-    private static Dictionary<IntPtr, DateTime> deviceLastSeenTime = new Dictionary<IntPtr, DateTime>(2);
-    private static Dictionary<IntPtr, bool> deviceHasSentInput = new Dictionary<IntPtr, bool>(2);
+    private static readonly Dictionary<IntPtr, DateTime> deviceLastSeenTime = new Dictionary<IntPtr, DateTime>(2);
+    private static readonly Dictionary<IntPtr, bool> deviceHasSentInput = new Dictionary<IntPtr, bool>(2);
     private static readonly TimeSpan DeviceRemovalGracePeriod = TimeSpan.FromSeconds(1);
 
     private static TouchpadDeviceInfo GetDeviceInfoFromHid(IntPtr hwnd)
@@ -86,8 +86,10 @@ internal static class TouchpadHelper {
                 newDeviceInfo.vendorId = deviceInfo.hid.dwVendorId.ToString();
                 newDeviceInfo.productId = deviceInfo.hid.dwProductId.ToString();
                 
+                
                 availableDeviceInfos[hwnd] = newDeviceInfo;
-                deviceLastSeenTime[hwnd] = DateTime.Now; // Only set timestamp for NEW devices
+                // Only set timestamp for NEW devices
+                deviceLastSeenTime[hwnd] = DateTime.Now;
                 deviceHasSentInput[hwnd] = false; // New devices haven't sent input yet
                 Logger.Log($"[TouchpadHelper] Added device: {hwnd}, deviceId: {newDeviceInfo.deviceId}, VID/PID: {newDeviceInfo.vendorId}/{newDeviceInfo.productId}");
             }
@@ -174,41 +176,44 @@ internal static class TouchpadHelper {
     /// </summary>
     public static void CleanupDisconnectedDevices()
     {
-        var now = DateTime.Now;
-        var devicesToRemove = new List<IntPtr>();
-
-        foreach (var kvp in availableDeviceInfos)
+        lock (deviceLastSeenTime)
         {
-            var device = kvp.Key;
-            
-            // Check if device is still valid
-            if (!IsDeviceStillValid(device))
+            var now = DateTime.Now;
+            var devicesToRemove = new List<IntPtr>();
+
+            foreach (var kvp in availableDeviceInfos)
             {
-                // If we haven't tracked this device's last seen time, set it now
-                if (!deviceLastSeenTime.ContainsKey(device))
+                var device = kvp.Key;
+                
+                // Check if device is still valid
+                if (!IsDeviceStillValid(device))
                 {
+                    // If we haven't tracked this device's last seen time, set it now
+                    if (!deviceLastSeenTime.ContainsKey(device))
+                    {
+                        deviceLastSeenTime[device] = now;
+                    }
+                    // Only remove if grace period has elapsed
+                    else if (now - deviceLastSeenTime[device] > DeviceRemovalGracePeriod)
+                    {
+                        devicesToRemove.Add(device);
+                    }
+                }
+                else
+                {
+                    // Device is valid, update last seen time
                     deviceLastSeenTime[device] = now;
                 }
-                // Only remove if grace period has elapsed
-                else if (now - deviceLastSeenTime[device] > DeviceRemovalGracePeriod)
-                {
-                    devicesToRemove.Add(device);
-                }
             }
-            else
-            {
-                // Device is valid, update last seen time
-                deviceLastSeenTime[device] = now;
-            }
-        }
 
-        foreach (var device in devicesToRemove)
-        {
-            var deviceInfo = availableDeviceInfos[device];
-            availableDeviceInfos.Remove(device);
-            deviceLastSeenTime.Remove(device);
-            deviceHasSentInput.Remove(device);
-            Logger.Log($"[TouchpadHelper] Removed disconnected device after grace period: {device}, deviceId: {deviceInfo.deviceId}");
+            foreach (var device in devicesToRemove)
+            {
+                var deviceInfo = availableDeviceInfos[device];
+                availableDeviceInfos.Remove(device);
+                deviceLastSeenTime.Remove(device);
+                deviceHasSentInput.Remove(device);
+                Logger.Log($"[TouchpadHelper] Removed disconnected device after grace period: {device}, deviceId: {deviceInfo.deviceId}");
+            }
         }
     }
 
@@ -320,13 +325,13 @@ internal static class TouchpadHelper {
             // 1. Devices that have sent actual input (active devices)
             // 2. Newly added devices (likely the new connection)
             // 3. Most recent timestamp (fallback)
-            var sortedDevices = group.OrderByDescending(kvp => deviceHasSentInput.ContainsKey(kvp.Key) && deviceHasSentInput[kvp.Key] ? 1 : 0)
+            var sortedDevices = group.OrderByDescending(kvp => deviceHasSentInput.TryGetValue(kvp.Key, out var hasSent) && hasSent ? 1 : 0)
                                      .ThenByDescending(kvp => newlyAddedHandles.Contains(kvp.Key) ? 1 : 0)
-                                     .ThenByDescending(kvp => deviceLastSeenTime.ContainsKey(kvp.Key) ? deviceLastSeenTime[kvp.Key] : DateTime.MinValue)
+                                     .ThenByDescending(kvp => deviceLastSeenTime.TryGetValue(kvp.Key, out var lastSeen) ? lastSeen : DateTime.MinValue)
                                      .ToList();
             
             var keepDevice = sortedDevices.First();
-            var hasSentInput = deviceHasSentInput.ContainsKey(keepDevice.Key) && deviceHasSentInput[keepDevice.Key];
+            var hasSentInput = deviceHasSentInput.TryGetValue(keepDevice.Key, out var keepHasSent) && keepHasSent;
             var wasNewDevice = newlyAddedHandles.Contains(keepDevice.Key);
             
             string reason = hasSentInput ? "has sent input" : (wasNewDevice ? "newly added" : "most recent");
@@ -335,7 +340,7 @@ internal static class TouchpadHelper {
             // Remove all except the first one
             foreach (var device in sortedDevices.Skip(1))
             {
-                var deviceHadSentInput = deviceHasSentInput.ContainsKey(device.Key) && deviceHasSentInput[device.Key];
+                var deviceHadSentInput = deviceHasSentInput.TryGetValue(device.Key, out var hadSent) && hadSent;
                 Logger.Log($"[TouchpadHelper] Removing duplicate device: {device.Key}, deviceId: {device.Value.deviceId}, VID/PID: {device.Value.vendorId}/{device.Value.productId}, hadSentInput: {deviceHadSentInput}");
                 availableDeviceInfos.Remove(device.Key);
                 deviceLastSeenTime.Remove(device.Key);
@@ -536,8 +541,11 @@ internal static class TouchpadHelper {
             // Update the timestamp for this device since it just sent input
             if (availableDeviceInfos.ContainsKey(currentDevice))
             {
-                deviceLastSeenTime[currentDevice] = DateTime.Now;
-                deviceHasSentInput[currentDevice] = true; // Mark that this device has sent actual input
+                lock (deviceLastSeenTime)
+                {
+                    deviceLastSeenTime[currentDevice] = DateTime.Now;
+                    deviceHasSentInput[currentDevice] = true; // Mark that this device has sent actual input
+                }
             }
 
             return (currentDevice, contacts, contactCount);

@@ -76,7 +76,7 @@ public class ProfileViewModel : INotifyPropertyChanged
 
 public sealed partial class ProfilesSettings : Page
 {
-	private ObservableCollection<ProfileViewModel> _profiles = new ObservableCollection<ProfileViewModel>();
+	private readonly ObservableCollection<ProfileViewModel> _profiles = new ObservableCollection<ProfileViewModel>();
 	private ProfileViewModel _selectedProfile;
 	private ProfileViewModel _rightClickedProfile;
 	private ProfileViewModel _previousSelection;

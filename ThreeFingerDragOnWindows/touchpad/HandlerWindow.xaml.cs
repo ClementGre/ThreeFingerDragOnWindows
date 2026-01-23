@@ -89,7 +89,10 @@ public sealed partial class HandlerWindow : Window {
 
         // Update smart profile switcher with current device
         var deviceInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
-        App.SmartProfileSwitcher?.SetCurrentDevice(deviceInfo.deviceId);
+        if (deviceInfo != null)
+        {
+            App.SmartProfileSwitcher?.SetCurrentDevice(deviceInfo.deviceId);
+        }
 
         _app.OnTouchpadContact(currentDevice, contacts.ToArray()); // Transfer to App for displaying contacts in SettingsWindow
         _lastContactCtms = Ctms();

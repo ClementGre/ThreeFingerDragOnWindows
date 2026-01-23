@@ -32,8 +32,8 @@ private const uint WINEVENT_OUTOFCONTEXT = 0;
 private delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, 
     int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
-private readonly Timer _checkTimer;
-private WinEventDelegate _hookDelegate;
+    private readonly Timer _checkTimer;
+    private readonly WinEventDelegate _hookDelegate;
 private IntPtr _hookHandle;
 private string _lastProcessPath = "";
 private bool _isEnabled = false;
@@ -264,11 +264,19 @@ public void SetCurrentDevice(string deviceId)
             App.SettingsData.SwitchToProfile(matchedProfileFile);
             
             // Refresh settings window if open
-            App.Instance.DispatcherQueue.TryEnqueue(() => {
-                if(App.SettingsWindow is SettingsWindow settingsWindow){
-                    settingsWindow.LoadProfiles();
-                }
-            });
+            var dispatcherQueue = App.Instance?.DispatcherQueue;
+            if (dispatcherQueue != null)
+            {
+                dispatcherQueue.TryEnqueue(() => {
+                    if(App.SettingsWindow is SettingsWindow settingsWindow){
+                        settingsWindow.LoadProfiles();
+                    }
+                });
+            }
+            else
+            {
+                Logger.Log("[SmartSwitcher] DispatcherQueue is not available; skipping settings window refresh.");
+            }
         } else {
             Logger.Log($"[SmartSwitcher] Summary: {profilesWithSmart} profiles with smart switching for device, {totalPrograms} total programs");
             Logger.Log($"[SmartSwitcher] No matching profile found for current process on device {_currentDeviceId}");
