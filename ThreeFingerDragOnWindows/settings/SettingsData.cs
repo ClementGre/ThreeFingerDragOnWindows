@@ -69,6 +69,7 @@ public class SettingsData{
 
     public int ThreeFingerDragStartThreshold { get; set; } = 100;
     public int ThreeFingerDragStopThreshold { get; set; } = 10;
+    public int ThreeFingerDragMaxFingersDistance { get; set; } = 0; // 0 = disabled. Max allowed pairwise distance between fingers to start a drag.
    
     // Other settings
 

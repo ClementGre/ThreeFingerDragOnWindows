@@ -210,6 +210,27 @@
                                SpinButtonPlacementMode="Compact" />
                 </StackPanel>
             </wuc:SettingsCard>
+            <wuc:SettingsCard
+                HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE815;}"
+                Header="Maximum distance between fingers"
+                Description="The farthest allowed distance between any two fingers. Two effects: 1) With 3 fingers, the drag won't start if they are spread farther apart than this (e.g. one thumb on the left + two fingers on the right while typing). 2) With 4 fingers, if three of them stay within this distance and one is farther away (e.g. an accidental thumb + a real three-finger drag), the far finger is treated as an accidental touch and ignored, so the drag still works. Set to 0 to disable. Check the logs (maxPairDist) to find a suitable value.">
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
+                    <Slider MinWidth="150"
+                            StepFrequency="1"
+                            Maximum="2000"
+                            Minimum="0"
+                            Value="{x:Bind MaxFingersDistanceProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <NumberBox MinWidth="80"
+                               Value="{x:Bind MaxFingersDistanceProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                               Minimum="0"
+                               Maximum="10000"
+                               SmallChange="10"
+                               LargeChange="100"
+                               SpinButtonPlacementMode="Compact" />
+                </StackPanel>
+            </wuc:SettingsCard>
 
             <Expander
                 IsExpanded="False"
