@@ -29,7 +29,7 @@ public class FingerCounter {
     /// longDelayMovingFingersCount : number of fingers that are on the touchpad and that have led to a moving distance higher than App.SettingsData.ThreeFingerDragStartThreshold
     ///     Used to determine if the user has really started to drag
     /// originalFingersCount : number of original fingers on the touchpad after the short delay.
-    ///     This is updated only when contacts list length is &lt;= 1 or when contacts have been released for more than RELEASE_FINGERS_THRESHOLD_MS ms.
+    ///     This is updated only when contacts list length is &lt;= 1 or after the shared contact-release threshold has elapsed.
     ///     Used to determine if the user has originally started to scroll, drag, or desktop swipe. When moving with a single finger, this variable is reset.
     /// </returns>
     public (int, int, int, int) CountMovingFingers(IntPtr currentDevice, TouchpadContact[] newContacts, bool areContactsIdsCommons, float longestDist2D, bool hasFingersReleased){

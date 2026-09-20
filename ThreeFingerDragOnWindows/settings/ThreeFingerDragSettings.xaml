@@ -67,6 +67,28 @@
 
             </wuc:SettingsExpander>
 
+            <wuc:SettingsExpander
+                Description="Experimental: after a quick one-finger double tap, moving the second touch starts a left-button drag. You can briefly lift and reposition the finger without ending the drag. Disable Windows &quot;Tap twice and drag to multi-select&quot; before enabling this option."
+                Header="Enable double-tap drag lock"
+                HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE8B0;}"
+                IsExpanded="True">
+                <ToggleSwitch x:Name="DoubleTapDragLockEnabled"
+                              IsOn="{x:Bind DoubleTapDragLockEnabledProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <wuc:SettingsExpander.Items>
+                    <wuc:SettingsCard Description="How long the left button remains held after lifting the finger. Recommended: 500 ms."
+                                      Header="Drag-lock release delay (ms)"
+                                      IsEnabled="{Binding ElementName=DoubleTapDragLockEnabled, Path=IsOn}">
+                        <NumberBox MinWidth="240"
+                                   LargeChange="100"
+                                   Maximum="2000"
+                                   Minimum="100"
+                                   SmallChange="50"
+                                   SpinButtonPlacementMode="Compact"
+                                   Value="{x:Bind DoubleTapDragLockReleaseDelayProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </wuc:SettingsCard>
+                </wuc:SettingsExpander.Items>
+            </wuc:SettingsExpander>
+
             <wuc:SettingsCard
                 Description="Keep the left button to be able to select text and drag objects."
                 HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE962;}"

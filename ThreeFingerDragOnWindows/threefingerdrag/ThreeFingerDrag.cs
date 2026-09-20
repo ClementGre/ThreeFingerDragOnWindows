@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using ThreeFingerDragEngine.utils;
+using ThreeFingerDragOnWindows.drag;
 using ThreeFingerDragOnWindows.settings;
+using ThreeFingerDragOnWindows.touchpad;
 using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.threefingerdrag;
 
-public class ThreeFingerDrag{
-    public const int RELEASE_FINGERS_THRESHOLD_MS = 40; // Windows Precision Touchpad sends contacts about every 10ms
-
+public class ThreeFingerDrag : IDisposable{
     private readonly DistanceManager _distanceManager = new();
     private readonly FingerCounter _fingerCounter = new();
     private readonly Timer _dragEndTimer = new();
+    private readonly DragButtonCoordinator _dragButtonCoordinator;
     private bool _isDragging;
 
-    public ThreeFingerDrag(){
+    public ThreeFingerDrag(DragButtonCoordinator dragButtonCoordinator){
+        _dragButtonCoordinator = dragButtonCoordinator;
         _dragEndTimer.AutoReset = false;
         _dragEndTimer.Elapsed += OnTimerElapsed;
     }
@@ -27,7 +29,7 @@ public class ThreeFingerDrag{
 
     public void OnTouchpadContact(IntPtr currentDevice, TouchpadContact[] oldContacts, TouchpadContact[] contacts, long elapsed){
         var deviceInfo = TouchpadHelper.GetDeivceInfo(currentDevice);
-        bool hasFingersReleased = elapsed > RELEASE_FINGERS_THRESHOLD_MS;
+        bool hasFingersReleased = elapsed > TouchpadTiming.ContactReleaseThresholdMs;
         Logger.Log("TFD: " + string.Join(", ", oldContacts.Select(c => c.ToString())) + " | " +
                    string.Join(", ", contacts.Select(c => c.ToString())) + " | " + elapsed);
         bool areContactsIdsCommons = FingerCounter.AreContactsIdsCommons(oldContacts, contacts);
@@ -44,9 +46,10 @@ public class ThreeFingerDrag{
         if(fingersCount >= 3 && areContactsIdsCommons && longDelayMovingFingersCount == 3 &&
            originalFingersCount == 3 && !_isDragging){
             // Start dragging
-            _isDragging = true;
-            Logger.Log("    START DRAG, click down");
-            MouseOperations.ThreeFingersDragMouseDown();
+            if(_dragButtonCoordinator.TryAcquire(DragOwner.ThreeFinger, App.SettingsData.ThreeFingerDragButton)){
+                _isDragging = true;
+                Logger.Log("    START DRAG, click down");
+            }
         } else if(_isDragging &&
                   (shortDelayMovingFingersCount < 2 || (originalFingersCount != 3 && originalFingersCount >= 2))){
             // Stop dragging
@@ -95,15 +98,25 @@ public class ThreeFingerDrag{
         }
     }
 
-    private void StopDrag(){
+    public void Stop(string reason = "three-finger-stop"){
+        _dragEndTimer.Stop();
+        StopDrag(reason);
+    }
+
+    private void StopDrag(string reason = "three-finger-stop"){
         _isDragging = false;
-        MouseOperations.ThreeFingersDragMouseUp();
+        _dragButtonCoordinator.Release(DragOwner.ThreeFinger, reason);
     }
 
     private int GetReleaseDelay(){
         // Delay after which the click is released if no input is detected
         return App.SettingsData.ThreeFingerDragAllowReleaseAndRestart
-            ? Math.Max(App.SettingsData.ThreeFingerDragReleaseDelay, RELEASE_FINGERS_THRESHOLD_MS)
-            : RELEASE_FINGERS_THRESHOLD_MS;
+            ? Math.Max(App.SettingsData.ThreeFingerDragReleaseDelay, TouchpadTiming.ContactReleaseThresholdMs)
+            : TouchpadTiming.ContactReleaseThresholdMs;
+    }
+
+    public void Dispose(){
+        Stop("three-finger-dispose");
+        _dragEndTimer.Dispose();
     }
 }

@@ -29,7 +29,10 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
 
     public bool EnabledProperty {
         get{ return App.SettingsData.ThreeFingerDrag; }
-        set{ App.SettingsData.ThreeFingerDrag = value; }
+        set{
+            App.SettingsData.ThreeFingerDrag = value;
+            App.Instance.HandlerWindow?.SetThreeFingerDragEnabled(value);
+        }
     }
 
     public int ButtonTypeProperty {
@@ -45,6 +48,20 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
     public int ReleaseDelayProperty {
         get{ return App.SettingsData.ThreeFingerDragReleaseDelay; }
         set{ App.SettingsData.ThreeFingerDragReleaseDelay = value; }
+    }
+
+    public bool DoubleTapDragLockEnabledProperty {
+        get{ return App.SettingsData.DoubleTapDragLockEnabled; }
+        set{
+            if(App.SettingsData.DoubleTapDragLockEnabled == value) return;
+            App.SettingsData.DoubleTapDragLockEnabled = value;
+            App.Instance.HandlerWindow?.SetDoubleTapDragLockEnabled(value);
+        }
+    }
+
+    public int DoubleTapDragLockReleaseDelayProperty {
+        get{ return App.SettingsData.DoubleTapDragLockReleaseDelay; }
+        set{ App.SettingsData.DoubleTapDragLockReleaseDelay = value; }
     }
     
     public ObservableCollection<MouseSpeedSettings> MouseSpeedSettingItems

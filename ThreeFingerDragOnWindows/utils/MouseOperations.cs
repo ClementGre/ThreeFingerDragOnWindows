@@ -6,6 +6,9 @@ namespace ThreeFingerDragOnWindows.utils;
 
 public class MouseOperations {
     private const int INPUT_MOUSE = 0;
+    private const int VK_LBUTTON = 0x01;
+    private const int VK_RBUTTON = 0x02;
+    private const int VK_MBUTTON = 0x04;
     private const int MOUSEEVENTF_MOVE = 0x0001;
     public const int MOUSEEVENTF_LEFTDOWN = 0x0002;
     public const int MOUSEEVENTF_LEFTUP = 0x0004;
@@ -24,12 +27,25 @@ public class MouseOperations {
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetCursorPos(out IntMousePoint lpFIntMousePoint);
 
+    [DllImport("user32.dll")]
+    private static extern short GetAsyncKeyState(int vKey);
+
 
     public static IntMousePoint GetCursorPosition(){
         IntMousePoint currentIntMousePoint;
         var gotPoint = GetCursorPos(out currentIntMousePoint);
         if(!gotPoint) currentIntMousePoint = new IntMousePoint(0, 0);
         return currentIntMousePoint;
+    }
+
+    public static bool IsMouseButtonDown(SettingsData.ThreeFingerDragButtonType button){
+        int virtualKey = button switch{
+            SettingsData.ThreeFingerDragButtonType.LEFT => VK_LBUTTON,
+            SettingsData.ThreeFingerDragButtonType.RIGHT => VK_RBUTTON,
+            SettingsData.ThreeFingerDragButtonType.MIDDLE => VK_MBUTTON,
+            _ => 0,
+        };
+        return virtualKey != 0 && (GetAsyncKeyState(virtualKey) & 0x8000) != 0;
     }
 
     public static void ShiftCursorPosition(float x, float y){

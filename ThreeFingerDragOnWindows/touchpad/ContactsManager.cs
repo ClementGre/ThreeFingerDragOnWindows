@@ -50,8 +50,18 @@ public class ContactsManager{
     private uint _targetContactCount;
 
     private void ReceiveTouchpadContacts(IntPtr currentDevice, List<TouchpadContact> contacts, uint count){
-        if(contacts == null || contacts.Count == 0){
+        if(contacts == null){
+            Logger.Log("Receiving invalid null contacts with cC=" + count);
+            return;
+        }
+
+        if(contacts.Count == 0){
             Logger.Log("Receiving empty contacts with cC=" + count);
+            if(count == 0){
+                _source.OnTouchpadReleased(currentDevice);
+                _lastContacts.Clear();
+                _targetContactCount = 0;
+            }
             return;
         }
 

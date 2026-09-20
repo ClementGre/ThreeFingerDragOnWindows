@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using ThreeFingerDragEngine.utils;
 using ThreeFingerDragOnWindows.settings;
+using ThreeFingerDragOnWindows.touchpad;
 using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.threefingerdrag;
@@ -11,14 +12,14 @@ namespace ThreeFingerDragOnWindows.threefingerdrag;
 public class DistanceManager {
 
     // List of contacts that exists but that can't be used for the distance calculation yet.
-    // There is a delay of RELEASE_FINGERS_THRESHOLD_MS before they can affect the distance.
+    // There is a shared contact-release delay before they can affect the distance.
     private Dictionary<int, long> _quarantineContacts = new();
     private List<int> _trustedContacts = new();
 
     /// <summary>
     /// Find the longest distance between two TouchpadContact of same ID.
     /// When new contacts are registered, there is a delay (quarantine) before they can affect the distance.
-    /// Returned distance is 0 if the delay between this call and the last one is higher than RELEASE_FINGERS_THRESHOLD_MS (if hasFingersReleased is true).
+    /// Returned distance is 0 if the delay between this call and the last one exceeds the shared contact-release threshold (if hasFingersReleased is true).
     /// </summary>
     /// <param name="oldContacts">First contacts list</param>
     /// <param name="newContacts">Second contacts list</param>
@@ -47,7 +48,7 @@ public class DistanceManager {
             long contactCtms;
             if(_quarantineContacts.TryGetValue(newContact.ContactId, out contactCtms)){
                 // Contact exist in quarantine
-                if(Ctms() - contactCtms > ThreeFingerDrag.RELEASE_FINGERS_THRESHOLD_MS){
+                if(Ctms() - contactCtms > TouchpadTiming.ContactReleaseThresholdMs){
                     // Contact is now trusted
                     _trustedContacts.Add(newContact.ContactId);
                     _quarantineContacts.Remove(newContact.ContactId);

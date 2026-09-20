@@ -23,7 +23,7 @@ using WinUICommunity;
 namespace ThreeFingerDragOnWindows.settings;
 
 public class SettingsData{
-    private static int CURRENT_SETTINGS_VERSION = 5;
+    private static int CURRENT_SETTINGS_VERSION = 6;
 
     // Other
     public static bool DidVersionChanged { get; set; } = false;
@@ -69,6 +69,10 @@ public class SettingsData{
 
     public int ThreeFingerDragStartThreshold { get; set; } = 100;
     public int ThreeFingerDragStopThreshold { get; set; } = 10;
+
+    // Double-tap drag lock Settings
+    public bool DoubleTapDragLockEnabled { get; set; } = false;
+    public int DoubleTapDragLockReleaseDelay { get; set; } = 500;
    
     // Other settings
 
