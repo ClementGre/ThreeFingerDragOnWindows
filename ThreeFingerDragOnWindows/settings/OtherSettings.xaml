@@ -51,6 +51,13 @@
                      IsOpen="True"
                      Severity="Informational" />
 
+            <wuc:SettingsCard Header="Show system tray icon"
+                              Description="Show the app icon in the taskbar notification area. If hidden, launch the app again to reopen Settings."
+                              HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE75B;}">
+                <ToggleSwitch x:Name="ShowSystemTrayIcon"
+                              IsOn="{x:Bind ShowSystemTrayIconProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </wuc:SettingsCard>
+
             <wuc:SettingsCard Header="Record logs"
                               Description="To record logs, enable logging, reproduce the issue you are having, disable logging, save the file and add it to a GitHub issue. The log file contains only the last 10000 lines of logs."
                               HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE8E5;}">

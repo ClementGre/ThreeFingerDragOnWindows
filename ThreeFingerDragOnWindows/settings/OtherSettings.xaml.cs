@@ -245,6 +245,14 @@ public sealed partial class OtherSettings{
         set => App.SettingsData.RecordLogs = value;
     }
 
+    private bool ShowSystemTrayIconProperty {
+        get => App.SettingsData.ShowSystemTrayIcon;
+        set{
+            App.SettingsData.ShowSystemTrayIcon = value;
+            App.Instance.HandlerWindow?.SetTaskbarIconVisible(value);
+        }
+    }
+
     private async void SaveLogsButton_Click(object sender, RoutedEventArgs e){
 
         string path = Path.Combine(KnownFolders.GetPath(KnownFolder.Downloads), "Logs_ThreeFingerDragOnWindows.txt");

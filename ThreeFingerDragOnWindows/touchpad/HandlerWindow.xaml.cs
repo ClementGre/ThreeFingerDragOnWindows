@@ -27,6 +27,7 @@ public sealed partial class HandlerWindow : Window {
         _app = app;
         _contactsManager = new ContactsManager(this);
         _threeFingersDrag = new ThreeFingerDrag();
+        SetTaskbarIconVisible(App.SettingsData.ShowSystemTrayIcon);
 
         // Let the _handlerWindow to be defined in App.xaml.cs before initializing the source
         Utils.runOnMainThreadAfter(100, () => {
@@ -44,6 +45,12 @@ public sealed partial class HandlerWindow : Window {
     private void QuitApp(object sender, ExecuteRequestedEventArgs e){
         Logger.Log("Quitting App from HandlerWindow TaskbarIcon");
         _app.Quit();
+    }
+
+    public void SetTaskbarIconVisible(bool visible){
+        TaskbarIcon.ForceCreate(enablesEfficiencyMode: false);
+        TaskbarIcon.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        Logger.Log($"Taskbar icon visible: {visible}");
     }
 
 
