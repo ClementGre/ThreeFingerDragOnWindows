@@ -24,7 +24,7 @@
                 Severity="Warning" />
 
             <wuc:SettingsCard
-                Description="Allows to select text, drag windows and other objects with three finger on the touchpad (left click simulation)."
+                Description="Allows to select text, drag windows and other objects with three fingers on the touchpad (primary click simulation)."
                 HeaderIcon="{wuc:BitmapIcon Source='ms-appx:///Assets/icon-threefinger.png', ShowAsMonochrome=True}"
                 Header="Enable three finger drag">
                 <ToggleSwitch x:Name="Enabled"
@@ -68,14 +68,14 @@
             </wuc:SettingsExpander>
 
             <wuc:SettingsCard
-                Description="Keep the left button to be able to select text and drag objects."
+                Description="Keep the primary button to select text and drag objects. This follows the Windows primary mouse button setting."
                 HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE962;}"
                 Header="Mouse button to be hold while dragging">
                 <ComboBox x:Name="ButtonType"
                           SelectedIndex="{x:Bind ButtonTypeProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           MinWidth="240">
                     <x:String>None</x:String>
-                    <x:String>Left</x:String>
+                    <x:String>Primary</x:String>
                     <x:String>Right</x:String>
                     <x:String>Middle</x:String>
                 </ComboBox>

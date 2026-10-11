@@ -89,7 +89,7 @@ public class ThreeFingerDrag{
 
     private void OnTimerElapsed(object source, ElapsedEventArgs e){
         if(_isDragging){
-            Logger.Log("    STOP DRAG FROM TIMER, Left click up");
+            Logger.Log("    STOP DRAG FROM TIMER, click up");
             Logger.Log("");
             StopDrag();
         }

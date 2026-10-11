@@ -33,12 +33,12 @@ public class SettingsData{
     public bool ThreeFingerDrag { get; set; } = true;
 
     public enum ThreeFingerDragButtonType {
-        NONE,
-        LEFT,
-        RIGHT,
-        MIDDLE,
+        NONE = 0,
+        PRIMARY = 1,
+        RIGHT = 2,
+        MIDDLE = 3,
     }
-    public ThreeFingerDragButtonType ThreeFingerDragButton { get; set; } = ThreeFingerDragButtonType.LEFT;
+    public ThreeFingerDragButtonType ThreeFingerDragButton { get; set; } = ThreeFingerDragButtonType.PRIMARY;
 
     public bool ThreeFingerDragAllowReleaseAndRestart { get; set; } = true;
     public int ThreeFingerDragReleaseDelay { get; set; } = 500;
