@@ -11,13 +11,14 @@ namespace ThreeFingerDragOnWindows;
 
 public partial class App {
 
-    public readonly DispatcherQueue DispatcherQueue;
+public readonly DispatcherQueue DispatcherQueue;
 
-    public static App Instance;
-    public static SettingsData SettingsData;
-    public static SettingsWindow SettingsWindow;
+public static App Instance;
+public static SettingsData SettingsData;
+public static SettingsWindow SettingsWindow;
+public static SmartProfileSwitcher SmartProfileSwitcher;
 
-    public HandlerWindow HandlerWindow;
+public HandlerWindow HandlerWindow;
 
     public App(){
         Instance = this;
@@ -65,6 +66,11 @@ public partial class App {
         } else{
             HandlerWindow = new HandlerWindow(this);
         }
+        
+        // Start Smart Profile Switcher
+        SmartProfileSwitcher = new SmartProfileSwitcher();
+        SmartProfileSwitcher.Start();
+        Logger.Log("App initialization complete");
     }
 
 

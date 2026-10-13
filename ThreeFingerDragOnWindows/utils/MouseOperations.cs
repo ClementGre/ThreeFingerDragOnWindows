@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using ThreeFingerDragOnWindows.settings;
+using ThreeFingerDragOnWindows.settings.profiles;
 
 namespace ThreeFingerDragOnWindows.utils;
 
@@ -76,28 +77,28 @@ public class MouseOperations {
     }
 
     public static void ThreeFingersDragMouseDown(){
-        switch (App.SettingsData.ThreeFingerDragButton){
-            case SettingsData.ThreeFingerDragButtonType.LEFT:
+        switch (App.SettingsData.ActiveProfile.ThreeFingerDragButton){
+            case ThreeFingerDragProfile.ThreeFingerDragButtonType.LEFT:
                 MouseClick(MOUSEEVENTF_LEFTDOWN);
                 break;
-            case SettingsData.ThreeFingerDragButtonType.RIGHT:
+            case ThreeFingerDragProfile.ThreeFingerDragButtonType.RIGHT:
                 MouseClick(MOUSEEVENTF_RIGHTDOWN);
                 break;
-            case SettingsData.ThreeFingerDragButtonType.MIDDLE:
+            case ThreeFingerDragProfile.ThreeFingerDragButtonType.MIDDLE:
                 MouseClick(MOUSEEVENTF_MIDDLEDOWN);
                 break;
         }
     }
 
     public static void ThreeFingersDragMouseUp(){
-        switch (App.SettingsData.ThreeFingerDragButton){
-            case SettingsData.ThreeFingerDragButtonType.LEFT:
+        switch (App.SettingsData.ActiveProfile.ThreeFingerDragButton){
+            case ThreeFingerDragProfile.ThreeFingerDragButtonType.LEFT:
                 MouseClick(MOUSEEVENTF_LEFTUP);
                 break;
-            case SettingsData.ThreeFingerDragButtonType.RIGHT:
+            case ThreeFingerDragProfile.ThreeFingerDragButtonType.RIGHT:
                 MouseClick(MOUSEEVENTF_RIGHTUP);
                 break;
-            case SettingsData.ThreeFingerDragButtonType.MIDDLE:
+            case ThreeFingerDragProfile.ThreeFingerDragButtonType.MIDDLE:
                 MouseClick(MOUSEEVENTF_MIDDLEUP);
                 break;
         }

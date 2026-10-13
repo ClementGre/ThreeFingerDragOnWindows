@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.UI.Xaml;
-using ThreeFingerDragOnWindows.touchpad;
+using ThreeFingerDragOnWindows.settings.profiles;
 using ThreeFingerDragOnWindows.utils;
 
 namespace ThreeFingerDragOnWindows.settings;
@@ -28,91 +26,114 @@ public sealed partial class ThreeFingerDragSettings : INotifyPropertyChanged{
 
 
     public bool EnabledProperty {
-        get{ return App.SettingsData.ThreeFingerDrag; }
-        set{ App.SettingsData.ThreeFingerDrag = value; }
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDrag; }
+        set{ 
+            App.SettingsData.ActiveProfile.ThreeFingerDrag = value;
+            App.SettingsData.SaveActiveProfile();
+        }
     }
 
     public int ButtonTypeProperty {
-        get{ return (int) App.SettingsData.ThreeFingerDragButton; }
-        set{ App.SettingsData.ThreeFingerDragButton = (SettingsData.ThreeFingerDragButtonType) value; }
+        get{ return (int) App.SettingsData.ActiveProfile.ThreeFingerDragButton; }
+        set{ 
+            App.SettingsData.ActiveProfile.ThreeFingerDragButton = (ThreeFingerDragProfile.ThreeFingerDragButtonType) value;
+            App.SettingsData.SaveActiveProfile();
+        }
     }
 
     public bool AllowReleaseAndRestartProperty {
-        get{ return App.SettingsData.ThreeFingerDragAllowReleaseAndRestart; }
-        set{ App.SettingsData.ThreeFingerDragAllowReleaseAndRestart = value; }
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDragAllowReleaseAndRestart; }
+        set{ 
+            App.SettingsData.ActiveProfile.ThreeFingerDragAllowReleaseAndRestart = value;
+            App.SettingsData.SaveActiveProfile();
+        }
     }
 
     public int ReleaseDelayProperty {
-        get{ return App.SettingsData.ThreeFingerDragReleaseDelay; }
-        set{ App.SettingsData.ThreeFingerDragReleaseDelay = value; }
-    }
-    
-    public ObservableCollection<MouseSpeedSettings> MouseSpeedSettingItems
-    {
-        get
-        {
-            ObservableCollection<MouseSpeedSettings> settings = new ObservableCollection<MouseSpeedSettings>(new Collection<MouseSpeedSettings>());
-            List<TouchpadDeviceInfo> allDeviceInfos = TouchpadHelper.GetAllDeivceInfos();
-            foreach (TouchpadDeviceInfo device in allDeviceInfos)
-            {
-                var mouseSetting = new MouseSpeedSettings(
-                    App.SettingsData.ThreeFingerDeviceDragCursorConfigs.GetValueOrDefault(device.deviceId,
-                        new SettingsData.ThreeFingerDragConfig()), device);
-                settings.Add(mouseSetting);
-            }
-
-            settings.CollectionChanged += OnCollectionChanged;
-            return settings;
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDragReleaseDelay; }
+        set{ 
+            App.SettingsData.ActiveProfile.ThreeFingerDragReleaseDelay = value;
+            App.SettingsData.SaveActiveProfile();
         }
     }
-    
-    private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        OnPropertyChanged(nameof(MouseSpeedSettingItems));
+
+    public bool CursorMoveProperty {
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDragCursorMove; }
+        set{ 
+            App.SettingsData.ActiveProfile.ThreeFingerDragCursorMove = value;
+            App.SettingsData.SaveActiveProfile();
+        }
+    }
+
+
+    public float CursorSpeedProperty {
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDragCursorSpeed; }
+        set{
+            if(App.SettingsData.ActiveProfile.ThreeFingerDragCursorSpeed != value){
+                App.SettingsData.ActiveProfile.ThreeFingerDragCursorSpeed = value;
+                App.SettingsData.SaveActiveProfile();
+                OnPropertyChanged(nameof(CursorSpeedProperty));
+            }
+        }
+    }
+
+    public float CursorAccelerationProperty {
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDragCursorAcceleration; }
+        set{
+            if(App.SettingsData.ActiveProfile.ThreeFingerDragCursorAcceleration != value){
+                App.SettingsData.ActiveProfile.ThreeFingerDragCursorAcceleration = value;
+                App.SettingsData.SaveActiveProfile();
+                OnPropertyChanged(nameof(CursorAccelerationProperty));
+            }
+        }
     }
 
     public int CursorAveragingProperty {
-        get{ return App.SettingsData.ThreeFingerDragCursorAveraging; }
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDragCursorAveraging; }
         set{
-            if(App.SettingsData.ThreeFingerDragCursorAveraging != value){
-                App.SettingsData.ThreeFingerDragCursorAveraging = value;
+            if(App.SettingsData.ActiveProfile.ThreeFingerDragCursorAveraging != value){
+                App.SettingsData.ActiveProfile.ThreeFingerDragCursorAveraging = value;
+                App.SettingsData.SaveActiveProfile();
             }
         }
     }
 
     public int StartDragThresholdProperty {
-        get{ return App.SettingsData.ThreeFingerDragStartThreshold; }
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDragStartThreshold; }
         set{
-            if(App.SettingsData.ThreeFingerDragStartThreshold != value){
-                App.SettingsData.ThreeFingerDragStartThreshold = value;
+            if(App.SettingsData.ActiveProfile.ThreeFingerDragStartThreshold != value){
+                App.SettingsData.ActiveProfile.ThreeFingerDragStartThreshold = value;
                 OnPropertyChanged(nameof(StartDragThresholdProperty));
 
-                if(value < App.SettingsData.ThreeFingerDragStopThreshold){
-                    App.SettingsData.ThreeFingerDragStopThreshold = value;
+                if(value < App.SettingsData.ActiveProfile.ThreeFingerDragStopThreshold){
+                    App.SettingsData.ActiveProfile.ThreeFingerDragStopThreshold = value;
                     OnPropertyChanged(nameof(StopDragThresholdProperty));
                 }
+                App.SettingsData.SaveActiveProfile();
             }
         }
     }
     public int StopDragThresholdProperty {
-        get{ return App.SettingsData.ThreeFingerDragStopThreshold; }
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDragStopThreshold; }
         set{
-            if(App.SettingsData.ThreeFingerDragStopThreshold != value){
-                App.SettingsData.ThreeFingerDragStopThreshold = value;
+            if(App.SettingsData.ActiveProfile.ThreeFingerDragStopThreshold != value){
+                App.SettingsData.ActiveProfile.ThreeFingerDragStopThreshold = value;
                 OnPropertyChanged(nameof(StopDragThresholdProperty));
 
-                if(value > App.SettingsData.ThreeFingerDragStartThreshold){
-                    App.SettingsData.ThreeFingerDragStartThreshold = value;
+                if(value > App.SettingsData.ActiveProfile.ThreeFingerDragStartThreshold){
+                    App.SettingsData.ActiveProfile.ThreeFingerDragStartThreshold = value;
                     OnPropertyChanged(nameof(StartDragThresholdProperty));
                 }
+                App.SettingsData.SaveActiveProfile();
             }
         }
     }
     public int MaxFingerMoveDistanceProperty {
-        get{ return App.SettingsData.ThreeFingerDragMaxFingerMoveDistance; }
+        get{ return App.SettingsData.ActiveProfile.ThreeFingerDragMaxFingerMoveDistance; }
         set{
-            if(App.SettingsData.ThreeFingerDragMaxFingerMoveDistance != value){
-                App.SettingsData.ThreeFingerDragMaxFingerMoveDistance = value;
+            if(App.SettingsData.ActiveProfile.ThreeFingerDragMaxFingerMoveDistance != value){
+                App.SettingsData.ActiveProfile.ThreeFingerDragMaxFingerMoveDistance = value;
+                App.SettingsData.SaveActiveProfile();
                 OnPropertyChanged(nameof(MaxFingerMoveDistanceProperty));
             }
         }

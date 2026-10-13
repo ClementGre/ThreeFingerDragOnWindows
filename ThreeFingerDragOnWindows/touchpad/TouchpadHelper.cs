@@ -17,6 +17,9 @@ internal static class TouchpadHelper {
     public const int RIM_INPUTSINK = 1;
     
     private static Dictionary<IntPtr, TouchpadDeviceInfo> availableDeviceInfos = new Dictionary<IntPtr, TouchpadDeviceInfo>(2);
+    private static readonly Dictionary<IntPtr, DateTime> deviceLastSeenTime = new Dictionary<IntPtr, DateTime>(2);
+    private static readonly Dictionary<IntPtr, bool> deviceHasSentInput = new Dictionary<IntPtr, bool>(2);
+    private static readonly TimeSpan DeviceRemovalGracePeriod = TimeSpan.FromSeconds(1);
 
     private static TouchpadDeviceInfo GetDeviceInfoFromHid(IntPtr hwnd)
     {
@@ -35,7 +38,13 @@ internal static class TouchpadHelper {
         {
             if (GetRawInputDeviceInfo(hwnd, RIDI_DEVICENAME, ptr, ref nameSize) != unchecked((uint)-1))
             {
-                touchpadDevice.deviceId = ComputeMD5(Marshal.PtrToStringAnsi(ptr));
+                var deviceName = Marshal.PtrToStringAnsi(ptr);
+                touchpadDevice.deviceId = ComputeMD5(deviceName);
+                
+                // Store the raw device name for connection type detection
+                // Device name format: \\?\HID#VID_xxxx&PID_yyyy&...
+                // Bluetooth devices typically have different patterns in their device paths
+                touchpadDevice.deviceName = deviceName;
             }
         }
         finally
@@ -69,12 +78,24 @@ internal static class TouchpadHelper {
         if (deviceInfo.hid.usUsagePage == 0x000D &&
             deviceInfo.hid.usUsage == 0x0005)
         {
-            if (!availableDeviceInfos.ContainsKey(hwnd))
+            bool isNewDevice = !availableDeviceInfos.ContainsKey(hwnd);
+            
+            if (isNewDevice)
             {
-                availableDeviceInfos[hwnd] = GetDeviceInfoFromHid(hwnd);
-                availableDeviceInfos[hwnd].vendorId = deviceInfo.hid.dwVendorId.ToString();
-                availableDeviceInfos[hwnd].productId = deviceInfo.hid.dwProductId.ToString();
+                var newDeviceInfo = GetDeviceInfoFromHid(hwnd);
+                newDeviceInfo.vendorId = deviceInfo.hid.dwVendorId.ToString();
+                newDeviceInfo.productId = deviceInfo.hid.dwProductId.ToString();
+                
+                
+                availableDeviceInfos[hwnd] = newDeviceInfo;
+                // Only set timestamp for NEW devices
+                deviceLastSeenTime[hwnd] = DateTime.Now;
+                deviceHasSentInput[hwnd] = false; // New devices haven't sent input yet
+                Logger.Log($"[TouchpadHelper] Added device: {hwnd}, deviceId: {newDeviceInfo.deviceId}, VID/PID: {newDeviceInfo.vendorId}/{newDeviceInfo.productId}");
             }
+            // Note: We don't update timestamp for existing devices during enumeration
+            // Timestamps should only be updated when devices actually send input
+            
             return true;
         }
         return false;
@@ -139,9 +160,195 @@ internal static class TouchpadHelper {
         return null;
     }
 
+    /// <summary>
+    /// Validates that a device handle is still valid by checking if it still exists in the system
+    /// </summary>
+    private static bool IsDeviceStillValid(IntPtr hDevice)
+    {
+        uint deviceInfoSize = 0;
+        // Try to get device info - if it fails, the device is no longer valid
+        return GetRawInputDeviceInfo(hDevice, RIDI_DEVICEINFO, IntPtr.Zero, ref deviceInfoSize) == 0;
+    }
+
+    /// <summary>
+    /// Removes disconnected devices from the cache, but only after a grace period
+    /// to handle device reconnections during mode switches (e.g., Bluetooth to wired)
+    /// </summary>
+    public static void CleanupDisconnectedDevices()
+    {
+        lock (deviceLastSeenTime)
+        {
+            var now = DateTime.Now;
+            var devicesToRemove = new List<IntPtr>();
+
+            foreach (var kvp in availableDeviceInfos)
+            {
+                var device = kvp.Key;
+                
+                // Check if device is still valid
+                if (!IsDeviceStillValid(device))
+                {
+                    // If we haven't tracked this device's last seen time, set it now
+                    if (!deviceLastSeenTime.ContainsKey(device))
+                    {
+                        deviceLastSeenTime[device] = now;
+                    }
+                    // Only remove if grace period has elapsed
+                    else if (now - deviceLastSeenTime[device] > DeviceRemovalGracePeriod)
+                    {
+                        devicesToRemove.Add(device);
+                    }
+                }
+                else
+                {
+                    // Device is valid, update last seen time
+                    deviceLastSeenTime[device] = now;
+                }
+            }
+
+            foreach (var device in devicesToRemove)
+            {
+                var deviceInfo = availableDeviceInfos[device];
+                availableDeviceInfos.Remove(device);
+                deviceLastSeenTime.Remove(device);
+                deviceHasSentInput.Remove(device);
+                Logger.Log($"[TouchpadHelper] Removed disconnected device after grace period: {device}, deviceId: {deviceInfo.deviceId}");
+            }
+        }
+    }
+
     public static List<TouchpadDeviceInfo> GetAllDeivceInfos()
     {
+        // Clean up stale entries before returning
+        CleanupDisconnectedDevices();
         return availableDeviceInfos.Values.ToList();
+    }
+
+    /// <summary>
+    /// Extracts a normalized hardware identifier from the device name to match Bluetooth and wired connections
+    /// of the same physical device. Returns the VID and PID extracted from the device path.
+    /// </summary>
+    private static string GetNormalizedHardwareId(string deviceName, string vendorId, string productId)
+    {
+        if (string.IsNullOrEmpty(deviceName))
+            return $"{vendorId}_{productId}";
+        
+        // Try to extract VID and PID from device name path
+        // Format examples:
+        // \\?\HID#VID_046D&PID_B036&MI_01&Col02#...  (USB/wired)
+        // \\?\HID#VID_046D&PID_B036&...  (Bluetooth)
+        // We want to extract the VID_xxxx&PID_yyyy part as the hardware identifier
+        
+        var vidIndex = deviceName.IndexOf("VID_", StringComparison.OrdinalIgnoreCase);
+        var pidIndex = deviceName.IndexOf("PID_", StringComparison.OrdinalIgnoreCase);
+        
+        if (vidIndex >= 0 && pidIndex >= 0)
+        {
+            // Extract VID (4 hex digits after VID_)
+            var vid = deviceName.Substring(vidIndex + 4, 4);
+            // Extract PID (4 hex digits after PID_)
+            var pid = deviceName.Substring(pidIndex + 4, 4);
+            return $"VID_{vid}_PID_{pid}";
+        }
+        
+        // Fallback to vendorId + productId
+        return $"{vendorId}_{productId}";
+    }
+    
+    /// <summary>
+    /// Re-enumerates all touchpad devices. Should be called when WM_INPUT_DEVICE_CHANGE is received
+    /// to handle device reconnections (e.g., switching between Bluetooth and wired mode)
+    /// </summary>
+    public static void RefreshDevices()
+    {
+        Logger.Log("[TouchpadHelper] Refreshing device list...");
+        
+        uint deviceListCount = 0;
+        var rawInputDeviceListSize = (uint)Marshal.SizeOf<RAWINPUTDEVICELIST>();
+        
+        if (GetRawInputDeviceList(null, ref deviceListCount, rawInputDeviceListSize) != 0)
+        {
+            Logger.Log("[TouchpadHelper] Failed to get device count");
+            return;
+        }
+
+        var devices = new RAWINPUTDEVICELIST[deviceListCount];
+
+        if (GetRawInputDeviceList(devices, ref deviceListCount, rawInputDeviceListSize) != deviceListCount)
+        {
+            Logger.Log("[TouchpadHelper] Failed to enumerate devices");
+            return;
+        }
+
+        // Track which handles are currently valid in the system and which are new
+        var currentHandles = new HashSet<IntPtr>();
+        var newlyAddedHandles = new HashSet<IntPtr>();
+        
+        // Check each HID device to see if it's a touchpad
+        foreach (var device in devices.Where(x => x.dwType == RIM_TYPEHID))
+        {
+            bool wasNew = !availableDeviceInfos.ContainsKey(device.hDevice);
+            if (Exists(device.hDevice)) // This will add/update the device in our cache
+            {
+                currentHandles.Add(device.hDevice);
+                if (wasNew)
+                {
+                    newlyAddedHandles.Add(device.hDevice);
+                }
+            }
+        }
+        
+        // Remove any devices from our cache that are not in the current enumeration
+        // This ensures we don't keep stale devices when hardware disconnects
+        var devicesToRemove = availableDeviceInfos.Keys.Where(handle => !currentHandles.Contains(handle)).ToList();
+        
+        foreach (var handle in devicesToRemove)
+        {
+            var deviceInfo = availableDeviceInfos[handle];
+            availableDeviceInfos.Remove(handle);
+            deviceLastSeenTime.Remove(handle);
+            deviceHasSentInput.Remove(handle);
+            Logger.Log($"[TouchpadHelper] Removed device not found in enumeration: {handle}, deviceId: {deviceInfo.deviceId}, VID/PID: {deviceInfo.vendorId}/{deviceInfo.productId}");
+        }
+        
+        // Deduplicate devices with the same hardware ID (extracted from device name)
+        // This handles Bluetooth vs wired connections which may have different VID/PID reported by Windows
+        // but share the same hardware identifiers in their device path
+        var devicesByHardwareId = availableDeviceInfos
+            .GroupBy(kvp => GetNormalizedHardwareId(kvp.Value.deviceName, kvp.Value.vendorId, kvp.Value.productId))
+            .Where(g => g.Count() > 1)
+            .ToList();
+        
+        foreach (var group in devicesByHardwareId)
+        {
+            // Three-tier sorting priority:
+            // 1. Devices that have sent actual input (active devices)
+            // 2. Newly added devices (likely the new connection)
+            // 3. Most recent timestamp (fallback)
+            var sortedDevices = group.OrderByDescending(kvp => deviceHasSentInput.TryGetValue(kvp.Key, out var hasSent) && hasSent ? 1 : 0)
+                                     .ThenByDescending(kvp => newlyAddedHandles.Contains(kvp.Key) ? 1 : 0)
+                                     .ThenByDescending(kvp => deviceLastSeenTime.TryGetValue(kvp.Key, out var lastSeen) ? lastSeen : DateTime.MinValue)
+                                     .ToList();
+            
+            var keepDevice = sortedDevices.First();
+            var hasSentInput = deviceHasSentInput.TryGetValue(keepDevice.Key, out var keepHasSent) && keepHasSent;
+            var wasNewDevice = newlyAddedHandles.Contains(keepDevice.Key);
+            
+            string reason = hasSentInput ? "has sent input" : (wasNewDevice ? "newly added" : "most recent");
+            Logger.Log($"[TouchpadHelper] Found {group.Count()} devices with hardware ID: {group.Key}, keeping ({reason}): {keepDevice.Key}");
+            
+            // Remove all except the first one
+            foreach (var device in sortedDevices.Skip(1))
+            {
+                var deviceHadSentInput = deviceHasSentInput.TryGetValue(device.Key, out var hadSent) && hadSent;
+                Logger.Log($"[TouchpadHelper] Removing duplicate device: {device.Key}, deviceId: {device.Value.deviceId}, VID/PID: {device.Value.vendorId}/{device.Value.productId}, hadSentInput: {deviceHadSentInput}");
+                availableDeviceInfos.Remove(device.Key);
+                deviceLastSeenTime.Remove(device.Key);
+                deviceHasSentInput.Remove(device.Key);
+            }
+        }
+        
+        Logger.Log($"[TouchpadHelper] Refresh complete. Active devices: {availableDeviceInfos.Count}");
     }
 
     public static bool RegisterInput(IntPtr hwndTarget){
@@ -330,6 +537,16 @@ internal static class TouchpadHelper {
             }
 
             Logger.Log(toLog);
+
+            // Update the timestamp for this device since it just sent input
+            if (availableDeviceInfos.ContainsKey(currentDevice))
+            {
+                lock (deviceLastSeenTime)
+                {
+                    deviceLastSeenTime[currentDevice] = DateTime.Now;
+                    deviceHasSentInput[currentDevice] = true; // Mark that this device has sent actual input
+                }
+            }
 
             return (currentDevice, contacts, contactCount);
         } finally{

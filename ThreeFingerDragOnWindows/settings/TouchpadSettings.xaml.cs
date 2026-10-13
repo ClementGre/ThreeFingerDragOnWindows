@@ -25,6 +25,9 @@ public sealed partial class TouchpadSettings {
         Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
         TouchpadStatus.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
         
+        // Clean up any disconnected devices before displaying
+        TouchpadHelper.CleanupDisconnectedDevices();
+        
         if(App.Instance.HandlerWindow.TouchpadExists){
             if(App.Instance.HandlerWindow.InputReceiverInstalled) {
                 string deviceInfosString = String.Join("\n", TouchpadHelper.GetAllDeivceInfos().Select(deviceInfo => deviceInfo.ToString()));
