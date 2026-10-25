@@ -6,6 +6,7 @@ namespace ThreeFingerDragOnWindows.utils;
 
 public class MouseOperations {
     private const int INPUT_MOUSE = 0;
+    private const int SM_SWAPBUTTON = 23;
     private const int MOUSEEVENTF_MOVE = 0x0001;
     public const int MOUSEEVENTF_LEFTDOWN = 0x0002;
     public const int MOUSEEVENTF_LEFTUP = 0x0004;
@@ -18,11 +19,30 @@ public class MouseOperations {
     // decimal parts are kept and then added to be taken in account
     private static float _decimalX;
     private static float _decimalY;
+    private static int? _threeFingersDragMouseUpEventFlag;
 
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetCursorPos(out IntMousePoint lpFIntMousePoint);
+
+    [DllImport("user32.dll")]
+    private static extern int GetSystemMetrics(int nIndex);
+
+    internal static bool AreMouseButtonsSwapped(){
+        return GetSystemMetrics(SM_SWAPBUTTON) != 0;
+    }
+
+    internal static SettingsData.ThreeFingerDragButtonType ConvertPhysicalButtonToLogical(
+        SettingsData.ThreeFingerDragButtonType buttonType, bool areButtonsSwapped){
+        if(!areButtonsSwapped) return buttonType;
+
+        return buttonType switch{
+            SettingsData.ThreeFingerDragButtonType.PRIMARY => SettingsData.ThreeFingerDragButtonType.SECONDARY,
+            SettingsData.ThreeFingerDragButtonType.SECONDARY => SettingsData.ThreeFingerDragButtonType.PRIMARY,
+            _ => buttonType,
+        };
+    }
 
 
     public static IntMousePoint GetCursorPosition(){
@@ -76,30 +96,35 @@ public class MouseOperations {
     }
 
     public static void ThreeFingersDragMouseDown(){
-        switch (App.SettingsData.ThreeFingerDragButton){
-            case SettingsData.ThreeFingerDragButtonType.LEFT:
-                MouseClick(MOUSEEVENTF_LEFTDOWN);
-                break;
-            case SettingsData.ThreeFingerDragButtonType.RIGHT:
-                MouseClick(MOUSEEVENTF_RIGHTDOWN);
-                break;
-            case SettingsData.ThreeFingerDragButtonType.MIDDLE:
-                MouseClick(MOUSEEVENTF_MIDDLEDOWN);
-                break;
-        }
+        (int? mouseDownEventFlag, int? mouseUpEventFlag) = GetThreeFingersDragMouseEventFlags(
+            App.SettingsData.ThreeFingerDragButton, AreMouseButtonsSwapped());
+        _threeFingersDragMouseUpEventFlag = mouseUpEventFlag;
+
+        if(mouseDownEventFlag.HasValue) MouseClick(mouseDownEventFlag.Value);
     }
 
     public static void ThreeFingersDragMouseUp(){
-        switch (App.SettingsData.ThreeFingerDragButton){
-            case SettingsData.ThreeFingerDragButtonType.LEFT:
-                MouseClick(MOUSEEVENTF_LEFTUP);
-                break;
-            case SettingsData.ThreeFingerDragButtonType.RIGHT:
-                MouseClick(MOUSEEVENTF_RIGHTUP);
-                break;
+        int? mouseUpEventFlag = _threeFingersDragMouseUpEventFlag;
+        _threeFingersDragMouseUpEventFlag = null;
+
+        if(mouseUpEventFlag.HasValue) MouseClick(mouseUpEventFlag.Value);
+    }
+
+    internal static (int? mouseDownEventFlag, int? mouseUpEventFlag) GetThreeFingersDragMouseEventFlags(
+        SettingsData.ThreeFingerDragButtonType buttonType, bool areButtonsSwapped){
+        switch(buttonType){
+            case SettingsData.ThreeFingerDragButtonType.PRIMARY:
+                return areButtonsSwapped
+                    ? (MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP)
+                    : (MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
+            case SettingsData.ThreeFingerDragButtonType.SECONDARY:
+                return areButtonsSwapped
+                    ? (MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP)
+                    : (MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP);
             case SettingsData.ThreeFingerDragButtonType.MIDDLE:
-                MouseClick(MOUSEEVENTF_MIDDLEUP);
-                break;
+                return (MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP);
+            default:
+                return (null, null);
         }
     }
 

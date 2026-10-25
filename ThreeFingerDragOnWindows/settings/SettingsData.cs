@@ -23,7 +23,7 @@ using WinUICommunity;
 namespace ThreeFingerDragOnWindows.settings;
 
 public class SettingsData{
-    private static int CURRENT_SETTINGS_VERSION = 5;
+    private static int CURRENT_SETTINGS_VERSION = 6;
 
     // Other
     public static bool DidVersionChanged { get; set; } = false;
@@ -33,12 +33,12 @@ public class SettingsData{
     public bool ThreeFingerDrag { get; set; } = true;
 
     public enum ThreeFingerDragButtonType {
-        NONE,
-        LEFT,
-        RIGHT,
-        MIDDLE,
+        NONE = 0,
+        PRIMARY = 1,
+        SECONDARY = 2,
+        MIDDLE = 3,
     }
-    public ThreeFingerDragButtonType ThreeFingerDragButton { get; set; } = ThreeFingerDragButtonType.LEFT;
+    public ThreeFingerDragButtonType ThreeFingerDragButton { get; set; } = ThreeFingerDragButtonType.PRIMARY;
 
     public bool ThreeFingerDragAllowReleaseAndRestart { get; set; } = true;
     public int ThreeFingerDragReleaseDelay { get; set; } = 500;
@@ -105,17 +105,19 @@ public class SettingsData{
             up.save();
         }
 
+        var loadedSettingsVersion = up.SettingsVersion;
+
         if (up.ThreeFingerDeviceDragCursorConfigs == null)
         {
             up.ThreeFingerDeviceDragCursorConfigs = new Dictionary<string, ThreeFingerDragConfig>(2);
             up.save();
         }
 
-        if(up.SettingsVersion < 1){
+        if(loadedSettingsVersion < 1){
             Logger.Log("Updating settings to version 1");
             up.save();
         }
-        if(up.SettingsVersion < 2){
+        if(loadedSettingsVersion < 2){
             Logger.Log("Updating settings to version 2");
             if(up.RunElevated && StartupManager.IsElevatedStartupOn()){
 
@@ -143,7 +145,13 @@ public class SettingsData{
 
         }
 
-        if(up.SettingsVersion != CURRENT_SETTINGS_VERSION){
+        if(loadedSettingsVersion < 6){
+            Logger.Log("Updating settings to version 6");
+            up.ThreeFingerDragButton = MouseOperations.ConvertPhysicalButtonToLogical(
+                up.ThreeFingerDragButton, MouseOperations.AreMouseButtonsSwapped());
+        }
+
+        if(loadedSettingsVersion != CURRENT_SETTINGS_VERSION){
             DidVersionChanged = true;
             up.save();
         }
