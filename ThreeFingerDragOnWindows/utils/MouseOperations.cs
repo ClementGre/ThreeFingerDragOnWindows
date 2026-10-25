@@ -29,6 +29,21 @@ public class MouseOperations {
     [DllImport("user32.dll")]
     private static extern int GetSystemMetrics(int nIndex);
 
+    internal static bool AreMouseButtonsSwapped(){
+        return GetSystemMetrics(SM_SWAPBUTTON) != 0;
+    }
+
+    internal static SettingsData.ThreeFingerDragButtonType ConvertPhysicalButtonToLogical(
+        SettingsData.ThreeFingerDragButtonType buttonType, bool areButtonsSwapped){
+        if(!areButtonsSwapped) return buttonType;
+
+        return buttonType switch{
+            SettingsData.ThreeFingerDragButtonType.PRIMARY => SettingsData.ThreeFingerDragButtonType.SECONDARY,
+            SettingsData.ThreeFingerDragButtonType.SECONDARY => SettingsData.ThreeFingerDragButtonType.PRIMARY,
+            _ => buttonType,
+        };
+    }
+
 
     public static IntMousePoint GetCursorPosition(){
         IntMousePoint currentIntMousePoint;
@@ -82,7 +97,7 @@ public class MouseOperations {
 
     public static void ThreeFingersDragMouseDown(){
         (int? mouseDownEventFlag, int? mouseUpEventFlag) = GetThreeFingersDragMouseEventFlags(
-            App.SettingsData.ThreeFingerDragButton, GetSystemMetrics(SM_SWAPBUTTON) != 0);
+            App.SettingsData.ThreeFingerDragButton, AreMouseButtonsSwapped());
         _threeFingersDragMouseUpEventFlag = mouseUpEventFlag;
 
         if(mouseDownEventFlag.HasValue) MouseClick(mouseDownEventFlag.Value);
@@ -102,8 +117,10 @@ public class MouseOperations {
                 return areButtonsSwapped
                     ? (MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP)
                     : (MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
-            case SettingsData.ThreeFingerDragButtonType.RIGHT:
-                return (MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP);
+            case SettingsData.ThreeFingerDragButtonType.SECONDARY:
+                return areButtonsSwapped
+                    ? (MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP)
+                    : (MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP);
             case SettingsData.ThreeFingerDragButtonType.MIDDLE:
                 return (MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP);
             default:

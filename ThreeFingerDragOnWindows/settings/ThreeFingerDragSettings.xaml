@@ -68,7 +68,7 @@
             </wuc:SettingsExpander>
 
             <wuc:SettingsCard
-                Description="Keep the primary button to select text and drag objects. This follows the Windows primary mouse button setting."
+                Description="Primary and secondary follow the Windows primary mouse button setting."
                 HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE962;}"
                 Header="Mouse button to be hold while dragging">
                 <ComboBox x:Name="ButtonType"
@@ -76,7 +76,7 @@
                           MinWidth="240">
                     <x:String>None</x:String>
                     <x:String>Primary</x:String>
-                    <x:String>Right</x:String>
+                    <x:String>Secondary</x:String>
                     <x:String>Middle</x:String>
                 </ComboBox>
             </wuc:SettingsCard>
